@@ -20,7 +20,7 @@ import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import TokensHistory from "./data/TokensHistoryData";
+import TokensHistory from "./data/TokensHistory";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -29,9 +29,9 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
 // Data
-import projectsTableData from "layouts/tables/data/projectsTableData";
+import projectsTableData from "layouts/tokens/data/projectsTableData";
 
-function Tables() {
+function Tokens() {
   const { columns: pColumns, rows: pRows } = projectsTableData();
 
   return (
@@ -94,4 +94,4 @@ function Tables() {
   );
 }
 
-export default Tables;
+export default Tokens;

@@ -6,26 +6,26 @@ const useAxios = (url) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const response = await axios.get(url);
+      const response = await axios.get(url);
 
-        if (response.status !== 200) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        setData(response.data);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
+      if (response.status !== 200) {
+        throw new Error(`Request failed with status ${response.status}`);
       }
-    };
 
+      setData(response.data);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (url) {
       fetchData();
     }
@@ -34,7 +34,11 @@ const useAxios = (url) => {
     return () => {};
   }, [url]);
 
-  return { data, loading, error };
+  const refetch = async () => {
+    await fetchData();
+  };
+
+  return { data, loading, error, refetch };
 };
 
 export default useAxios;

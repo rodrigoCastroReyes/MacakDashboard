@@ -12,7 +12,6 @@ import StoreIcon from "@mui/icons-material/Store";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDProgress from "components/MDProgress";
-import LinearWithLabel from "layouts/dashboard/components/LinearWithLabel";
 
 const PosStatistics = ({ statistics }) => {
   const topThreeStats = statistics.slice(0, 3);
@@ -42,13 +41,13 @@ const PosStatistics = ({ statistics }) => {
               </Avatar>
               <Box ml={2}>
                 <Progress color="primary" value={percentage} />
-                <Typography variant="subtitle1">{pos}</Typography>;
+                <Typography variant="subtitle1">{pos}</Typography>
               </Box>
             </Box>
           </div>
         ))}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Button variant="contained">Ver reporte</Button>
+          <Button variant="contained" style={{color:"white"}}>Ver reporte</Button>
         </Box>
       </CardContent>
     </Card>

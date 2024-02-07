@@ -25,21 +25,14 @@ import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
-import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
-
-// Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 
 // Dashboard components
-import EventSummary from "layouts/dashboard/components/EventSumary";
-import SalesSummary from "./components/SalesSumary";
-import RecentTransactions from "./components/RecentTransactions";
-import StaticsPOS from "./components/StaticsPOS";
+import EventSummary from "layouts/resumen/components/EventSumary";
+import SalesSummary from "layouts/resumen/components/SalesSumary";
+import RecentTransactions from "layouts/resumen/components/RecentTransactions";
+import StaticsPOS from "layouts/resumen/components/StaticsPOS";
 
-function Dashboard() {
+function Resumen() {
   const [dashboardData, setDashboardData] = useState({
     eventSummary: {
       eventCount: 0,
@@ -70,43 +63,43 @@ function Dashboard() {
         },
         salesSummary: {
           salesByPos: [
-            { pos: "Tienda A", sales: 1500 },
-            { pos: "Tienda B", sales: 2000 },
-            { pos: "Tienda C", sales: 1800 },
-            { pos: "Tienda D", sales: 1200 },
-            { pos: "Tienda E", sales: 2200 },
-            { pos: "Tienda F", sales: 1700 },
-            { pos: "Tienda G", sales: 1900 },
-            { pos: "Tienda H", sales: 1400 },
-            { pos: "Tienda I", sales: 1600 },
-            { pos: "Tienda J", sales: 2100 },
-            { pos: "Tienda K", sales: 1300 },
-            { pos: "Tienda L", sales: 1800 },
+            { pos: "Punto de venta 1", sales: 1500 },
+            { pos: "Punto de venta 2", sales: 2000 },
+            { pos: "Punto de venta 3", sales: 1800 },
+            { pos: "Punto de venta 4", sales: 1200 },
+            { pos: "Punto de venta 5", sales: 2200 },
+            { pos: "Punto de venta 6", sales: 1700 },
+            { pos: "Punto de venta 7", sales: 1900 },
+            { pos: "Punto de venta 8", sales: 1400 },
+            { pos: "Punto de venta 9", sales: 1600 },
+            { pos: "Punto de venta 10", sales: 2100 },
+            { pos: "Punto de venta 11", sales: 1300 },
+            { pos: "Punto de venta 12", sales: 1800 },
           ],
         },
         recentTransactions: [
-          { date: "2024-02-05", pos: "Tienda A", amount: 100, type: "exitosa" },
-          { date: "2024-02-04", pos: "Tienda B", amount: 200, type: "fallida" },
-          { date: "2024-02-03", pos: "Tienda C", amount: 150, type: "exitosa" },
-          { date: "2024-02-02", pos: "Tienda D", amount: 120, type: "exitosa" },
-          { date: "2024-02-01", pos: "Tienda E", amount: 180, type: "fallida" },
-          { date: "2024-01-24", pos: "Tienda E", amount: 160, type: "exitosa" },
-          { date: "2024-01-23", pos: "Tienda E", amount: 140, type: "fallida" },
-          { date: "2024-01-22", pos: "Tienda E", amount: 200, type: "exitosa" },
+          { date: "2024-02-05", pos: "Punto de venta 1", amount: 100, type: "exitosa" },
+          { date: "2024-02-04", pos: "Punto de venta 2", amount: 200, type: "fallida" },
+          { date: "2024-02-03", pos: "Punto de venta 3", amount: 150, type: "exitosa" },
+          { date: "2024-02-02", pos: "Punto de venta 4", amount: 120, type: "exitosa" },
+          { date: "2024-02-01", pos: "Punto de venta 5", amount: 180, type: "fallida" },
+          { date: "2024-01-24", pos: "Punto de venta 5", amount: 160, type: "exitosa" },
+          { date: "2024-01-23", pos: "Punto de venta 5", amount: 140, type: "fallida" },
+          { date: "2024-01-22", pos: "Punto de venta 5", amount: 200, type: "exitosa" },
         ],
         posStatistics: [
-          { pos: "Tienda A", percentage: 25 },
-          { pos: "Tienda B", percentage: 50 },
-          { pos: "Tienda C", percentage: 75 },
-          { pos: "Tienda D", percentage: 50 },
-          { pos: "Tienda E", percentage: 25 },
-          { pos: "Tienda F", percentage: 75 },
-          { pos: "Tienda G", percentage: 10 },
-          { pos: "Tienda H", percentage: 75 },
-          { pos: "Tienda I", percentage: 25 },
-          { pos: "Tienda J", percentage: 50 },
-          { pos: "Tienda K", percentage: 75 },
-          { pos: "Tienda L", percentage: 50 },
+          { pos: "Punto de venta 1", percentage: 25 },
+          { pos: "Punto de venta 2", percentage: 50 },
+          { pos: "Punto de venta 3", percentage: 75 },
+          { pos: "Punto de venta 4", percentage: 50 },
+          { pos: "Punto de venta 5", percentage: 25 },
+          { pos: "Punto de venta 6", percentage: 75 },
+          { pos: "Punto de venta 7", percentage: 10 },
+          { pos: "Punto de venta 8", percentage: 75 },
+          { pos: "Punto de venta 9", percentage: 25 },
+          { pos: "Punto de venta 10", percentage: 50 },
+          { pos: "Punto de venta 11", percentage: 75 },
+          { pos: "Punto de venta 12", percentage: 50 },
         ],
       });
     }, 1000);
@@ -150,4 +143,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Resumen;

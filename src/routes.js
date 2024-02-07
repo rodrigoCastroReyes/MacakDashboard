@@ -36,44 +36,49 @@ Coded by www.creative-tim.com
 */
 
 // Material Dashboard 2 React layouts
-import Dashboard from "layouts/dashboard";
-import Tables from "layouts/tables";
-import Billing from "layouts/billing";
+import Resumen from "layouts/resumen";
+import Tokens from "layouts/tokens";
+import Transacciones from "layouts/transacciones"
+/*import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";
+import SignUp from "layouts/authentication/sign-up";*/
 
 // @mui icons
-import Icon from "@mui/material/Icon";
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+
 
 const routes = [
   {
     type: "collapse",
-    name: "Dashboard",
-    key: "dashboard",
-    icon: <Icon fontSize="small">dashboard</Icon>,
-    route: "/dashboard",
-    component: <Dashboard />,
+    name: "Resumen",
+    key: "resumen",
+    icon: <QueryStatsIcon fontSize="small" color="white"></QueryStatsIcon>,
+    route: "/resumen",
+    component: <Resumen />,
   },
   {
     type: "collapse",
-    name: "Tables",
-    key: "tables",
-    icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
-    component: <Tables />,
+    name: "Transacciones",
+    key: "transacciones",
+    icon: <PointOfSaleIcon  fontSize="small" color="white"></PointOfSaleIcon>,
+    route: "/transacciones",
+    component: <Transacciones />,
   },
   {
     type: "collapse",
-    name: "Billing",
-    key: "billing",
-    icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/billing",
-    component: <Billing />,
+    name: "Tokens",
+    key: "tokens",
+    icon: <CreditCardIcon fontSize="small" color="white"></CreditCardIcon>,
+    route: "/tokens",
+    component: <Tokens />,
   },
-  {
+  
+  /*{
     type: "collapse",
     name: "RTL",
     key: "rtl",
@@ -112,7 +117,7 @@ const routes = [
     icon: <Icon fontSize="small">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
-  },
+  },*/
 ];
 
 export default routes;
