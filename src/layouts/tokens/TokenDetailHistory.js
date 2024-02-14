@@ -12,7 +12,6 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
 import TokensData from "layouts/tokens/data/TokensData";
-//import TokenDetailHistoryData from "layouts/tokens/data/TokenDetailHistoryData.js";
 
 function TokenDetailHistory() {
   /*const { code } = useParams();
@@ -40,23 +39,37 @@ function TokenDetailHistory() {
   const navigate = useNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const [tokens, setTokens] = useState([]);
-
+  const [balance, setBalance] = useState(0);
 
   useEffect(() => {
     // Simulando la obtención de datos
     const fetchData = async () => {
       // Aquí puedes realizar la lógica para obtener los detalles del token basado en el código
       // Por ejemplo, buscar en el objeto TokenDetailHistoryData
-      const codeDetails = TokensData.tokens.find(
-        (item) => item.code === code
-      );
+      const codeDetails = TokensData.tokens.find((item) => item.code === code);
       if (codeDetails) {
         setTokens(codeDetails.transactions);
+        const initialBalance = calculateInitialBalance(
+          codeDetails.transactions,
+          codeDetails.balance
+        );
+        setBalance(initialBalance);
       }
     };
 
     fetchData();
   }, [code]);
+
+  const calculateInitialBalance = (transactions, initialBalance) => {
+    return transactions.reduce((acc, transaction) => {
+      if (transaction.type === "Compra" && transaction.status === "success") {
+        return acc - transaction.amount;
+      } else if (transaction.type === "Carga" && transaction.status === "success") {
+        return acc + transaction.amount;
+      }
+      return acc;
+    }, initialBalance);
+  };
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -117,49 +130,61 @@ function TokenDetailHistory() {
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
-      <Card>
-        <MDBox
-          mx={2}
-          mt={-3}
-          py={3}
-          px={2}
-          variant="gradient"
-          bgColor="info"
-          borderRadius="lg"
-          coloredShadow="info"
-        >
-          <MDTypography variant="h6" color="white">
-            Historial de transacciones de Token {code}
-          </MDTypography>
-        </MDBox>
-        <MDBox pt={3} px={2} style={{display:'flex', justifyContent: 'flex-end'}}>
-              <MDTypography variant="body1" color="textPrimary" style={{ position: 'realtive', marginRight: '1rem' }} >
-                Saldo disponible: $1000 {/* Aquí va el saldo disponible */}
-              </MDTypography>
-            </MDBox>
-        <MDBox pt={3}>
-          <div style={{ marginBottom: "2rem" }}>
-            <button className="return-button" onClick={() => navigate("/tokens")}>
-              Volver a Tokens
-            </button>
-            <button
-              className="refresh-button"
-              onClick={handleRefresh}
-              disabled={refreshing}
-            >
-              {refreshing ? "Refrescando..." : "Actualizar"}
-            </button>
-          </div>
-          <DataTable
-            table={{ columns, rows }}
-            isSorted={false}
-            entriesPerPage={false}
-            showTotalEntries={10}
-            noEndBorder
-          />
-        </MDBox>
-      </Card>
-       </Grid>
+            <Card>
+              <MDBox
+                mx={2}
+                mt={-3}
+                py={3}
+                px={2}
+                variant="gradient"
+                bgColor="info"
+                borderRadius="lg"
+                coloredShadow="info"
+              >
+                <MDTypography variant="h6" color="white">
+                  Historial de transacciones de Token {code}
+                </MDTypography>
+              </MDBox>
+              <MDBox
+                pt={3}
+                px={2}
+                style={{ display: "flex", justifyContent: "flex-end" }}
+              >
+                <MDTypography
+                  variant="body1"
+                  color="textPrimary"
+                  style={{ position: "realtive", marginRight: "1rem" }}
+                >
+                  Saldo disponible: ${balance}{" "}
+                  {/* Aquí va el saldo disponible */}
+                </MDTypography>
+              </MDBox>
+              <MDBox pt={3}>
+                <div style={{ marginBottom: "2rem" }}>
+                  <button
+                    className="return-button"
+                    onClick={() => navigate("/tokens")}
+                  >
+                    Volver a Tokens
+                  </button>
+                  <button
+                    className="refresh-button"
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                  >
+                    {refreshing ? "Refrescando..." : "Actualizar"}
+                  </button>
+                </div>
+                <DataTable
+                  table={{ columns, rows }}
+                  isSorted={false}
+                  entriesPerPage={false}
+                  showTotalEntries={10}
+                  noEndBorder
+                />
+              </MDBox>
+            </Card>
+          </Grid>
         </Grid>
       </MDBox>
       <Footer />

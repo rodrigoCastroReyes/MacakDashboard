@@ -98,7 +98,7 @@ const tokens = data?.tokens;*/}
         table={{ columns, rows }}
         isSorted={false}
         entriesPerPage={false}
-        showTotalEntries={false}
+        showTotalEntries={10}
         noEndBorder
       />
     </>
