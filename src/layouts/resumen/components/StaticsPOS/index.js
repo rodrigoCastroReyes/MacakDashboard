@@ -17,8 +17,8 @@ const PosStatistics = ({ statistics }) => {
   const topThreeStats = statistics.slice(0, 3);
 
   const Progress = ({ color, value }) => (
-    <MDBox display="flex" alignItems="center">
-      <MDBox ml={0.5} width="9rem">
+    <MDBox display="flex" alignItems="center" style={{width:"500px"}}>
+      <MDBox ml={0.5} width="100%">
         <MDProgress variant="gradient" color={color} value={value} />
       </MDBox>
       <MDTypography variant="caption" color="text" fontWeight="medium">
@@ -35,8 +35,8 @@ const PosStatistics = ({ statistics }) => {
         </Typography>
         {topThreeStats.map(({ pos, percentage }) => (
           <div key={pos}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <Avatar>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1, width:"500px" }}>
+              <Avatar style={{width:"48px"}}>
                 <StoreIcon />
               </Avatar>
               <Box ml={2}>

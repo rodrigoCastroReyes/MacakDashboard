@@ -1,0 +1,353 @@
+{
+  "event_id": "f9b857ac-16f2-4852-8981-b72831e7f67c",
+  "pos": [
+    {
+      "pos": "Punto_de_venta_1",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 75,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "success",
+          "date": 1707103588293,
+          "amount": 5,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588593,
+          "amount": 10,
+          "order_id": null
+        },
+        {
+          "type": "failed",
+          "date": 1707103588993,
+          "amount": 50,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_2",
+      "transactions": [
+        {
+          "type": "failed",
+          "date": 1707103588243,
+          "amount": 5,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "sucess",
+          "date": 1707103588293,
+          "amount": 10,
+          "order_id": null
+        },
+        {
+          "type": "sucess",
+          "date": 1707103588593,
+          "amount": 10,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 10,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_3",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 10,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "success",
+          "date": 1707103588293,
+          "amount": 10,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588593,
+          "amount": 10,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 10,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_4",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 50,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "failed",
+          "date": 1707103588593,
+          "amount": 10,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 5,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_5",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 10,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 10,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_6",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 10,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 10,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_7",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 10,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "sucess",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "failed",
+          "date": 1707103588593,
+          "amount": 5,
+          "order_id": null
+        },
+        {
+          "type": "sucess",
+          "date": 1707103588993,
+          "amount": 10,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_8",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 10,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 10,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_9",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 75,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "failed",
+          "date": 1707103588293,
+          "amount": 5,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588593,
+          "amount": 10,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 5,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_10",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 10,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "success",
+          "date": 1707103588293,
+          "amount": 10,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 10,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_11",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 10,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 10,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "pos": "Punto_de_venta_12",
+      "transactions": [
+        {
+          "type": "success",
+          "date": 1707103588243,
+          "amount": 10,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "success",
+          "date": 1707103588993,
+          "amount": 10,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    }
+  ]
+}

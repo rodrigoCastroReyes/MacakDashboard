@@ -9,7 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 
 const EventSummary = ({
-  eventCount,
+  totalSales,
   totalIncome,
   activatedTokens,
   salesPoints,
@@ -53,7 +53,7 @@ const EventSummary = ({
                   >
                     <Typography align="center">
                       <Typography align="center" style={{ color: "#197BBD" }}>
-                        {eventCount}
+                        ${totalSales}
                       </Typography>
                       <Typography variant="h3" align="center">
                         Ventas Totales
@@ -86,10 +86,10 @@ const EventSummary = ({
                   >
                     <Typography align="center">
                       <Typography align="center" style={{ color: "#197BBD" }}>
-                        {totalIncome}
+                        ${totalIncome}
                       </Typography>
                       <Typography variant="h3" align="center">
-                        Ingresos totales
+                        Saldo Total
                       </Typography>
                     </Typography>
                   </Grid>
@@ -205,7 +205,7 @@ const EventSummary = ({
 };
 
 EventSummary.propTypes = {
-  eventCount: PropTypes.number.isRequired,
+  totalSales: PropTypes.number.isRequired,
   totalIncome: PropTypes.number.isRequired,
   activatedTokens: PropTypes.number.isRequired,
   salesPoints: PropTypes.number.isRequired,

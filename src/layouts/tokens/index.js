@@ -13,54 +13,46 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+import TokensHistory from "layouts/tokens/TokensHistory";
+
 // @mui material components
+{/*import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
 
-// Material Dashboard 2 React components
+Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import TokensHistory from "./data/TokensHistory";
+import TokenDetailHistory from "layouts/tokens/data/TokenDetailHistory";
+import TokensHistory from "layouts/tokens/data/TokensHistory";
 
-// Material Dashboard 2 React example components
+ Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import DataTable from "examples/Tables/DataTable";
 
-// Data
+Data
 import projectsTableData from "layouts/tokens/data/projectsTableData";
 
 function Tokens() {
   const { columns: pColumns, rows: pRows } = projectsTableData();
 
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
-      <MDBox pt={6} pb={3}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography variant="h6" color="white">
-                  Historial de registro de tokens
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <TokensHistory />
-              </MDBox>
-            </Card>
-          </Grid>
-          {/*<Grid item xs={12}>
+      <DashboardLayout>
+        <DashboardNavbar />
+        <Router>
+        <MDBox pt={6} pb={3}>
+          <Grid container spacing={6}>
+            <Grid item xs={12}>
+              <Routes>
+                
+                <Route path="/tokens" element={<TokensHistory />} />
+                
+                <Route
+                  exact
+                  path="/tokens/:code"
+                  element={<TokenDetailHistory />}
+                />
+              </Routes>
+              <Grid item xs={12}>
             <Card>
               <MDBox
                 mx={2}
@@ -86,11 +78,40 @@ function Tokens() {
                 />
               </MDBox>
             </Card>
-  </Grid>*/}
-        </Grid>
-      </MDBox>
-      <Footer />
-    </DashboardLayout>
+  </Grid>
+            </Grid>
+          </Grid>
+        </MDBox>
+        </Router>
+        <Footer />
+      </DashboardLayout>
+  );
+}
+
+export default Tokens;
+*/}
+
+
+
+/**
+=========================================================
+* Material Dashboard 2 React - v2.2.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
+function Tokens() {
+
+  return (
+      <TokensHistory />
   );
 }
 

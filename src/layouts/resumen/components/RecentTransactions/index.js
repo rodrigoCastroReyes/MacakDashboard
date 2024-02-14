@@ -25,22 +25,22 @@ const RecentTransactions = ({ transactions }) => {
 
   const rows = transactions.map((transaction) => ({
     pos: (
-      <MDTypography variant="button" fontWeight="medium" style={{ color: transaction.type === 'fallido' ? 'red' : 'inherit' }}>
+      <MDTypography variant="button" fontWeight="medium" style={{ color: transaction.type === 'fallida' ? 'red' : 'inherit' }}>
         {transaction.pos}
       </MDTypography>
     ),
     type: (
-      <MDTypography variant="button" fontWeight="medium" style={{ color: transaction.type === 'fallido' ? 'red' : 'inherit' }}>
+      <MDTypography variant="button" fontWeight="medium" style={{ color: transaction.type === 'fallida' ? 'red' : 'inherit' }}>
         {transaction.type}
       </MDTypography>
     ),
     date: (
-      <MDTypography variant="caption" fontWeight="medium" style={{ color: transaction.type === 'fallido' ? 'red' : 'inherit' }}>
+      <MDTypography variant="caption" fontWeight="medium" style={{ color: transaction.type === 'fallida' ? 'red' : 'inherit' }}>
         {moment(transaction.date).format("DD MMM YYYY")}
       </MDTypography>
     ),
     amount: (
-      <MDTypography variant="caption" fontWeight="medium" style={{ color: transaction.type === 'fallido' ? 'red' : 'inherit' }}>
+      <MDTypography variant="caption" fontWeight="medium" style={{ color: transaction.type === 'fallida' ? 'red' : 'inherit' }}>
         {transaction.amount}
       </MDTypography>
     ),

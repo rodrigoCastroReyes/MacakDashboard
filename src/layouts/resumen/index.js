@@ -35,7 +35,7 @@ import StaticsPOS from "layouts/resumen/components/StaticsPOS";
 function Resumen() {
   const [dashboardData, setDashboardData] = useState({
     eventSummary: {
-      eventCount: 0,
+      totalSales: 0,
       totalIncome: 0,
       activatedTokens: 0,
       salesPoints: 0,
@@ -55,8 +55,8 @@ function Resumen() {
     setTimeout(() => {
       setDashboardData({
         eventSummary: {
-          eventCount: 10,
-          totalIncome: 1000,
+          totalSales: 850.75,
+          totalIncome: 14000,
           activatedTokens: 100,
           salesPoints: 12,
           transactions: 200,
@@ -113,7 +113,7 @@ function Resumen() {
           <Grid item xs={12} sm={6}>
             <MDBox mb={1.5}>
               <EventSummary
-                eventCount={dashboardData.eventSummary.eventCount}
+                totalSales={dashboardData.eventSummary.totalSales}
                 totalIncome={dashboardData.eventSummary.totalIncome}
                 activatedTokens={dashboardData.eventSummary.activatedTokens}
                 salesPoints={dashboardData.eventSummary.salesPoints}

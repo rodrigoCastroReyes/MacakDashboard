@@ -39,6 +39,8 @@ Coded by www.creative-tim.com
 import Resumen from "layouts/resumen";
 import Tokens from "layouts/tokens";
 import Transacciones from "layouts/transacciones"
+import TokenDetailHistory from "layouts/tokens/TokenDetailHistory";
+import PointOfSaleTransactionHistory from "layouts/transacciones/PointOfSaleTransactionHistory";
 /*import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
@@ -50,7 +52,6 @@ import SignUp from "layouts/authentication/sign-up";*/
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
-
 
 const routes = [
   {
@@ -70,12 +71,24 @@ const routes = [
     component: <Transacciones />,
   },
   {
+    type: "route",
+    key: "transaccion",
+    route: "/transaccion/:pos",
+    component: <PointOfSaleTransactionHistory />,
+  },
+  {
     type: "collapse",
     name: "Tokens",
-    key: "tokens",
+    key: "token",
     icon: <CreditCardIcon fontSize="small" color="white"></CreditCardIcon>,
     route: "/tokens",
     component: <Tokens />,
+  },
+  {
+    type: "route",
+    key: "token",
+    route: "/token/:code",
+    component: <TokenDetailHistory />,
   },
   
   /*{

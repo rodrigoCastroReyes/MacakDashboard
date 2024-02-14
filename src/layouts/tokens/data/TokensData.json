@@ -1,0 +1,181 @@
+{
+  "_id": "f9b857ac-16f2-4852-8981-b72831e7f67c",
+  "tokens": [
+    {
+      "_id": "d24d3691-687e-461a-9924-b1d0abb70f10",
+      "__createdtime__": 1706926481458,
+      "__updatedtime__": 1706926481458,
+      "code": "abcdef",
+      "status": "registered",
+      "event_id": "f9b857ac-16f2-4852-8981-b72831e7f67c",
+      "balance": 89,
+      "__v": 0,
+      "transactions": [
+        {
+          "type": "Compra",
+          "description": "Compra exitosa",
+          "status": "success",
+          "date": 1707103588243,
+          "amount": 50,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "Carga",
+          "description": "Carga de saldo",
+          "status": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "Carga",
+          "description": "Carga de saldo",
+          "status": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "Compra",
+          "description": "Compra rechazada",
+          "status": "rejected",
+          "date": 1707103588993,
+          "amount": 90,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "_id": "5bce89d5-7074-4dad-9bb9-e531e7671872",
+      "__createdtime__": 1707225584313,
+      "__updatedtime__": 1707225584313,
+      "code": "FB4F0E43",
+      "status": "registered",
+      "event_id": "f9b857ac-16f2-4852-8981-b72831e7f67c",
+      "balance": 52.5,
+      "__v": 0,
+      "transactions": [
+        {
+          "type": "Compra",
+          "description": "Compra exitosa",
+          "status": "success",
+          "date": 1707103588243,
+          "amount": 50,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "Carga",
+          "description": "Carga de saldo",
+          "status": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "Carga",
+          "description": "Carga de saldo",
+          "status": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "Compra",
+          "description": "Compra rechazada",
+          "status": "rejected",
+          "date": 1707103588993,
+          "amount": 81,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "_id": "51373394-c621-4c56-829d-a329bff45bec",
+      "__createdtime__": 1707225584313,
+      "__updatedtime__": 1707225584313,
+      "code": "043B734A606580",
+      "status": "registered",
+      "event_id": "f9b857ac-16f2-4852-8981-b72831e7f67c",
+      "balance": 10,
+      "__v": 0,
+      "transactions": [
+        {
+          "type": "Compra",
+          "description": "Compra exitosa",
+          "status": "success",
+          "date": 1707103588243,
+          "amount": 5,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "Carga",
+          "description": "Carga de saldo",
+          "status": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "Carga",
+          "description": "Carga de saldo",
+          "status": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "Compra",
+          "description": "Compra rechazada",
+          "status": "rejected",
+          "date": 1707103588993,
+          "amount": 56,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    },
+    {
+      "_id": "3ea1cf66-7179-4899-855e-84b8c16bd05e",
+      "__createdtime__": 1707324177531,
+      "__updatedtime__": 1707324177531,
+      "code": "5597BC90",
+      "status": "registered",
+      "event_id": "f9b857ac-16f2-4852-8981-b72831e7f67c",
+      "balance": 10.75,
+      "__v": 0,
+      "transactions": [
+        {
+          "type": "Compra",
+          "description": "Compra exitosa",
+          "status": "success",
+          "date": 1707103588243,
+          "amount": 5,
+          "order_id": "794b9334-db22-5892-b70a-66cc517e4ae0"
+        },
+        {
+          "type": "Carga",
+          "description": "Carga de saldo",
+          "status": "success",
+          "date": 1707103588293,
+          "amount": 20,
+          "order_id": null
+        },
+        {
+          "type": "Carga",
+          "description": "Carga de saldo",
+          "status": "success",
+          "date": 1707103588593,
+          "amount": 30,
+          "order_id": null
+        },
+        {
+          "type": "Compra",
+          "description": "Compra rechazada",
+          "status": "rejected",
+          "date": 1707103588993,
+          "amount": 56,
+          "order_id": "907b153b-3bbb-5383-9a92-753f4b0a4d71"
+        }
+      ]
+    }
+  ]
+}

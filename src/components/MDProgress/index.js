@@ -27,7 +27,7 @@ import MDProgressRoot from "components/MDProgress/MDProgressRoot";
 const MDProgress = forwardRef(({ variant, color, value, label, ...rest }, ref) => (
   <>
     {label && (
-      <MDTypography variant="button" fontWeight="medium" color="text">
+      <MDTypography variant="h4" fontWeight="medium" color="text">
         {value}%
       </MDTypography>
     )}
