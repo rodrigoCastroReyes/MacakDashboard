@@ -15,7 +15,7 @@ import "css/styles.css";
 import PointOfSalesTransactionHistoryData from "layouts/transacciones/data/PointOfSalesTransactionHistoryData";
 
 function PointOfSaleTransactionHistory() {
-  /*const { code } = useParams();
+  {/*const { code } = useParams();
   const [refreshing, setRefreshing] = useState(false);
   const { data, loading, error, refetch } = useAxios(
     `https://biodynamics.tech/api_tokens/event/tokens?id=${code}`
@@ -34,7 +34,7 @@ function PointOfSaleTransactionHistory() {
   if (loading) return <div>Cargando...</div>;
   if (error || !data?._id || !data?.tokens) return <div>Error al obtener los datos</div>;
 
-  const tokens = data?.tokens;*/
+const tokens = data?.tokens;*/}
 
   const { pos } = useParams();
   const navigate = useNavigate();
