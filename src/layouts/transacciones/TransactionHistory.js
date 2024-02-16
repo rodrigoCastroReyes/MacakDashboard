@@ -10,7 +10,7 @@ import "css/styles.css";
 function TransactionHistory() {
   const [refreshing, setRefreshing] = useState(false);
  {/* const { data, loading, error, refetch } = useAxios(
-    "https://biodynamics.tech/api_tokens/event/tokens?id=f9b857ac-16f2-4852-8981-b72831e7f67c"
+    ""
   );
 
   const handleRefresh = async () => {

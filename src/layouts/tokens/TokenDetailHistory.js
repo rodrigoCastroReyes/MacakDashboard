@@ -8,16 +8,16 @@ import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-//import useAxios from "hooks/useAxios";
+import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
-import TokensData from "layouts/tokens/data/TokensData";
 
 function TokenDetailHistory() {
-  /*const { code } = useParams();
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const { data, loading, error, refetch } = useAxios(
-    `https://biodynamics.tech/api_tokens/event/tokens?id=${code}`
+    `https://biodynamics.tech/api_tokens/dashboard/token?token_id=${id}`
   );
 
   const handleRefresh = async () => {
@@ -26,22 +26,15 @@ function TokenDetailHistory() {
     setRefreshing(false);
   };
 
-  useEffect(() => {
-    refetch();
-  }, [code,refetch]);
-
   if (loading) return <div>Cargando...</div>;
-  if (error || !data?._id || !data?.tokens) return <div>Error al obtener los datos</div>;
+  if (error || !data?.token || !data?.transactions) return <div>Error al obtener los datos</div>;
 
-  const tokens = data?.tokens;*/
+  const transactions = data?.transactions;
 
-  const { code } = useParams();
-  const navigate = useNavigate();
-  const [refreshing, setRefreshing] = useState(false);
-  const [tokens, setTokens] = useState([]);
-  const [balance, setBalance] = useState(0);
+  //const [refreshing, setRefreshing] = useState(false);
+  //const [tokens, setTokens] = useState([]);
 
-  useEffect(() => {
+{/*  useEffect(() => {
     // Simulando la obtención de datos
     const fetchData = async () => {
       // Aquí puedes realizar la lógica para obtener los detalles del token basado en el código
@@ -77,7 +70,7 @@ function TokenDetailHistory() {
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
-  };
+  };*/}
 
   const columns = [
     {
@@ -91,35 +84,34 @@ function TokenDetailHistory() {
     { Header: "Monto", accessor: "balance", align: "center" },
   ];
 
-  const rows = tokens.map((token) => ({
+  const rows = transactions.map((transaction) => ({
     registrationDate: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
-        {moment(token.date).format("DD [de] MMMM YYYY HH:mm:ss A")}
+        {moment(transaction.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
       </MDTypography>
     ),
     type: (
       <MDTypography variant="button" color="text" fontWeight="medium">
-        {/*{token.type === "Charge" ? "Carga" : "Saldo"}*/}
-        {token.type}
+        {transaction.type === "order" ? "Orden" : "Carga"}
       </MDTypography>
     ),
     status: (
       <MDTypography variant="button" color="text" fontWeight="medium">
-        {token.status === "success" ? "Exitosa" : "Fallida"}
+        {transaction.status === "success" ? "Exitosa" : "Fallida"}
       </MDTypography>
     ),
     detail: (
       <MDTypography variant="button" color="text" fontWeight="medium">
-        {token.description}
+        {transaction.description}
       </MDTypography>
     ),
     balance: (
       <MDTypography
         variant="caption"
         fontWeight="medium"
-        style={{ color: token.type === "Carga" ? "green" : "red" }}
+        style={{ color: transaction.type === "charge" ? "green" : "red" }}
       >
-        {`${token.type === "Carga" ? "+$" : "-$"}${token.amount}`}
+        {`${transaction.type === "charge" ? "+$" : "-$"}${transaction.token_last_balance - transaction.token_new_balance}`}
       </MDTypography>
     ),
   }));
@@ -142,7 +134,7 @@ function TokenDetailHistory() {
                 coloredShadow="info"
               >
                 <MDTypography variant="h6" color="white">
-                  Historial de transacciones de Token {code}
+                  Historial de transacciones de Token {data.token.code}
                 </MDTypography>
               </MDBox>
               <MDBox
@@ -155,7 +147,7 @@ function TokenDetailHistory() {
                   color="textPrimary"
                   style={{ position: "realtive", marginRight: "1rem" }}
                 >
-                  Saldo disponible: ${balance}{" "}
+                  Saldo disponible: ${data.token.balance}
                   {/* Aquí va el saldo disponible */}
                 </MDTypography>
               </MDBox>

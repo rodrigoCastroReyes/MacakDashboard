@@ -8,9 +8,8 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import MDTypography from "components/MDTypography";
-//import useAxios from "hooks/useAxios";
+import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
-import TokensData from "layouts/tokens/data/TokensData";
 import "css/styles.css";
 
 {
@@ -130,7 +129,7 @@ export default TokensHistory;
 
 function TokensHistory() {
   const [refreshing, setRefreshing] = useState(false);
-  {/*const { data, loading, error, refetch } = useAxios(
+  const { data, loading, error, refetch } = useAxios(
     "https://biodynamics.tech/api_tokens/event/tokens?id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
 
@@ -144,9 +143,9 @@ function TokensHistory() {
   if (error || !data?._id || !data?.tokens)
     return <div>Error al obtener los datos</div>;
 
-const tokens = data?.tokens;*/}
+const tokens = data?.tokens;
 
-const [tokens, setTokens] = useState([]);
+{/*const [tokens, setTokens] = useState([]);
 
 
   useEffect(() => {
@@ -167,7 +166,7 @@ const [tokens, setTokens] = useState([]);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
-  };
+  };*/}
 
   const columns = [
     {
@@ -188,7 +187,7 @@ const [tokens, setTokens] = useState([]);
   const rows = tokens.map((token) => ({
     code: (
       <MDTypography variant="button" color="text" fontWeight="medium">
-        <Link className='custom-link' to={`/token/${token.code}`}>{token.code}</Link>
+        <Link className='custom-link' to={`/token/${token._id}`}>{token.code}</Link>
       </MDTypography>
     ),
     status: (

@@ -87,7 +87,7 @@ const routes = [
   {
     type: "route",
     key: "token",
-    route: "/token/:code",
+    route: "/token/:id",
     component: <TokenDetailHistory />,
   },
   
