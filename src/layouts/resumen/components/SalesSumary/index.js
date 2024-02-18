@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import {Link} from 'react-router-dom';
 
 import {
   Typography,
@@ -59,7 +60,7 @@ const SalesSummary = ({ salesByPos }) => {
           <TableBody>
             {chunkedSales.map((row, rowIndex) => (
               <TableRow key={rowIndex}>
-                {row.map(({ pos, sales }) => (
+                {row.map(({ pos, sales, store_id }) => (
                   <React.Fragment key={pos}>
                     <TableCell
                       style={{
@@ -72,26 +73,28 @@ const SalesSummary = ({ salesByPos }) => {
                         justifySelf: "center",
                       }}
                     >
-                      <Grid
-                        sx={{
-                          borderRadius: "10%",
-                          background: "white",
-                          height: "100%",
-                          width: "100%",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <Typography align="center">
-                          <Typography align="center">${sales}</Typography>
-                          <Avatar>
-                            <StoreIcon />
-                          </Avatar>
-                          <Typography variant="h3">{pos}</Typography>
-                        </Typography>
-                      </Grid>
+                      <Link to={`/transaccion/${store_id}`}>
+                        <Grid
+                          sx={{
+                            borderRadius: "10%",
+                            background: "white",
+                            height: "100%",
+                            width: "100%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <Typography align="center">
+                            <Typography align="center">${sales}</Typography>
+                            <Avatar>
+                              <StoreIcon />
+                            </Avatar>
+                            <Typography variant="h3">{pos}</Typography>
+                          </Typography>
+                        </Grid>
+                      </Link>
                     </TableCell>
                   </React.Fragment>
                 ))}

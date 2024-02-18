@@ -31,47 +31,15 @@ function TokenDetailHistory() {
 
   const transactions = data?.transactions;
 
-  //const [refreshing, setRefreshing] = useState(false);
-  //const [tokens, setTokens] = useState([]);
-
-{/*  useEffect(() => {
-    // Simulando la obtención de datos
-    const fetchData = async () => {
-      // Aquí puedes realizar la lógica para obtener los detalles del token basado en el código
-      // Por ejemplo, buscar en el objeto TokenDetailHistoryData
-      const codeDetails = TokensData.tokens.find((item) => item.code === code);
-      if (codeDetails) {
-        setTokens(codeDetails.transactions);
-        const initialBalance = calculateInitialBalance(
-          codeDetails.transactions,
-          codeDetails.balance
-        );
-        setBalance(initialBalance);
-      }
-    };
-
-    fetchData();
-  }, [code]);
-
-  const calculateInitialBalance = (transactions, initialBalance) => {
-    return transactions.reduce((acc, transaction) => {
-      if (transaction.type === "Compra" && transaction.status === "success") {
-        return acc - transaction.amount;
-      } else if (transaction.type === "Carga" && transaction.status === "success") {
-        return acc + transaction.amount;
-      }
-      return acc;
-    }, initialBalance);
+  const getTranslateTypes = (transaction) =>{
+    if (transaction.type === "order") {
+      return "Orden";
+    } else if (transaction.type === "charge") {
+      return "Carga";
+    } else if (transaction.type === "refund") {
+      return "Reembolso";
+    }
   };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    // Simular la recarga de datos
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  };*/}
-
 
   const getBalanceChangeDisplay = (transaction) => {
     if (transaction.status === "rejected") {
@@ -109,12 +77,12 @@ function TokenDetailHistory() {
     ),
     type: (
       <MDTypography variant="button" color="text" fontWeight="medium">
-        {transaction.type === "order" ? "Orden" : "Carga"}
+        {getTranslateTypes(transaction)}
       </MDTypography>
     ),
     status: (
       <MDTypography variant="button" color="text" fontWeight="medium">
-        {transaction.status === "success" ? "Exitosa" : "Fallida"}
+        {transaction.status === "success" ? "Exitosa" : "Rechazada"}
       </MDTypography>
     ),
     detail: (

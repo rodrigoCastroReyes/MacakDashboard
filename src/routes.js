@@ -63,18 +63,18 @@ const routes = [
     component: <Resumen />,
   },
   {
+    type: "route",
+    key: "transaccion",
+    route: "/transaccion/:id",
+    component: <PointOfSaleTransactionHistory />,
+  },
+  {
     type: "collapse",
     name: "Transacciones",
     key: "transacciones",
     icon: <PointOfSaleIcon  fontSize="small" color="white"></PointOfSaleIcon>,
     route: "/transacciones",
     component: <Transacciones />,
-  },
-  {
-    type: "route",
-    key: "transaccion",
-    route: "/transaccion/:pos",
-    component: <PointOfSaleTransactionHistory />,
   },
   {
     type: "collapse",
