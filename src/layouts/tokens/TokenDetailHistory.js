@@ -33,7 +33,7 @@ function TokenDetailHistory() {
 
   const getTranslateTypes = (transaction) =>{
     if (transaction.type === "order") {
-      return "Orden";
+      return "Compra";
     } else if (transaction.type === "charge") {
       return "Carga";
     } else if (transaction.type === "refund") {
