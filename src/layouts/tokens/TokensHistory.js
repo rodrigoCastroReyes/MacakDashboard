@@ -197,7 +197,7 @@ const tokens = data?.tokens;
     ),
     registrationDate: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
-        {moment(token.__createdtime__).format("DD MMM YYYY")}
+        {moment(token.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
       </MDTypography>
     ),
     balance: (

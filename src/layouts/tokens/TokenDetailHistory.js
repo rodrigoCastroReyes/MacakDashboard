@@ -72,6 +72,23 @@ function TokenDetailHistory() {
     }, 1000);
   };*/}
 
+
+  const getBalanceChangeDisplay = (transaction) => {
+    if (transaction.status === "rejected") {
+      return `$${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}`;
+    }
+
+    if (transaction.status === "success") {
+      if (transaction.type === "order") {
+        return `-$${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}`;
+      } else if (transaction.type === "charge" || transaction.type === "refund") {
+        return `+$${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}`;
+      }
+    }
+
+    return `$${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}`;
+  };
+
   const columns = [
     {
       Header: "Fecha",
@@ -80,7 +97,7 @@ function TokenDetailHistory() {
     },
     { Header: "Tipo", accessor: "type", align: "left" },
     { Header: "Estado", accessor: "status", align: "left" },
-    { Header: "Descripción", accessor: "detail", align: "left" },
+    { Header: "Detalle", accessor: "detail", align: "left" },
     { Header: "Monto", accessor: "balance", align: "center" },
   ];
 
@@ -111,7 +128,7 @@ function TokenDetailHistory() {
         fontWeight="medium"
         style={{ color: transaction.type === "charge" ? "green" : "red" }}
       >
-        {`${transaction.type === "charge" ? "+$" : "-$"}${transaction.token_last_balance - transaction.token_new_balance}`}
+        {getBalanceChangeDisplay(transaction)}
       </MDTypography>
     ),
   }));
