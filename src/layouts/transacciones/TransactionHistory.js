@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import moment from "moment";
 import MDTypography from "components/MDTypography";
-//import useAxios from "hooks/useAxios";
+import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
-import TransactionsData from "layouts/transacciones/data/PointOfSalesTransactionHistoryData";
 import "css/styles.css";
 
 function TransactionHistory() {
   const [refreshing, setRefreshing] = useState(false);
- {/* const { data, loading, error, refetch } = useAxios(
-    ""
+  const { data, loading, error, refetch } = useAxios(
+    "https://biodynamics.tech/api_tokens/dashboard/event?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
 
   const handleRefresh = async () => {
@@ -20,69 +18,51 @@ function TransactionHistory() {
   };
 
   if (loading) return <div>Cargando...</div>;
-  if (error || !data?._id || !data?.tokens) return <div>Error al obtener los datos</div>;
+  if (error || !data?.event_id || !data?.transactions) return <div>Error al obtener los datos</div>;
 
-const tokens = data?.tokens;*/}
-
-  const [pos, setPos] = useState([]);
-
-
-  useEffect(() => {
-    // Simulando la obtención de datos
-    const fetchData = async () => {
-      const pos = TransactionsData.pos;
-      if (pos) {
-        setPos(pos);
-      }
-    };
-
-    fetchData();
-  }, [pos]);
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    // Simular la recarga de datos
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  };
-
+const transactions = data?.transactions;
 
   const columns = [
     {
-      Header: "Punto de venta",
-      accessor: "pos",
+      Header: "Fecha",
+      accessor: "date",
       width: "30%",
       align: "left",
     },
     { Header: "Tipo", accessor: "type", align: "left" },
     {
-      Header: "Fecha",
-      accessor: "date",
+      Header: "Estado",
+      accessor: "status",
       align: "center",
     },
+    { Header: "Detalle", accessor: "detail", align: "left" },
     { Header: "Monto", accessor: "amount", align: "center" },
   ];
 
-  const rows = pos.map((sp) => ({
-    pos: (
-      <MDTypography variant="button" color="text" fontWeight="medium" style={{ color: sp.transactions[0].type === 'failed' ? 'red' : 'inherit' }}>
-        <Link className='custom-link' to={`/transaccion/${sp.pos.replace(" ","_")}`}>{sp.pos}</Link>
+  const rows = transactions.map((transaction) => ({
+    date: (
+      <MDTypography variant="button" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }}>
+        {moment(transaction.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
       </MDTypography>
     ),
     type: (
-      <MDTypography variant="button" color="text" fontWeight="medium" style={{ color: sp.transactions[0].type === 'failed' ? 'red' : 'inherit' }} >
-        {sp.transactions[0].type === 'success' ? 'Exitosa' : 'Fallida'}
+      <MDTypography variant="button" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
+        {transaction.type === "order" ? "Orden" : "Carga"}
       </MDTypography>
     ),
-    date: (
-      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: sp.transactions[0].type === 'failed' ? 'red' : 'inherit' }} >
-        {moment(sp.transactions[0].date).format("DD MMM YYYY")}
+    status: (
+      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
+        {transaction.status === 'success' ? 'Exitosa' : 'Fallida'}
+      </MDTypography>
+    ),
+    detail: (
+      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
+        {transaction.description}
       </MDTypography>
     ),
     amount: (
-      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: sp.transactions[0].type === 'failed' ? 'red' : 'inherit' }} >
-        ${sp.transactions[0].amount}
+      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
+        ${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}
       </MDTypography>
     ),
   }));
