@@ -34,8 +34,7 @@
     "stylis": "4.1.4",
     "stylis-plugin-rtl": "2.1.1",
     "yup": "1.1.1",
-    "@babel/core": "^7.22.5",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/preset-env": "7.22"
   },
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false react-scripts start",
@@ -64,7 +63,6 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "eslint": "8.39.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-import": "2.27.5",
