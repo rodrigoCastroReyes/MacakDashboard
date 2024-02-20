@@ -131,7 +131,6 @@ function TokenDetailHistory() {
               >
                 <MDTypography
                   variant="body1"
-                  color="textPrimary"
                   style={{ position: "realtive", marginRight: "1rem" }}
                 >
                   Saldo disponible: ${data.token.balance}
@@ -158,7 +157,7 @@ function TokenDetailHistory() {
                   table={{ columns, rows }}
                   isSorted={false}
                   entriesPerPage={false}
-                  showTotalEntries={10}
+                  showTotalEntries={false}
                   noEndBorder
                 />
               </MDBox>
