@@ -40,7 +40,7 @@ import Resumen from "layouts/resumen";
 import Tokens from "layouts/tokens";
 import Transacciones from "layouts/transacciones"
 import TokenDetailHistory from "layouts/tokens/TokenDetailHistory";
-import PointOfSaleTransactionHistory from "layouts/transacciones/PointOfSaleTransactionHistory";
+import PointOfSaleTransactionHistory from "layouts/transacciones/pointOfSaleTransactionHistory";
 /*import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
