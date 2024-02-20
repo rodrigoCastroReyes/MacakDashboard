@@ -34,10 +34,12 @@ function TokenDetailHistory() {
   const getTranslateTypes = (transaction) =>{
     if (transaction.type === "order") {
       return "Compra";
-    } else if (transaction.type === "charge") {
+    } else if (transaction.type === "recharge") {
       return "Carga";
     } else if (transaction.type === "refund") {
       return "Reembolso";
+    }else{
+      return "";
     }
   };
 
@@ -94,7 +96,7 @@ function TokenDetailHistory() {
       <MDTypography
         variant="caption"
         fontWeight="medium"
-        style={{ color: transaction.type === "charge" ? "green" : "red" }}
+        style={{ color: transaction.type === "recharge" ? "#007bff" : "#ee2346" }}
       >
         {getBalanceChangeDisplay(transaction)}
       </MDTypography>
@@ -142,7 +144,7 @@ function TokenDetailHistory() {
                     className="return-button"
                     onClick={() => navigate("/tokens")}
                   >
-                    Volver a Tokens
+                    Volver
                   </button>
                   <button
                     className="refresh-button"

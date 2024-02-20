@@ -11,13 +11,14 @@ import MDTypography from "components/MDTypography";
 import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
+import 'moment/locale/es';
 
 function TokensHistory() {
   const [refreshing, setRefreshing] = useState(false);
   const { data, loading, error, refetch } = useAxios(
     "https://biodynamics.tech/api_tokens/event/tokens?id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
-
+  moment().lang('es');
   const handleRefresh = async () => {
     setRefreshing(true);
     await refetch();
@@ -32,18 +33,18 @@ function TokensHistory() {
 
   const columns = [
     {
-      Header: "Código del Token",
+      Header: "Fecha de Registro",
+      accessor: "registrationDate",
+      align: "center",
+    },
+    {
+      Header: "Código",
       accessor: "code",
       width: "30%",
       align: "left",
     },
     { Header: "Estado", accessor: "status", align: "left" },
-    {
-      Header: "Fecha de Registro",
-      accessor: "registrationDate",
-      align: "center",
-    },
-    { Header: "Monto", accessor: "balance", align: "center" },
+    { Header: "Saldo", accessor: "balance", align: "center" },
   ];
 
   const rows = tokens.map((token) => ({

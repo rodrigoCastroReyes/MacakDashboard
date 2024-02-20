@@ -1,18 +1,46 @@
-
-.customLink {
-  color: inherit; /* Color predeterminado */
-  text-decoration: none; /* Quitar subrayado */
+@font-face {
+  font-family: 'montserrat';
+  src: local('Montserrat'), url(./../fonts/Montserrat/Montserrat-Regular.ttf) format('truetype');
 }
 
-.customLink:hover {
-  color: red; /* Color al pasar el mouse */
+@font-face {
+  font-family: 'montserrat';
+  font-weight: 900;
+  src: local('Montserrat'), url(./../fonts/Montserrat/Montserrat-Bold.ttf) format('truetype');
 }
 
-.customLink:visited {
+@font-face {
+  font-family: 'montserrat';
+  font-weight: 900;
+  src: local('Montserrat'), url(./../fonts/Montserrat/Montserrat-Black.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'poppins';
+  font-weight: 900;
+  src: local('Poppins'), url(./../fonts/Poppins/Poppins-Regular.ttf) format('truetype');
+}
+
+.MuiTypography-root {
+  font-family: 'poppins' !important;
+}
+
+.custom-link {
+  color: #515355 !important;
+  font-weight: 800;
+  text-decoration: none !important;
+}
+
+.custom-link:hover {
+  color: #007bff !important; /* Color al pasar el mouse */
+}
+
+.custom-link:visited {
   color: purple; /* Color después de visitar el enlace */
 }
 
 .refresh-button {
+  font-family: 'montserrat';
   background-color: #007bff;
   color: #ffffff;
   padding: 0.5rem 1rem;
@@ -29,6 +57,7 @@
 }
 
 .return-button {
+  font-family: 'montserrat';
   background-color: #007bff;
   color: #ffffff;
   padding: 0.5rem 1rem;
@@ -41,5 +70,17 @@
 }
 
 .return-button:hover {
+  font-family: 'montserrat';
   background-color: #0056b3; /* Cambio de color al pasar el ratón */
+}
+
+
+.empty-container{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  padding: 25px;
+  font-family: 'poppins';
 }

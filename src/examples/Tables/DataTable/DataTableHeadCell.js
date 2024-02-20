@@ -46,6 +46,7 @@ function DataTableHeadCell({ width, children, sorted, align, ...rest }) {
         color={darkMode ? "white" : "secondary"}
         opacity={0.7}
         sx={({ typography: { size, fontWeightBold } }) => ({
+          fontFamily: "montserrat",
           fontSize: size.xxs,
           fontWeight: fontWeightBold,
           textTransform: "uppercase",

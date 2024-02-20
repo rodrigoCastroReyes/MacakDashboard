@@ -56,6 +56,14 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 const routes = [
   {
     type: "collapse",
+    name: "Tokens",
+    key: "token",
+    icon: <CreditCardIcon fontSize="small" color="white"></CreditCardIcon>,
+    route: "/tokens",
+    component: <Tokens />,
+  },
+  {
+    type: "collapse",
     name: "Resumen",
     key: "resumen",
     icon: <QueryStatsIcon fontSize="small" color="white"></QueryStatsIcon>,
@@ -75,14 +83,6 @@ const routes = [
     icon: <PointOfSaleIcon  fontSize="small" color="white"></PointOfSaleIcon>,
     route: "/transacciones",
     component: <Transacciones />,
-  },
-  {
-    type: "collapse",
-    name: "Tokens",
-    key: "token",
-    icon: <CreditCardIcon fontSize="small" color="white"></CreditCardIcon>,
-    route: "/tokens",
-    component: <Tokens />,
   },
   {
     type: "route",
