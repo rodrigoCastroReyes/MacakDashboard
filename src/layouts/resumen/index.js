@@ -61,22 +61,6 @@ function Resumen() {
           salesPoints: 12,
           transactions: 200,
         },
-        salesSummary: {
-          salesByPos: [
-            { pos: "Snacks S.A", sales: 1500, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7" },
-            { pos: "Punto de venta 2", sales: 2000, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 3", sales: 1800, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 4", sales: 1200, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 5", sales: 2200, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 6", sales: 1700, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 7", sales: 1900, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 8", sales: 1400, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 9", sales: 1600, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 10", sales: 2100, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 11", sales: 1300, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-            { pos: "Punto de venta 12", sales: 1800, store_id: "d22aac82-0680-4c84-a166-4fa348b3b2c7"},
-          ],
-        },
         recentTransactions: [
           { date: "2024-02-05", pos: "Punto de venta 1", amount: 100, type: "exitosa" },
           { date: "2024-02-04", pos: "Punto de venta 2", amount: 200, type: "fallida" },
@@ -122,7 +106,7 @@ function Resumen() {
             </MDBox>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <SalesSummary salesByPos={dashboardData.salesSummary.salesByPos} />
+            <SalesSummary />
           </Grid>
           <Grid item xs={12} sm={6}>
             <MDBox mb={1.5}>

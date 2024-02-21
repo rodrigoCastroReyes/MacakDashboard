@@ -29,7 +29,7 @@ function PointOfSaleTransactionHistory() {
 
   if (loading) return <div>Cargando...</div>;
   if (error || !data?.store || !data?.transactions)
-    return <div>Error al obtener los datos</div>;
+    return <div style={{margin:"auto 0"}} >Error al obtener los datos</div>;
 
   const transactions = data?.transactions;
 

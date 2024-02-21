@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {Link} from 'react-router-dom';
+import useAxios from "hooks/useAxios";
 
 import {
   Typography,
@@ -17,12 +18,21 @@ import StoreIcon from "@mui/icons-material/Store";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const SalesSummary = ({ salesByPos }) => {
+const SalesSummary = () => {
   const [startIndex, setStartIndex] = useState(0);
+  const { data, loading, error, refetch } = useAxios(
+    "https://biodynamics.tech/api_tokens/dashboard/summary_per_store?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
+  );
+  
+  if (loading) return <div>Cargando...</div>;
+  if (error || !data?.stores_summary)
+    return <div>Error al obtener los datos</div>;
+  
+  const stores_summary = data.stores_summary;
   const itemsPerPage = 6;
 
   // Limitamos la cantidad de puntos de venta a mostrar a 6
-  const salesToDisplay = salesByPos.slice(
+  const salesToDisplay = stores_summary.slice(
     startIndex,
     startIndex + itemsPerPage
   );
@@ -39,7 +49,7 @@ const SalesSummary = ({ salesByPos }) => {
   const chunkedSales = chunkArray(salesToDisplay, 3);
 
   const handleNextPage = () => {
-    if (startIndex + itemsPerPage < salesByPos.length) {
+    if (startIndex + itemsPerPage < stores_summary.length) {
       setStartIndex(startIndex + itemsPerPage);
     }
   };
@@ -60,8 +70,8 @@ const SalesSummary = ({ salesByPos }) => {
           <TableBody>
             {chunkedSales.map((row, rowIndex) => (
               <TableRow key={rowIndex}>
-                {row.map(({ pos, sales, store_id }) => (
-                  <React.Fragment key={pos}>
+                {row.map(({ store, total}) => (
+                  <React.Fragment key={store}>
                     <TableCell
                       style={{
                         width: "25%",
@@ -73,7 +83,7 @@ const SalesSummary = ({ salesByPos }) => {
                         justifySelf: "center",
                       }}
                     >
-                      <Link to={`/transaccion/${store_id}`}>
+                      <Link to={`/transaccion/${store}`}>
                         <Grid
                           sx={{
                             borderRadius: "10%",
@@ -87,11 +97,11 @@ const SalesSummary = ({ salesByPos }) => {
                           }}
                         >
                           <Typography align="center">
-                            <Typography align="center">${sales}</Typography>
+                            <Typography align="center">${total}</Typography>
                             <Avatar>
                               <StoreIcon />
                             </Avatar>
-                            <Typography variant="h3">{pos}</Typography>
+                            <Typography variant="h3">{store}</Typography>
                           </Typography>
                         </Grid>
                       </Link>
@@ -109,7 +119,7 @@ const SalesSummary = ({ salesByPos }) => {
             <ArrowBackIcon />
           </IconButton>
         )}
-        {salesByPos.length > itemsPerPage && (
+        {stores_summary.length > itemsPerPage && (
           <IconButton onClick={handleNextPage}>
             <ArrowForwardIcon />
           </IconButton>
@@ -120,10 +130,10 @@ const SalesSummary = ({ salesByPos }) => {
 };
 
 SalesSummary.propTypes = {
-  salesByPos: PropTypes.arrayOf(
+  stores_summary: PropTypes.arrayOf(
     PropTypes.shape({
-      pos: PropTypes.string.isRequired,
-      sales: PropTypes.number.isRequired,
+      store: PropTypes.string.isRequired,
+      total: PropTypes.number.isRequired,
     })
   ).isRequired,
 };
