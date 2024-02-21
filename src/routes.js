@@ -40,7 +40,7 @@ import Resumen from "layouts/resumen";
 import Tokens from "layouts/tokens";
 import Transacciones from "layouts/transacciones"
 import TokenDetailHistory from "layouts/tokens/TokenDetailHistory";
-import PointOfSaleTransactionHistory from "layouts/transacciones/PointOfSaleTransactionHistory";
+import PointOfSaleTransactionHistory from "layouts/transacciones/pointOfSaleTransactionHistory";
 /*import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
@@ -54,6 +54,14 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 
 const routes = [
+  {
+    type: "collapse",
+    name: "Tokens",
+    key: "token",
+    icon: <CreditCardIcon fontSize="small" color="white"></CreditCardIcon>,
+    route: "/tokens",
+    component: <Tokens />,
+  },
   {
     type: "collapse",
     name: "Resumen",
@@ -75,14 +83,6 @@ const routes = [
     icon: <PointOfSaleIcon  fontSize="small" color="white"></PointOfSaleIcon>,
     route: "/transacciones",
     component: <Transacciones />,
-  },
-  {
-    type: "collapse",
-    name: "Tokens",
-    key: "token",
-    icon: <CreditCardIcon fontSize="small" color="white"></CreditCardIcon>,
-    route: "/tokens",
-    component: <Tokens />,
   },
   {
     type: "route",

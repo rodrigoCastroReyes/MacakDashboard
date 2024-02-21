@@ -35,6 +35,7 @@ const transactions = data?.transactions;
       accessor: "status",
       align: "center",
     },
+    { Header: "Token", accessor: "token", align: "left" },
     { Header: "Detalle", accessor: "detail", align: "left" },
     { Header: "Monto", accessor: "amount", align: "center" },
   ];
@@ -58,6 +59,11 @@ const transactions = data?.transactions;
     detail: (
       <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
         {transaction.description}
+      </MDTypography>
+    ),
+    token: (
+      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
+        {transaction.token_id.code}
       </MDTypography>
     ),
     amount: (
