@@ -109,7 +109,7 @@ function Resumen() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <MDBox mb={1.5}>
               <EventSummary
@@ -124,7 +124,7 @@ function Resumen() {
           <Grid item xs={12} sm={6}>
             <SalesSummary salesByPos={dashboardData.salesSummary.salesByPos} />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={12}>
             <MDBox mb={1.5}>
               <RecentTransactions
                 transactions={dashboardData.recentTransactions}

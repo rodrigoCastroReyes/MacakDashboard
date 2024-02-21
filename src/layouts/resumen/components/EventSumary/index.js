@@ -1,6 +1,7 @@
 import React from "react";
 import { Grid, Card, CardContent, Typography } from "@mui/material";
 import PropTypes from "prop-types";
+import './style.css'
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -18,7 +19,7 @@ const EventSummary = ({
   return (
     <Card>
       <CardContent>
-        <Typography variant="h6" gutterBottom>
+        <Typography className="event-summary-title" gutterBottom>
           Resumen del evento
         </Typography>
         <TableContainer
@@ -30,143 +31,10 @@ const EventSummary = ({
               <TableRow style={{ height: "auto" }}>
                 <TableCell
                   style={{
-                    width: "25%",
-                    height: "175px",
-                    border: "40px solid white",
-                    background: "white",
-                    padding: 0,
-                    justifyItems: "center",
-                    justifySelf: "center",
-                  }}
-                >
-                  <Grid
-                    sx={{
-                      borderRadius: "10%",
-                      background: "white",
-                      height: "100%",
-                      width: "50%",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography align="center">
-                      <Typography align="center" style={{ color: "#197BBD" }}>
-                        ${totalSales}
-                      </Typography>
-                      <Typography variant="h3" align="center">
-                        Ventas Totales
-                      </Typography>
-                    </Typography>
-                  </Grid>
-                </TableCell>
-                <TableCell
-                  style={{
-                    width: "25%",
-                    height: "175px",
-                    border: "40px solid white",
-                    background: "white",
-                    padding: 0,
-                    justifyItems: "center",
-                    justifySelf: "center",
-                  }}
-                >
-                  <Grid
-                    sx={{
-                      borderRadius: "10%",
-                      background: "white",
-                      height: "100%",
-                      width: "50%",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography align="center">
-                      <Typography align="center" style={{ color: "#197BBD" }}>
-                        ${totalIncome}
-                      </Typography>
-                      <Typography variant="h3" align="center">
-                        Saldo Total
-                      </Typography>
-                    </Typography>
-                  </Grid>
-                </TableCell>
-                <TableCell
-                  style={{
-                    width: "25%",
-                    height: "175px",
-                    border: "40px solid white",
-                    background: "white",
-                    padding: 0,
-                    justifyItems: "center",
-                    justifySelf: "center",
-                  }}
-                >
-                  <Grid
-                    sx={{
-                      borderRadius: "10%",
-                      background: "white",
-                      height: "100%",
-                      width: "50%",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography align="center">
-                      <Typography align="center" style={{ color: "#197BBD" }}>
-                        {activatedTokens}
-                      </Typography>
-                      <Typography variant="h3" align="center">
-                        Tokens activados
-                      </Typography>
-                    </Typography>
-                  </Grid>
-                </TableCell>
-              </TableRow>
-              <TableRow style={{ height: "auto" }}>
-                <TableCell
-                  style={{
-                    width: "25%",
-                    height: "175px",
-                    border: "40px solid white",
-                    background: "white",
-                    padding: 0,
-                    justifyItems: "center",
-                    justifySelf: "center",
-                  }}
-                >
-                  <Grid
-                    sx={{
-                      borderRadius: "10%",
-                      background: "white",
-                      height: "100%",
-                      width: "50%",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography align="center">
-                      <Typography align="center" style={{ color: "#197BBD" }}>
-                        {salesPoints}
-                      </Typography>
-                      <Typography variant="h3" align="center">
-                        Puntos de venta
-                      </Typography>
-                    </Typography>
-                  </Grid>
-                </TableCell>
-                <TableCell
-                  style={{
-                    width: "25%",
-                    height: "175px",
-                    border: "40px solid white",
+                    fontFamily: 'lato',
+                    width: "33.33%",
+                    height: "50px",
+                    border: "10px solid white",
                     background: "white",
                     padding: 0,
                     justifyItems: "center",
@@ -186,10 +54,143 @@ const EventSummary = ({
                     }}
                   >
                     <Typography align="center">
-                      <Typography align="center" style={{ color: "#197BBD" }}>
+                      <Typography align="center" className="event-summary-value">
+                        ${totalSales}
+                      </Typography>
+                      <Typography  className="event-summary-label" align="center">
+                        Ventas
+                      </Typography>
+                    </Typography>
+                  </Grid>
+                </TableCell>
+                <TableCell
+                  style={{
+                    width: "33.33%",
+                    height: "50px",
+                    border: "10px solid white",
+                    background: "white",
+                    padding: 0,
+                    justifyItems: "center",
+                    justifySelf: "center",
+                  }}
+                >
+                  <Grid
+                    sx={{
+                      borderRadius: "10%",
+                      background: "white",
+                      height: "100%",
+                      width: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Typography align="center">
+                      <Typography align="center" className="event-summary-value">
+                        ${totalIncome}
+                      </Typography>
+                      <Typography className="event-summary-label" align="center">
+                        Recargas
+                      </Typography>
+                    </Typography>
+                  </Grid>
+                </TableCell>
+                <TableCell
+                  style={{
+                    height: "50px",
+                    border: "10px solid white",
+                    background: "white",
+                    padding: 0,
+                    justifyItems: "center",
+                    justifySelf: "center",
+                  }}
+                >
+                  <Grid
+                    sx={{
+                      borderRadius: "10%",
+                      background: "white",
+                      height: "100%",
+                      width: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Typography align="center">
+                      <Typography align="center" className="event-summary-value" >
+                        {activatedTokens}
+                      </Typography>
+                      <Typography className="event-summary-label" align="center">
+                        Tokens
+                      </Typography>
+                    </Typography>
+                  </Grid>
+                </TableCell>
+              </TableRow>
+              <TableRow style={{ height: "auto" }}>
+                <TableCell
+                  style={{
+                    width: "50%",
+                    height: "50px",
+                    border: "10px solid white",
+                    background: "white",
+                    padding: 0,
+                    justifyItems: "center",
+                    justifySelf: "center",
+                  }}
+                >
+                  <Grid
+                    sx={{
+                      borderRadius: "10%",
+                      background: "white",
+                      height: "100%",
+                      width: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Typography align="center">
+                      <Typography align="center" className="event-summary-value">
+                        {salesPoints}
+                      </Typography>
+                      <Typography className="event-summary-label" align="center">
+                        Puntos de venta
+                      </Typography>
+                    </Typography>
+                  </Grid>
+                </TableCell>
+                <TableCell
+                  style={{
+                    width: "50%",
+                    height: "50px",
+                    border: "10px solid white",
+                    background: "white",
+                    padding: 0,
+                    justifyItems: "center",
+                    justifySelf: "center",
+                  }}
+                >
+                  <Grid
+                    sx={{
+                      borderRadius: "10%",
+                      background: "white",
+                      height: "100%",
+                      width: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Typography align="center">
+                      <Typography align="center" className="event-summary-value">
                         {transactions}
                       </Typography>
-                      <Typography variant="h3" align="center">
+                      <Typography className="event-summary-label" align="center">
                         Transacciones
                       </Typography>
                     </Typography>
