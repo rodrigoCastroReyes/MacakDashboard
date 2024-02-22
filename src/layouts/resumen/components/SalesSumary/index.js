@@ -70,7 +70,7 @@ const SalesSummary = () => {
           <TableBody>
             {chunkedSales.map((row, rowIndex) => (
               <TableRow key={rowIndex}>
-                {row.map(({ store, total}) => (
+                {row.map(({ store, store_id, total}) => (
                   <React.Fragment key={store}>
                     <TableCell
                       style={{
@@ -83,7 +83,7 @@ const SalesSummary = () => {
                         justifySelf: "center",
                       }}
                     >
-                      <Link to={`/transaccion/${store}`}>
+                      <Link to={`/transaccion/${store_id}`}>
                         <Grid
                           sx={{
                             borderRadius: "10%",

@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
+import MDBadge from "components/MDBadge";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -33,7 +34,7 @@ function TokenDetailHistory() {
 
   const getTranslateTypes = (transaction) =>{
     if (transaction.type === "order") {
-      return "Compra";
+      return "Orden";
     } else if (transaction.type === "recharge") {
       return "Carga";
     } else if (transaction.type === "refund") {
@@ -78,9 +79,9 @@ function TokenDetailHistory() {
       </MDTypography>
     ),
     type: (
-      <MDTypography variant="button" color="text" fontWeight="medium">
-        {getTranslateTypes(transaction)}
-      </MDTypography>
+      <MDBox ml={-1}>
+        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="sm" />
+      </MDBox>
     ),
     status: (
       <MDTypography variant="button" color="text" fontWeight="medium">

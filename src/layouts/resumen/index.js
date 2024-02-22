@@ -29,7 +29,6 @@ import Footer from "examples/Footer";
 // Dashboard components
 import EventSummary from "layouts/resumen/components/EventSumary";
 import SalesSummary from "layouts/resumen/components/SalesSumary";
-import RecentTransactions from "layouts/resumen/components/RecentTransactions";
 import StaticsPOS from "layouts/resumen/components/StaticsPOS";
 import TransactionHistory from "layouts/transacciones/TransactionHistory";
 import MDTypography from "components/MDTypography";

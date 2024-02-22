@@ -20,8 +20,8 @@ function TransactionHistory({numRows}) {
 
   if (loading) return <div>Cargando...</div>;
   if (error || !data?.event_id || !data?.transactions) return <div>Error al obtener los datos</div>;
-  var transactions;
-  if(numRows == -1){
+  let transactions;
+  if(numRows === -1){
     transactions = data?.transactions;
   }else{
     transactions = data?.transactions.slice(0,numRows);

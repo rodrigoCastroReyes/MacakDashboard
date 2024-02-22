@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import Grid from "@mui/material/Grid";
@@ -9,6 +9,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import useAxios from "hooks/useAxios";
+import MDBadge from "components/MDBadge";
 import DataTable from "examples/Tables/DataTable";
 import { useParams } from "react-router-dom";
 import "css/styles.css";
@@ -35,7 +36,7 @@ function PointOfSaleTransactionHistory() {
 
   const getTranslateTypes = (transaction) => {
     if (transaction.type === "order") {
-      return "Compra";
+      return "Orden";
     } else if (transaction.type === "charge") {
       return "Carga";
     } else if (transaction.type === "refund") {
@@ -66,7 +67,7 @@ function PointOfSaleTransactionHistory() {
         variant="caption"
         color="text"
         fontWeight="medium"
-        style={{ color: transaction.type === "rejected" ? "red" : "inherit" }}
+        style={{ color: transaction.status === "rejected" ? "red" : "inherit" }}
       >
         {moment(transaction.__createdtime__).format(
           "DD [de] MMMM YYYY HH:mm:ss A"
@@ -74,21 +75,16 @@ function PointOfSaleTransactionHistory() {
       </MDTypography>
     ),
     type: (
-      <MDTypography
-        variant="button"
-        color="text"
-        fontWeight="medium"
-        style={{ color: transaction.type === "rejected" ? "red" : "inherit" }}
-      >
-        {getTranslateTypes(transaction)}
-      </MDTypography>
+      <MDBox ml={-1}>
+        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="sm" />
+      </MDBox>
     ),
     status: (
       <MDTypography
         variant="button"
         color="text"
         fontWeight="medium"
-        style={{ color: transaction.type === "rejected" ? "red" : "inherit" }}
+        style={{ color: transaction.status === "rejected" ? "red" : "inherit" }}
       >
         {transaction.status === "success" ? "Exitosa" : "Rechazada"}
       </MDTypography>
@@ -107,7 +103,7 @@ function PointOfSaleTransactionHistory() {
       <MDTypography
         variant="caption"
         fontWeight="medium"
-        style={{ color: transaction.type === "rejected" ? "red" : "inherit" }}
+        style={{ color: transaction.status === "rejected" ? "red" : "inherit" }}
       >
         ${Math.abs(
           transaction.token_last_balance - transaction.token_new_balance
