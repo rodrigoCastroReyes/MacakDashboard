@@ -31,6 +31,9 @@ import EventSummary from "layouts/resumen/components/EventSumary";
 import SalesSummary from "layouts/resumen/components/SalesSumary";
 import RecentTransactions from "layouts/resumen/components/RecentTransactions";
 import StaticsPOS from "layouts/resumen/components/StaticsPOS";
+import TransactionHistory from "layouts/transacciones/TransactionHistory";
+import MDTypography from "components/MDTypography";
+import { Card } from "@mui/material";
 
 function Resumen() {
   const [dashboardData, setDashboardData] = useState({
@@ -109,13 +112,30 @@ function Resumen() {
             <SalesSummary />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <MDBox mb={1.5}>
-              <RecentTransactions
-                transactions={dashboardData.recentTransactions}
-              />
-            </MDBox>
+          <Card>
+              <MDBox
+                mx={2}
+                mt={-3}
+                py={3}
+                px={2}
+                variant="gradient"
+                bgColor="info"
+                borderRadius="lg"
+                coloredShadow="info"
+              >
+                <MDTypography
+                  fontWeight="regular"
+                  fontFamily="montserrat"
+                  variant="h6" color="white">
+                  Transacciones recientes
+                </MDTypography>
+              </MDBox>
+              <MDBox pt={3}>
+                <TransactionHistory numRows="10" />
+              </MDBox>
+            </Card>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={12}>
             <MDBox mb={1.5}>
               <StaticsPOS statistics={dashboardData.posStatistics} />
             </MDBox>

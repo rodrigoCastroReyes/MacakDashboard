@@ -4,13 +4,14 @@ import MDTypography from "components/MDTypography";
 import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
+import MDBox from "components/MDBox";
+import MDBadge from "components/MDBadge";
 
-function TransactionHistory() {
+function TransactionHistory({numRows}) {
   const [refreshing, setRefreshing] = useState(false);
   const { data, loading, error, refetch } = useAxios(
     "https://biodynamics.tech/api_tokens/dashboard/event?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
-
   const handleRefresh = async () => {
     setRefreshing(true);
     await refetch();
@@ -19,8 +20,12 @@ function TransactionHistory() {
 
   if (loading) return <div>Cargando...</div>;
   if (error || !data?.event_id || !data?.transactions) return <div>Error al obtener los datos</div>;
-
-const transactions = data?.transactions;
+  var transactions;
+  if(numRows == -1){
+    transactions = data?.transactions;
+  }else{
+    transactions = data?.transactions.slice(0,numRows);
+  }
 
   const columns = [
     {
@@ -42,32 +47,32 @@ const transactions = data?.transactions;
 
   const rows = transactions.map((transaction) => ({
     date: (
-      <MDTypography variant="button" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }}>
+      <MDTypography fontFamily="poppins" variant="button" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }}>
         {moment(transaction.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
       </MDTypography>
     ),
     type: (
-      <MDTypography variant="button" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
-        {transaction.type === "order" ? "Orden" : "Carga"}
-      </MDTypography>
+      <MDBox ml={-1}>
+        <MDBadge fontFamily="poppins" badgeContent= {transaction.type === "order" ? "Orden" : "Carga"}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="sm" />
+      </MDBox>
     ),
     status: (
-      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
+      <MDTypography fontFamily="poppins" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
         {transaction.status === 'success' ? 'Exitosa' : 'Fallida'}
       </MDTypography>
     ),
     detail: (
-      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
+      <MDTypography fontFamily="poppins" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
         {transaction.description}
       </MDTypography>
     ),
     token: (
-      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
+      <MDTypography fontFamily="poppins" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
         {transaction.token_id.code}
       </MDTypography>
     ),
     amount: (
-      <MDTypography variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'red' : 'inherit' }} >
+      <MDTypography fontFamily="poppins" variant="caption" color={ transaction.type === 'order' ? 'info' : 'success' } fontWeight="bold" >
         ${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}
       </MDTypography>
     ),
@@ -84,7 +89,7 @@ const transactions = data?.transactions;
         table={{ columns, rows }}
         isSorted={false}
         entriesPerPage={false}
-        showTotalEntries={10}
+        showTotalEntries={false}
         noEndBorder
       />
     </>

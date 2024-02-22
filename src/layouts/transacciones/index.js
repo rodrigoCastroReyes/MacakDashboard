@@ -46,12 +46,15 @@ function Transacciones() {
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography variant="h6" color="white">
+                <MDTypography 
+                  fontWeight="regular"
+                  fontFamily="montserrat"
+                  variant="h6" color="white">
                   Historial de transacciones
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>
-                <TransactionHistory />
+                <TransactionHistory numRows="-1" />
               </MDBox>
             </Card>
           </Grid>
