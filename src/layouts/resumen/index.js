@@ -32,15 +32,17 @@ import SalesSummary from "layouts/resumen/components/SalesSumary";
 import StaticsPOS from "layouts/resumen/components/StaticsPOS";
 import TransactionHistory from "layouts/transacciones/TransactionHistory";
 import MDTypography from "components/MDTypography";
-import { Card } from "@mui/material";
+import { Card, Typography } from "@mui/material";
+import './style.css'
+import usePostAxios from "hooks/usePostAxios";
+import useGetAuthAxios from "hooks/useGetAuthAxios";
+import axios from "axios";
 
-function Resumen() {
+const Resumen = () => {
   const [dashboardData, setDashboardData] = useState({
     eventSummary: {
       totalSales: 0,
       totalIncome: 0,
-      activatedTokens: 0,
-      salesPoints: 0,
       transactions: 0,
     },
     salesSummary: {
@@ -50,97 +52,89 @@ function Resumen() {
     posStatistics: [],
   });
 
-  // Simular carga de datos
+  const [jwtToken, setJwtToken ] = useState(null);
+  const [event, setEvent ] = useState({
+    amount_token_registered: 0,
+    stores : []
+  });
+  const [ eventSummary, setEventSummary ] = useState({
+    totalSales : 0,
+    totalRecharge : 0
+  })
+  const { data, loading, error } =  usePostAxios("https://biodynamics.tech/api_tokens/user/login",{
+    username : 'event_123',
+    password : 'abcd'
+  });
+  useEffect(()=>{
+    if(data){
+      setJwtToken(data.jwtoken);
+    }
+  }, [data]);
+
   useEffect(() => {
-    // Aquí puedes hacer una llamada a una API o cargar datos de algún lugar
-    // Por ahora, simularemos datos estáticos
-    setTimeout(() => {
-      setDashboardData({
-        eventSummary: {
-          totalSales: 850.75,
-          totalIncome: 14000,
-          activatedTokens: 100,
-          salesPoints: 12,
-          transactions: 200,
-        },
-        recentTransactions: [
-          { date: "2024-02-05", pos: "Punto de venta 1", amount: 100, type: "exitosa" },
-          { date: "2024-02-04", pos: "Punto de venta 2", amount: 200, type: "fallida" },
-          { date: "2024-02-03", pos: "Punto de venta 3", amount: 150, type: "exitosa" },
-          { date: "2024-02-02", pos: "Punto de venta 4", amount: 120, type: "exitosa" },
-          { date: "2024-02-01", pos: "Punto de venta 5", amount: 180, type: "fallida" },
-          { date: "2024-01-24", pos: "Punto de venta 5", amount: 160, type: "exitosa" },
-          { date: "2024-01-23", pos: "Punto de venta 5", amount: 140, type: "fallida" },
-          { date: "2024-01-22", pos: "Punto de venta 5", amount: 200, type: "exitosa" },
-        ],
-        posStatistics: [
-          { pos: "Punto de venta 1", percentage: 25 },
-          { pos: "Punto de venta 2", percentage: 50 },
-          { pos: "Punto de venta 3", percentage: 75 },
-          { pos: "Punto de venta 4", percentage: 50 },
-          { pos: "Punto de venta 5", percentage: 25 },
-          { pos: "Punto de venta 6", percentage: 75 },
-          { pos: "Punto de venta 7", percentage: 10 },
-          { pos: "Punto de venta 8", percentage: 75 },
-          { pos: "Punto de venta 9", percentage: 25 },
-          { pos: "Punto de venta 10", percentage: 50 },
-          { pos: "Punto de venta 11", percentage: 75 },
-          { pos: "Punto de venta 12", percentage: 50 },
-        ],
-      });
-    }, 1000);
-  }, []);
+    async function fetch_data(){
+      if (jwtToken) {
+        const response = await axios.get("https://biodynamics.tech/api_tokens/event?id=f9b857ac-16f2-4852-8981-b72831e7f67c",{
+          headers: {
+            'Authorization': jwtToken
+          }
+        });
+        setEvent(response.data);
+      }
+    }
+    fetch_data()
+  }, [jwtToken]);
+
+  useEffect(()=>{
+    async function fetch_data(){
+      const sales_response = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=order");
+      const recharges_response = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=recharge");
+      if(sales_response && recharges_response){
+        setEventSummary({
+          totalSales : sales_response.data.total_value,
+          totalRecharge : recharges_response.data.total_value
+        });
+      }
+    }
+    fetch_data();
+  })
+
+  if (loading) return <div>Cargando...</div>;
+  if (error || data == null) return <div>Error al obtener los datos</div>;
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox py={3}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <MDBox mb={1.5}>
-              <EventSummary
-                totalSales={dashboardData.eventSummary.totalSales}
-                totalIncome={dashboardData.eventSummary.totalIncome}
-                activatedTokens={dashboardData.eventSummary.activatedTokens}
-                salesPoints={dashboardData.eventSummary.salesPoints}
-                transactions={dashboardData.eventSummary.transactions}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <SalesSummary />
-          </Grid>
-          <Grid item xs={12} sm={12}>
-          <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography
-                  fontWeight="regular"
-                  fontFamily="montserrat"
-                  variant="h6" color="white">
-                  Transacciones recientes
-                </MDTypography>
+        <MDBox py={3}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12}>
+              <MDBox mb={1}>
+                <EventSummary
+                  totalSales={eventSummary.totalSales}
+                  totalIncome={eventSummary.totalRecharge}
+                  activatedTokens={event.amount_token_registered}
+                  salesPoints={event.stores.length}
+                  transactions={dashboardData.eventSummary.transactions}
+                />
               </MDBox>
-              <MDBox pt={3}>
-                <TransactionHistory numRows="10" />
-              </MDBox>
-            </Card>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <SalesSummary />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <Card>
+                <Typography 
+                  className="event-title"
+                >
+                Transacciones recientes
+                </Typography>
+                <MDBox pt={3}>
+                  <TransactionHistory numRows="10" />
+                </MDBox>
+              </Card>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={12}>
-            <MDBox mb={1.5}>
-              <StaticsPOS statistics={dashboardData.posStatistics} />
-            </MDBox>
-          </Grid>
-        </Grid>
-      </MDBox>
+        </MDBox>
       <Footer />
     </DashboardLayout>
   );

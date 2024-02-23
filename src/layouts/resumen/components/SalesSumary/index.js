@@ -13,10 +13,15 @@ import {
   Avatar,
   IconButton,
   Grid,
+  CardContent,
+  Card,
 } from "@mui/material";
 import StoreIcon from "@mui/icons-material/Store";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
+import MDBox from "components/MDBox";
+import './style.css'
 
 const SalesSummary = () => {
   const [startIndex, setStartIndex] = useState(0);
@@ -61,71 +66,51 @@ const SalesSummary = () => {
   };
 
   return (
-    <div>
-      <Typography variant="h6" gutterBottom>
-        Resumen de ventas
-      </Typography>
-      <TableContainer>
-        <Table>
-          <TableBody>
-            {chunkedSales.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {row.map(({ store, store_id, total}) => (
-                  <React.Fragment key={store}>
-                    <TableCell
-                      style={{
-                        width: "25%",
-                        height: "175px",
-                        border: "40px solid white",
-                        background: "white",
-                        padding: 0,
-                        justifyItems: "center",
-                        justifySelf: "center",
+    <Card>
+      <CardContent className="event-summary-container">
+        <Typography fontWeight="regular" 
+          className="event-sales-title" gutterBottom>
+         Resumen por puntos de venta
+        </Typography>
+        <MDBox py={3}>
+          <Grid container spacing={3}>
+            {stores_summary.map(({ store, store_id, total}) => (
+              <React.Fragment key={store}>
+                <Grid item xs={12} md={6} lg={3}>
+                  <MDBox mb={1.5}>
+                  <Link to={`/transaccion/${store_id}`}>
+                    <ComplexStatisticsCard
+                      color="dark"
+                      icon="store"
+                      title={ store }
+                      count={ total }
+                      percentage={{
+                      color: "success",
+                      amount: "",
+                      label: "Suma de ventas",
                       }}
-                    >
-                      <Link to={`/transaccion/${store_id}`}>
-                        <Grid
-                          sx={{
-                            borderRadius: "10%",
-                            background: "white",
-                            height: "100%",
-                            width: "100%",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <Typography align="center">
-                            <Typography align="center">${total}</Typography>
-                            <Avatar>
-                              <StoreIcon />
-                            </Avatar>
-                            <Typography variant="h3">{store}</Typography>
-                          </Typography>
-                        </Grid>
-                      </Link>
-                    </TableCell>
-                  </React.Fragment>
-                ))}
-              </TableRow>
+                      />
+                  </Link>
+                  </MDBox>
+                </Grid>
+              </React.Fragment>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        {startIndex > 0 && (
-          <IconButton onClick={handlePreviousPage}>
-            <ArrowBackIcon />
-          </IconButton>
-        )}
-        {stores_summary.length > itemsPerPage && (
-          <IconButton onClick={handleNextPage}>
-            <ArrowForwardIcon />
-          </IconButton>
-        )}
-      </div>
-    </div>
+          </Grid>
+        </MDBox>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          {startIndex > 0 && (
+            <IconButton onClick={handlePreviousPage}>
+              <ArrowBackIcon />
+            </IconButton>
+          )}
+          {stores_summary.length > itemsPerPage && (
+            <IconButton onClick={handleNextPage}>
+              <ArrowForwardIcon />
+            </IconButton>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

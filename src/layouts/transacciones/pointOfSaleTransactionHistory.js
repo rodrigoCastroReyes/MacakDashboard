@@ -12,7 +12,7 @@ import useAxios from "hooks/useAxios";
 import MDBadge from "components/MDBadge";
 import DataTable from "examples/Tables/DataTable";
 import { useParams } from "react-router-dom";
-import "css/styles.css";
+import "./styles.css";
 
 function PointOfSaleTransactionHistory() {
   const { id } = useParams();
@@ -66,6 +66,7 @@ function PointOfSaleTransactionHistory() {
       <MDTypography
         variant="caption"
         color="text"
+        fontFamily="poppins"
         fontWeight="medium"
         style={{ color: transaction.status === "rejected" ? "red" : "inherit" }}
       >
@@ -81,6 +82,7 @@ function PointOfSaleTransactionHistory() {
     ),
     status: (
       <MDTypography
+        fontFamily="poppins"
         variant="button"
         color="text"
         fontWeight="medium"
@@ -91,6 +93,7 @@ function PointOfSaleTransactionHistory() {
     ),
     detail: (
       <MDTypography
+        fontFamily="poppins"
         variant="button"
         color="text"
         fontWeight="medium"
@@ -101,9 +104,10 @@ function PointOfSaleTransactionHistory() {
     ),
     amount: (
       <MDTypography
+        fontFamily="poppins"
         variant="caption"
-        fontWeight="medium"
-        style={{ color: transaction.status === "rejected" ? "red" : "inherit" }}
+        color={ transaction.type === 'order' ? 'info' : 'success' }
+        fontWeight="bold"
       >
         ${Math.abs(
           transaction.token_last_balance - transaction.token_new_balance
@@ -129,7 +133,7 @@ function PointOfSaleTransactionHistory() {
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography variant="h6" color="white">
+                <MDTypography className="sale-transaction-title" color="white">
                   Historial de transacciones para {data.store.name}
                 </MDTypography>
               </MDBox>

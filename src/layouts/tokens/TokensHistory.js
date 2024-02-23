@@ -49,22 +49,22 @@ function TokensHistory() {
 
   const rows = tokens.map((token) => ({
     code: (
-      <MDTypography variant="button" color="text" fontWeight="medium">
+      <MDTypography fontFamily="poppins" variant="button" color="text" fontWeight="medium">
         <Link className='custom-link' to={`/token/${token._id}`}>{token.code}</Link>
       </MDTypography>
     ),
     status: (
-      <MDTypography variant="button" color="text" fontWeight="medium">
+      <MDTypography  fontFamily="poppins"  variant="button" color="text" fontWeight="medium">
         {token.status === "registered" ? "Registrado" : "No Registrado"}
       </MDTypography>
     ),
     registrationDate: (
-      <MDTypography variant="caption" color="text" fontWeight="medium">
+      <MDTypography  fontFamily="poppins"  variant="caption" color="text" fontWeight="medium">
         {moment(token.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
       </MDTypography>
     ),
     balance: (
-      <MDTypography variant="caption" color="text" fontWeight="medium">
+      <MDTypography  fontFamily="poppins"  variant="caption" color="success" fontWeight="bold">
         ${token.balance}
       </MDTypography>
     ),
@@ -82,6 +82,7 @@ function TokensHistory() {
                 mt={-3}
                 py={3}
                 px={2}
+                fontFamily='monteserrat'
                 variant="gradient"
                 bgColor="info"
                 borderRadius="lg"

@@ -9,6 +9,12 @@
   src: local('Montserrat'), url(./../fonts/Montserrat/Montserrat-Bold.ttf) format('truetype');
 }
 
+
+@font-face {
+  font-family: 'montserrat-semibold';
+  src: local('Montserrat'), url(./../fonts/Montserrat/Montserrat-SemiBold.ttf) format('truetype');
+}
+
 @font-face {
   font-family: 'montserrat';
   font-weight: 900;

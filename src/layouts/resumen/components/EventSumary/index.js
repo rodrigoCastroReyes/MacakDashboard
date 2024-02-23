@@ -8,6 +8,8 @@ import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
+import MDBox from "components/MDBox";
+import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 
 const EventSummary = ({
   totalSales,
@@ -18,188 +20,72 @@ const EventSummary = ({
 }) => {
   return (
     <Card>
-      <CardContent>
-        <Typography className="event-summary-title" gutterBottom>
+      <CardContent className="event-summary-container" >
+        <Typography className="event-summary-title">
           Resumen del evento
         </Typography>
-        <TableContainer
-          sx={{ width: "40%", overflowX: "auto" }}
-          style={{ width: "100%" }}
-        >
-          <Table>
-            <TableBody>
-              <TableRow style={{ height: "auto" }}>
-                <TableCell
-                  style={{
-                    fontFamily: 'lato',
-                    width: "33.33%",
-                    height: "50px",
-                    border: "10px solid white",
-                    background: "white",
-                    padding: 0,
-                    justifyItems: "center",
-                    justifySelf: "center",
+        <MDBox py={3}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6} lg={3}>
+              <MDBox mb={1.5}>
+                <ComplexStatisticsCard
+                  color="dark"
+                  icon="weekend"
+                  title="Ventas totales del evento"
+                  count={ "$" + totalSales}
+                  percentage={{
+                    color: "success",
+                    amount: "",
+                    label: "Ventas de todos los puntos de venta",
                   }}
-                >
-                  <Grid
-                    sx={{
-                      borderRadius: "10%",
-                      background: "white",
-                      height: "100%",
-                      width: "100%",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography align="center">
-                      <Typography align="center" className="event-summary-value">
-                        ${totalSales}
-                      </Typography>
-                      <Typography  className="event-summary-label" align="center">
-                        Ventas
-                      </Typography>
-                    </Typography>
-                  </Grid>
-                </TableCell>
-                <TableCell
-                  style={{
-                    width: "33.33%",
-                    height: "50px",
-                    border: "10px solid white",
-                    background: "white",
-                    padding: 0,
-                    justifyItems: "center",
-                    justifySelf: "center",
+                />
+              </MDBox>
+            </Grid>
+            <Grid item xs={12} md={6} lg={3}>
+              <MDBox mb={1.5}>
+                <ComplexStatisticsCard
+                  icon="leaderboard"
+                  title="Recargas de tokens"
+                  count={ "$" + totalIncome }
+                  percentage={{
+                    color: "success",
+                    amount: "",
+                    label: "Suma de todas las recargas",
                   }}
-                >
-                  <Grid
-                    sx={{
-                      borderRadius: "10%",
-                      background: "white",
-                      height: "100%",
-                      width: "100%",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography align="center">
-                      <Typography align="center" className="event-summary-value">
-                        ${totalIncome}
-                      </Typography>
-                      <Typography className="event-summary-label" align="center">
-                        Recargas
-                      </Typography>
-                    </Typography>
-                  </Grid>
-                </TableCell>
-                <TableCell
-                  style={{
-                    height: "50px",
-                    border: "10px solid white",
-                    background: "white",
-                    padding: 0,
-                    justifyItems: "center",
-                    justifySelf: "center",
+                />
+              </MDBox>
+            </Grid>
+            <Grid item xs={12} md={6} lg={3}>
+              <MDBox mb={1.5}>
+                <ComplexStatisticsCard
+                  icon="leaderboard"
+                  title="Tokens activados"
+                  count={ activatedTokens}
+                  percentage={{
+                    color: "success",
+                    amount: "",
+                    label: "Tokens registrados al evento",
                   }}
-                >
-                  <Grid
-                    sx={{
-                      borderRadius: "10%",
-                      background: "white",
-                      height: "100%",
-                      width: "100%",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography align="center">
-                      <Typography align="center" className="event-summary-value" >
-                        {activatedTokens}
-                      </Typography>
-                      <Typography className="event-summary-label" align="center">
-                        Tokens
-                      </Typography>
-                    </Typography>
-                  </Grid>
-                </TableCell>
-              </TableRow>
-              <TableRow style={{ height: "auto" }}>
-                <TableCell
-                  style={{
-                    width: "50%",
-                    height: "50px",
-                    border: "10px solid white",
-                    background: "white",
-                    padding: 0,
-                    justifyItems: "center",
-                    justifySelf: "center",
+                />
+              </MDBox>
+            </Grid>
+            <Grid item xs={12} md={6} lg={3}>
+              <MDBox mb={1.5}>
+                <ComplexStatisticsCard
+                  color="success"
+                  icon="store"
+                  title="Puntos de venta"
+                  count={ salesPoints}
+                  percentage={{
+                    color: "success",
+                    amount: "",
+                    label: "Numero de tiendas registradas",
                   }}
-                >
-                  <Grid
-                    sx={{
-                      borderRadius: "10%",
-                      background: "white",
-                      height: "100%",
-                      width: "100%",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography align="center">
-                      <Typography align="center" className="event-summary-value">
-                        {salesPoints}
-                      </Typography>
-                      <Typography className="event-summary-label" align="center">
-                        Puntos de venta
-                      </Typography>
-                    </Typography>
-                  </Grid>
-                </TableCell>
-                <TableCell
-                  style={{
-                    width: "50%",
-                    height: "50px",
-                    border: "10px solid white",
-                    background: "white",
-                    padding: 0,
-                    justifyItems: "center",
-                    justifySelf: "center",
-                  }}
-                >
-                  <Grid
-                    sx={{
-                      borderRadius: "10%",
-                      background: "white",
-                      height: "100%",
-                      width: "100%",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography align="center">
-                      <Typography align="center" className="event-summary-value">
-                        {transactions}
-                      </Typography>
-                      <Typography className="event-summary-label" align="center">
-                        Transacciones
-                      </Typography>
-                    </Typography>
-                  </Grid>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+                />
+              </MDBox>
+            </Grid>
+          </Grid>
+        </MDBox>
       </CardContent>
     </Card>
   );

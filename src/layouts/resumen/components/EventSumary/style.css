@@ -1,8 +1,8 @@
 
 .event-summary-title{
-    font-family: 'Montserrat' !important;
-    font-size: 22px;
-    font-weight: bold !important;
+    font-family: 'montserrat-semibold' !important;
+    font-size: 20px;
+    font-weight: 800 !important;
 }
 
 .event-summary-label{
@@ -15,6 +15,10 @@
 .event-summary-value{
     color: #197bbd;
     font-family: 'Montserrat' !important;
-    font-size: 20px !important;
+    font-size: 18px !important;
     font-weight: bold !important;
+}
+
+.event-summary-container{
+    padding: 15px 15px 15px 15px !important;
 }

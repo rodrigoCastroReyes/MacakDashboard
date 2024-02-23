@@ -111,6 +111,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     } else if (type === "title") {
       returnValue = (
         <MDTypography
+          
           key={key}
           color={textColor}
           display="block"
@@ -148,6 +149,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     >
       <MDBox pt={3} pb={1} px={4} textAlign="center">
         <MDBox
+         
           display={{ xs: "block", xl: "none" }}
           position="absolute"
           top={0}
@@ -166,7 +168,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
-            <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
+            <MDTypography component="h6" variant="button" fontWeight="medium" fontFamily="montserrat" color={textColor}>
               {brandName}
             </MDTypography>
           </MDBox>
@@ -179,19 +181,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         }
       />
       <List>{renderRoutes}</List>
-      <MDBox p={2} mt="auto">
-        <MDButton
-          component="a"
-          href="https://www.creative-tim.com/product/material-dashboard-pro-react"
-          target="_blank"
-          rel="noreferrer"
-          variant="gradient"
-          color={sidenavColor}
-          fullWidth
-        >
-          upgrade to pro
-        </MDButton>
-      </MDBox>
     </SidenavRoot>
   );
 }

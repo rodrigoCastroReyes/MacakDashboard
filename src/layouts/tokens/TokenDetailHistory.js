@@ -74,8 +74,8 @@ function TokenDetailHistory() {
 
   const rows = transactions.map((transaction) => ({
     registrationDate: (
-      <MDTypography variant="caption" color="text" fontWeight="medium">
-        {moment(transaction.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
+      <MDTypography fontFamily='poppins' variant="caption" color="text" fontWeight="medium">
+        {moment(transaction.__updatedtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
       </MDTypography>
     ),
     type: (
@@ -84,19 +84,20 @@ function TokenDetailHistory() {
       </MDBox>
     ),
     status: (
-      <MDTypography variant="button" color="text" fontWeight="medium">
+      <MDTypography  fontFamily='poppins' variant="button" color="text" fontWeight="medium">
         {transaction.status === "success" ? "Exitosa" : "Rechazada"}
       </MDTypography>
     ),
     detail: (
-      <MDTypography variant="button" color="text" fontWeight="medium">
+      <MDTypography fontFamily='poppins' variant="button" color="text" fontWeight="medium">
         {transaction.description}
       </MDTypography>
     ),
     balance: (
       <MDTypography
+       fontFamily='poppins'
         variant="caption"
-        fontWeight="medium"
+        fontWeight="bold"
         style={{ color: transaction.type === "recharge" ? "#007bff" : "#ee2346" }}
       >
         {getBalanceChangeDisplay(transaction)}
