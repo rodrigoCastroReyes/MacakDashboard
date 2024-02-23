@@ -34,7 +34,7 @@ function TokenDetailHistory() {
 
   const getTranslateTypes = (transaction) =>{
     if (transaction.type === "order") {
-      return "Orden";
+      return "Compra";
     } else if (transaction.type === "recharge") {
       return "Carga";
     } else if (transaction.type === "refund") {
@@ -80,7 +80,7 @@ function TokenDetailHistory() {
     ),
     type: (
       <MDBox ml={-1}>
-        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="sm" />
+        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "error" : "success"} variant="gradient" size="sm" />
       </MDBox>
     ),
     status: (
@@ -98,7 +98,7 @@ function TokenDetailHistory() {
        fontFamily='poppins'
         variant="caption"
         fontWeight="bold"
-        style={{ color: transaction.type === "recharge" ? "#007bff" : "#ee2346" }}
+        color={transaction.type === "recharge" ? "success" : "error" }
       >
         {getBalanceChangeDisplay(transaction)}
       </MDTypography>
@@ -122,7 +122,7 @@ function TokenDetailHistory() {
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography variant="h6" color="white">
+                <MDTypography fontFamily='poppins' variant="h6" color="white">
                   Historial de transacciones de Token {data.token.code}
                 </MDTypography>
               </MDBox>
@@ -132,6 +132,8 @@ function TokenDetailHistory() {
                 style={{ display: "flex", justifyContent: "flex-end" }}
               >
                 <MDTypography
+                  fontFamily='poppins'
+                  fontWeight="regular"
                   variant="body1"
                   style={{ position: "realtive", marginRight: "1rem" }}
                 >

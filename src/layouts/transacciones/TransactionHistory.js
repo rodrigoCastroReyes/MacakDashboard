@@ -6,6 +6,7 @@ import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
 import MDBox from "components/MDBox";
 import MDBadge from "components/MDBadge";
+import { Link } from "react-router-dom";
 
 function TransactionHistory({numRows}) {
   const [refreshing, setRefreshing] = useState(false);
@@ -53,7 +54,7 @@ function TransactionHistory({numRows}) {
     ),
     type: (
       <MDBox ml={-1}>
-        <MDBadge fontFamily="poppins" badgeContent= {transaction.type === "order" ? "Orden" : "Carga"}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="sm" />
+        <MDBadge fontFamily="poppins" badgeContent= {transaction.type === "order" ? "Compra" : "Carga"}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="sm" />
       </MDBox>
     ),
     status: (
@@ -68,7 +69,7 @@ function TransactionHistory({numRows}) {
     ),
     token: (
       <MDTypography fontFamily="poppins" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
-        {transaction.token_id.code}
+        <Link className='custom-link' to={`/token/${transaction.token_id._id}`}> {transaction.token_id.code} </Link>
       </MDTypography>
     ),
     amount: (

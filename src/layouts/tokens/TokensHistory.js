@@ -88,7 +88,7 @@ function TokensHistory() {
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography variant="h6" color="white">
+                <MDTypography fontFamily="poppins" variant="h6" color="white">
                   Historial de registro de tokens
                 </MDTypography>
               </MDBox>

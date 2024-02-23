@@ -157,7 +157,7 @@ function PointOfSaleTransactionHistory() {
                   table={{ columns, rows }}
                   isSorted={false}
                   entriesPerPage={false}
-                  showTotalEntries={10}
+                  showTotalEntries={false}
                   noEndBorder
                 />
               </MDBox>

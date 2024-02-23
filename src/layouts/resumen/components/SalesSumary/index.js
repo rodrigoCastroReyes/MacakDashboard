@@ -74,16 +74,16 @@ const SalesSummary = () => {
         </Typography>
         <MDBox py={3}>
           <Grid container spacing={3}>
-            {stores_summary.map(({ store, store_id, total}) => (
-              <React.Fragment key={store}>
+            {stores_summary.map(({ name, store_id, total}) => (
+              <React.Fragment key={name}>
                 <Grid item xs={12} md={6} lg={3}>
                   <MDBox mb={1.5}>
                   <Link to={`/transaccion/${store_id}`}>
                     <ComplexStatisticsCard
                       color="dark"
                       icon="store"
-                      title={ store }
-                      count={ total }
+                      title={ name }
+                      count={ "$"+ total }
                       percentage={{
                       color: "success",
                       amount: "",
@@ -120,7 +120,7 @@ SalesSummary.propTypes = {
       store: PropTypes.string.isRequired,
       total: PropTypes.number.isRequired,
     })
-  ).isRequired,
+  ),
 };
 
 export default SalesSummary;
