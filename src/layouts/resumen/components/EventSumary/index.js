@@ -2,12 +2,6 @@ import React from "react";
 import { Grid, Card, CardContent, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import './style.css'
-
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
 import MDBox from "components/MDBox";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 

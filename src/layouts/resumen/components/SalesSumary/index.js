@@ -5,18 +5,11 @@ import useAxios from "hooks/useAxios";
 
 import {
   Typography,
-  Table,
-  TableContainer,
-  TableBody,
-  TableRow,
-  TableCell,
-  Avatar,
   IconButton,
   Grid,
   CardContent,
   Card,
 } from "@mui/material";
-import StoreIcon from "@mui/icons-material/Store";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
