@@ -32,7 +32,9 @@ function PointOfSaleTransactionHistory() {
   if (error || !data?.store || !data?.transactions)
     return <div style={{margin:"auto 0"}} >Error al obtener los datos</div>;
 
-  const transactions = data?.transactions;
+  const sortTransactions = data?.transactions.sort((trans1, trans2) => (trans2.__updatedtime__) - (trans1.__updatedtime__));
+
+  console.log(sortTransactions);
 
   const getTranslateTypes = (transaction) => {
     if (transaction.type === "order") {
@@ -61,7 +63,7 @@ function PointOfSaleTransactionHistory() {
     { Header: "Monto", accessor: "amount", align: "center" },
   ];
 
-  const rows = transactions.map((transaction) => ({
+  const rows = sortTransactions.map((transaction) => ({
     date: (
       <MDTypography
         variant="caption"
