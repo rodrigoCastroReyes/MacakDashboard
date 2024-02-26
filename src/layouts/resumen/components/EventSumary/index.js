@@ -10,7 +10,6 @@ const EventSummary = ({
   totalIncome,
   activatedTokens,
   salesPoints,
-  transactions,
 }) => {
   return (
     <Card>

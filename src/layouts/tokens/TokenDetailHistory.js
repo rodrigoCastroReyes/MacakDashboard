@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
+import 'moment/locale/es'; // without this line it didn't work
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import MDTypography from "components/MDTypography";
@@ -21,6 +22,7 @@ function TokenDetailHistory() {
     `https://biodynamics.tech/api_tokens/dashboard/token?token_id=${id}`
   );
 
+  moment().locale('es');
   const handleRefresh = async () => {
     setRefreshing(true);
     await refetch();

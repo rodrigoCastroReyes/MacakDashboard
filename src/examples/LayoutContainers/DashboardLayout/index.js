@@ -34,7 +34,7 @@ function DashboardLayout({ children }) {
 
   useEffect(() => {
     setLayout(dispatch, "resumen");
-  }, [pathname]);
+  }, [dispatch,pathname]);
 
   return (
     <MDBox

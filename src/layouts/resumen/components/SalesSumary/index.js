@@ -18,7 +18,7 @@ import './style.css'
 
 const SalesSummary = () => {
   const [startIndex, setStartIndex] = useState(0);
-  const { data, loading, error, refetch } = useAxios(
+  const { data, loading, error } = useAxios(
     "https://biodynamics.tech/api_tokens/dashboard/summary_per_store?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
   
@@ -35,7 +35,8 @@ const SalesSummary = () => {
     startIndex + itemsPerPage
   );
 
-  // Función para dividir el array en grupos de 3 elementos
+  // eslint-disable-next-line no-lone-blocks
+  //Función para dividir el array en grupos de 3 elementos
   const chunkArray = (arr, size) => {
     return arr.reduce(
       (acc, _, i) => (i % size ? acc : [...acc, arr.slice(i, i + size)]),
@@ -44,6 +45,7 @@ const SalesSummary = () => {
   };
 
   // Dividimos los puntos de venta en grupos de 3
+  // eslint-disable-next-line no-unused-vars
   const chunkedSales = chunkArray(salesToDisplay, 3);
 
   const handleNextPage = () => {

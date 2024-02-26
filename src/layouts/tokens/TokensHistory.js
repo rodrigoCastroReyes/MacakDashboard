@@ -18,7 +18,7 @@ function TokensHistory() {
   const { data, loading, error, refetch } = useAxios(
     "https://biodynamics.tech/api_tokens/event/tokens?id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
-  moment().lang('es');
+  moment().locale('es');
   const handleRefresh = async () => {
     setRefreshing(true);
     await refetch();

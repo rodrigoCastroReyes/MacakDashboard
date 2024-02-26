@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import 'moment/locale/es'; // without this line it didn't work
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import MDTypography from "components/MDTypography";
@@ -35,6 +36,8 @@ function PointOfSaleTransactionHistory() {
   const sortTransactions = data?.transactions.sort((trans1, trans2) => (trans2.__updatedtime__) - (trans1.__updatedtime__));
 
   console.log(sortTransactions);
+
+  moment.locale('es');
 
   const getTranslateTypes = (transaction) => {
     if (transaction.type === "order") {

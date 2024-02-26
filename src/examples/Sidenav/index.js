@@ -48,6 +48,7 @@ import {
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
+  // eslint-disable-next-line no-unused-vars
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
@@ -80,7 +81,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
     // Remove event listener on cleanup
     return () => window.removeEventListener("resize", handleMiniSidenav);
-  }, [dispatch, location]);
+  }, [dispatch, location, transparentSidenav, whiteSidenav]);
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {

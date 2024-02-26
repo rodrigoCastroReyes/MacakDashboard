@@ -28,6 +28,7 @@ const usePostAxios = (url,body) => {
     }
     // Cleanup function to cancel the request if the component unmounts
     return () => {};
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 
   return { data, loading, error };

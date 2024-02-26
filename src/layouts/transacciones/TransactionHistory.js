@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import moment from "moment";
+import 'moment/locale/es'; // without this line it didn't work
 import MDTypography from "components/MDTypography";
 import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
@@ -7,6 +8,8 @@ import "css/styles.css";
 import MDBox from "components/MDBox";
 import MDBadge from "components/MDBadge";
 import { Link } from "react-router-dom";
+
+moment.locale('es');
 
 function TransactionHistory({numRows}) {
   const [refreshing, setRefreshing] = useState(false);

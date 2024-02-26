@@ -33,22 +33,10 @@ import TransactionHistory from "layouts/transacciones/TransactionHistory";
 import { Card, Typography } from "@mui/material";
 import './style.css'
 import usePostAxios from "hooks/usePostAxios";
-import useGetAuthAxios from "hooks/useGetAuthAxios";
+//import useGetAuthAxios from "hooks/useGetAuthAxios";
 import axios from "axios";
 
 const Resumen = () => {
-  const [dashboardData, setDashboardData] = useState({
-    eventSummary: {
-      totalSales: 0,
-      totalIncome: 0,
-      transactions: 0,
-    },
-    salesSummary: {
-      salesByPos: [],
-    },
-    recentTransactions: [],
-    posStatistics: [],
-  });
 
   const [jwtToken, setJwtToken ] = useState(null);
   const [event, setEvent ] = useState({
@@ -112,7 +100,6 @@ const Resumen = () => {
                   totalIncome={eventSummary.totalRecharge}
                   activatedTokens={event.amount_token_registered}
                   salesPoints={event.stores.length}
-                  transactions={dashboardData.eventSummary.transactions}
                 />
               </MDBox>
             </Grid>

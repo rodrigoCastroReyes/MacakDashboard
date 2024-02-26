@@ -65,7 +65,7 @@ const routes = [
   {
     type: "collapse",
     name: "Tokens",
-    key: "token",
+    key: "tokens",
     icon: <CreditCardIcon fontSize="small" color="white"></CreditCardIcon>,
     route: "/tokens",
     component: <Tokens />,

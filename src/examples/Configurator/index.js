@@ -276,13 +276,13 @@ function Configurator() {
         >
           <MDTypography variant="h6">Navbar Fixed</MDTypography>
 
-          <Switch checked={fixedNavbar} onChange={handleFixedNavbar} />
+          <Switch id="navbar-fixed-switch" checked={fixedNavbar} onChange={handleFixedNavbar} />
         </MDBox>
         <Divider />
         <MDBox display="flex" justifyContent="space-between" alignItems="center" lineHeight={1}>
           <MDTypography variant="h6">Light / Dark</MDTypography>
 
-          <Switch checked={darkMode} onChange={handleDarkMode} />
+          <Switch id="darkmode-switch" checked={darkMode} onChange={handleDarkMode} />
         </MDBox>
         <Divider />
         <MDBox mt={3} mb={2}>

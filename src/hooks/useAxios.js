@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const useAxios = (url) => {
@@ -6,7 +6,7 @@ const useAxios = (url) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -23,7 +23,7 @@ const useAxios = (url) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url]);
 
   useEffect(() => {
     if (url) {
@@ -32,11 +32,12 @@ const useAxios = (url) => {
 
     // Cleanup function to cancel the request if the component unmounts
     return () => {};
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     await fetchData();
-  };
+  }, [fetchData]);
 
   return { data, loading, error, refetch };
 };

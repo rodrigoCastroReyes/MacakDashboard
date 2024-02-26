@@ -64,6 +64,7 @@ export default function App() {
     darkMode,
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
 
