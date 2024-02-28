@@ -96,7 +96,7 @@ const routes = [
     type: "collapse",
     name: "Reportes",
     key: "reportes",
-    icon: <AnalyticsIcon fontSize="small" color="white"></AnalyticsIcon>,
+    icon: <AnalyticsIcon fontFamily="montserrat" fontSize="small" color="white"></AnalyticsIcon>,
     route: "/reportes",
     component: <Reports />,
   },

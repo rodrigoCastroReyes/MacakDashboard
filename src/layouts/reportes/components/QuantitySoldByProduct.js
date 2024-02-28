@@ -18,14 +18,14 @@ function QuantitySoldByProduct() {
     datasets: [
       {
         label: "Cantidad vendida",
-        color: "warning",
+        color: "success",
         data: report.map((product) => product.quantity),
       },
     ],
   };
 
   return (
-    <VerticalBarChart title="Cantidad vendida por producto" description={
+    <VerticalBarChart title="Unidades vendidas por producto" description={
     data.total} chart={chart} />
   );
 }

@@ -26,7 +26,7 @@ function SalesPerProduct() {
     datasets: [
       {
         label: "Total vendido",
-        color: "warning",
+        color: "primary",
         data: report.map((product) => getProductValue(product.value)),
       },
     ],

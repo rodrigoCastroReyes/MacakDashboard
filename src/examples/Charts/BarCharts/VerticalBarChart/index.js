@@ -94,9 +94,9 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
             </MDBox>
           )}
           <MDBox style={{margin:"auto"}} mt={icon.component ? -2 : 0}>
-            {title && <MDTypography variant="h2" component="div" align="center" >{title}</MDTypography>}
+            {title && <MDTypography color="black" fontWeight="medium" fontFamily="montserrat-semibold" component="div" align="center" >{title}</MDTypography>}
             <MDBox mb={2}>
-              <MDTypography component="div" variant="h2" color="black" align="center" fontSize="xxx-large">
+              <MDTypography component="div" fontFamily="montserrat" fontWeight="regular"  color="black" align="center" fontSize="x-large">
                 {description}
               </MDTypography>
             </MDBox>

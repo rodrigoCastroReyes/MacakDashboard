@@ -111,7 +111,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     } else if (type === "title") {
       returnValue = (
         <MDTypography
-          
           key={key}
           color={textColor}
           display="block"
