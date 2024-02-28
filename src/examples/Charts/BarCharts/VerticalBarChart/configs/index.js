@@ -13,8 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-// Material Dashboard 2 React base styles
-import typography from "assets/theme/base/typography";
+import "css/styles.css";
 
 function configs(labels, datasets) {
   return {
@@ -29,6 +28,19 @@ function configs(labels, datasets) {
         legend: {
           display: false,
         },
+        datalabels: {
+          display: true,
+          color: "#1c0d02",
+          anchor: "end",
+          font: {
+            size: 11,
+            family: "monteserrat",
+            style: "normal",
+            lineHeight: 2,
+          },
+          offset: -20,
+          align: "start",
+        },
       },
       scales: {
         y: {
@@ -42,10 +54,10 @@ function configs(labels, datasets) {
           ticks: {
             display: true,
             padding: 10,
-            color: "#9ca2b7",
+            color: "#1c0d02",
             font: {
-              size: 11,
-              family: typography.fontFamily,
+              size: 14,
+              family: "monteserrat",
               style: "normal",
               lineHeight: 2,
             },
@@ -60,11 +72,11 @@ function configs(labels, datasets) {
           },
           ticks: {
             display: true,
-            color: "#9ca2b7",
+            color: "#1c0d02",
             padding: 10,
             font: {
-              size: 11,
-              family: typography.fontFamily,
+              size: 14,
+              family: "poppins",
               style: "normal",
               lineHeight: 2,
             },

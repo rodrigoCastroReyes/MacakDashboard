@@ -20,6 +20,7 @@ import PropTypes from "prop-types";
 
 // react-chartjs-2 components
 import { Bar } from "react-chartjs-2";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -44,7 +45,14 @@ import configs from "examples/Charts/BarCharts/VerticalBarChart/configs";
 // Material Dashboard 2 React base styles
 import colors from "assets/theme/base/colors";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function VerticalBarChart({ icon, title, description, height, chart }) {
   const chartDatasets = chart.datasets
@@ -85,10 +93,10 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
               <Icon fontSize="medium">{icon.component}</Icon>
             </MDBox>
           )}
-          <MDBox mt={icon.component ? -2 : 0}>
-            {title && <MDTypography variant="h6">{title}</MDTypography>}
+          <MDBox style={{margin:"auto"}} mt={icon.component ? -2 : 0}>
+            {title && <MDTypography variant="h2" component="div" align="center" >{title}</MDTypography>}
             <MDBox mb={2}>
-              <MDTypography component="div" variant="button" color="text">
+              <MDTypography component="div" variant="h2" color="black" align="center" fontSize="xxx-large">
                 {description}
               </MDTypography>
             </MDBox>
@@ -98,10 +106,10 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
       {useMemo(
         () => (
           <MDBox height={height}>
-            <Bar data={data} options={options} redraw />
+            <Bar data={data} plugins={[ChartDataLabels]} options={options} redraw />
           </MDBox>
         ),
-        [chart, height]
+        [data, height, options]
       )}
     </MDBox>
   );

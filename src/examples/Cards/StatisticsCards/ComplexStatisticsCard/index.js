@@ -32,7 +32,7 @@ function ComplexStatisticsCard({ color, title, count, percentage, icon }) {
         <MDBox
           variant="gradient"
           bgColor={color}
-          color={color === "light" ? "dark" : "white"}
+           color={color === "light" ? "dark" : "white"}
           coloredShadow={color}
           borderRadius="xl"
           display="flex"

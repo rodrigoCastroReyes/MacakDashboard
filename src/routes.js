@@ -52,6 +52,8 @@ import SignUp from "layouts/authentication/sign-up";*/
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import Reports from "layouts/reportes";
 
 const routes = [
   {
@@ -90,7 +92,14 @@ const routes = [
     route: "/token/:id",
     component: <TokenDetailHistory />,
   },
-  
+  {
+    type: "collapse",
+    name: "Reportes",
+    key: "reportes",
+    icon: <AnalyticsIcon fontSize="small" color="white"></AnalyticsIcon>,
+    route: "/reportes",
+    component: <Reports />,
+  },
   /*{
     type: "collapse",
     name: "RTL",
