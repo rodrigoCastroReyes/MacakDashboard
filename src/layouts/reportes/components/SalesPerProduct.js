@@ -12,6 +12,14 @@ function SalesPerProduct() {
     return <div>Error al obtener los datos</div>;
 
   const report = data?.report;
+  
+  const getProductValue = (value) => {
+    if(value % 1 === 0){
+      return Number.parseFloat(value).toFixed(2);
+    }else{
+      return value.toFixed(2);
+    }
+  };
 
   const chart = {
     labels: report.map((product) => product.description),
@@ -19,7 +27,7 @@ function SalesPerProduct() {
       {
         label: "Total vendido",
         color: "warning",
-        data: report.map((product) => product.value),
+        data: report.map((product) => getProductValue(product.value)),
       },
     ],
   };

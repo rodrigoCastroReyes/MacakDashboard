@@ -30,11 +30,18 @@ function configs(labels, datasets) {
         },
         datalabels: {
           display: true,
+          formatter: function (value) {
+            if (value.toString().includes('.')) {
+              return "$" + new Intl.NumberFormat("en-US").format(value);
+            } else {
+              return new Intl.NumberFormat("en-US").format(value);
+            }
+          },
           color: "#1c0d02",
           anchor: "end",
           font: {
             size: 11,
-            family: "monteserrat",
+            family: "montserrat-semibold",
             style: "normal",
             lineHeight: 2,
           },
@@ -56,8 +63,8 @@ function configs(labels, datasets) {
             padding: 10,
             color: "#1c0d02",
             font: {
-              size: 14,
-              family: "monteserrat",
+              size: 12,
+              family: "montserrat",
               style: "normal",
               lineHeight: 2,
             },
@@ -75,11 +82,14 @@ function configs(labels, datasets) {
             color: "#1c0d02",
             padding: 10,
             font: {
-              size: 14,
+              size: 12,
               family: "poppins",
               style: "normal",
               lineHeight: 2,
             },
+            //autoSkip: false,
+            //maxRotation: 45,
+            //minRotation: 45,
           },
         },
       },
