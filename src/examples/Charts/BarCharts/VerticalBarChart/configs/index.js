@@ -37,7 +37,7 @@ function configs(labels, datasets) {
               return new Intl.NumberFormat("en-US").format(value);
             }
           },
-          color: "orange",
+          color: "black",
           anchor: "end",
           font: {
             size: 11,
