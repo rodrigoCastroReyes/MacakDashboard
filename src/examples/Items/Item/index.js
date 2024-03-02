@@ -20,19 +20,19 @@ import PropTypes from "prop-types";
 
 // @mui material components
 import MenuItem from "@mui/material/MenuItem";
-import Link from "@mui/material/Link";
+import { Link } from "react-router-dom";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 // custom styles for the NotificationItem
-import menuItem from "examples/Items/NotificationItem/styles";
+import menuItem from "examples/Items/Item/styles";
 
-const NotificationItem = forwardRef(({ icon, title, ...rest }, ref) => (
+const Item = forwardRef(({ icon, title, to, ...rest }, ref) => (
   <MenuItem {...rest} ref={ref} sx={(theme) => menuItem(theme)}>
-    <MDBox component={Link} py={0.5} display="flex" alignItems="center" lineHeight={1}>
-      <MDTypography variant="body1" color="secondary" lineHeight={0.75}>
+    <MDBox py={0.5} display="flex" alignItems="center" lineHeight={1}>
+      <MDTypography component={Link} to ={to}variant="body1" color="secondary" lineHeight={0.75}>
         {icon}
       </MDTypography>
       <MDTypography variant="button" fontWeight="regular" sx={{ ml: 1 }}>
@@ -42,10 +42,11 @@ const NotificationItem = forwardRef(({ icon, title, ...rest }, ref) => (
   </MenuItem>
 ));
 
-// Typechecking props for the NotificationItem
-NotificationItem.propTypes = {
+// Typechecking props for the Item
+Item.propTypes = {
   icon: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,
+  to: PropTypes.string.isRequired,
 };
 
-export default NotificationItem;
+export default Item;

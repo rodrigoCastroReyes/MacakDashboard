@@ -26,6 +26,8 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
@@ -34,7 +36,7 @@ import MDInput from "components/MDInput";
 
 // Material Dashboard 2 React example components
 import Breadcrumbs from "examples/Breadcrumbs";
-import NotificationItem from "examples/Items/NotificationItem";
+import Item from "examples/Items/Item";
 
 // Custom styles for DashboardNavbar
 import {
@@ -52,13 +54,16 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+import { useAuth } from 'context/authProvider';
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
+  const [openAccountMenu, setOpenAccountMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const { logout } = useAuth();
 
   useEffect(() => {
     // Setting the navbar type
@@ -90,6 +95,13 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
+  const handleOpenAccountMenu = (event) => setOpenAccountMenu(event.currentTarget);
+  const handleCloseAccountMenu = () => setOpenAccountMenu(false);
+
+   const handleLogout = () => {
+    logout(); // Llamar a la función de logout
+    console.log("Cerrando sesion");
+  };
 
   // Render the notifications menu
   const renderMenu = () => (
@@ -104,9 +116,35 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      <NotificationItem icon={<Icon>email</Icon>} title="Check new messages" />
-      <NotificationItem icon={<Icon>podcasts</Icon>} title="Manage Podcast sessions" />
-      <NotificationItem icon={<Icon>shopping_cart</Icon>} title="Payment successfully completed" />
+      <Item icon={<Icon>email</Icon>} title="Check new messages" />
+      <Item icon={<Icon>podcasts</Icon>} title="Manage Podcast sessions" />
+      <Item icon={<Icon>shopping_cart</Icon>} title="Payment successfully completed" />
+    </Menu>
+  );
+
+   const renderAccountMenu = () => (
+    <Menu
+      anchorEl={openAccountMenu}
+      anchorReference={null}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "left",
+      }}
+      open={Boolean(openAccountMenu)}
+      onClose={handleCloseAccountMenu}
+      sx={{ mt: 2 }}
+    >
+      <Link to="/profile">
+        <MenuItem onClick={handleCloseAccountMenu}> <ListItemIcon>
+          <Icon lineHeight={0.75}>person_search</Icon>
+        </ListItemIcon>View Profile</MenuItem>
+      </Link>
+      {/* Call handleLogout function when clicking "Log Out" */}
+      <Link to="/authentication/sign-in">
+        <MenuItem onClick={handleLogout}> <ListItemIcon>
+          <Icon lineHeight={0.75}>logout</Icon>
+        </ListItemIcon>Log Out</MenuItem>
+      </Link>
     </Menu>
   );
 
@@ -139,11 +177,19 @@ function DashboardNavbar({ absolute, light, isMini }) {
               <MDInput label="Search here" />
             </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
-                <IconButton sx={navbarIconButton} size="small" disableRipple>
+              <IconButton
+                size="small"
+                disableRipple
+                color="inherit"
+                sx={navbarIconButton}
+                aria-controls="profile-menu"
+                aria-haspopup="true"
+                variant="contained"
+                onClick={handleOpenAccountMenu}
+              >
                   <Icon sx={iconsStyle}>account_circle</Icon>
                 </IconButton>
-              </Link>
+                {renderAccountMenu()}
               <IconButton
                 size="small"
                 disableRipple

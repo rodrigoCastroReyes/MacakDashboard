@@ -16,7 +16,8 @@ Coded by www.creative-tim.com
 import { useState } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from 'context/authProvider';
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -42,9 +43,31 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 function Basic() {
+   const { login } = useAuth(); // Utilizar la función useAuth para acceder a la función login del AuthProvider
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await login(username, password); // Llamar a la función login del AuthProvider con las credenciales
+      setError('');
+      setLoggedIn(true);
+      console.log('Inicio de sesión exitoso'); 
+
+    } catch (error) {
+      setError('Credenciales incorrectas. Inténtalo de nuevo.'); // Manejar el error de inicio de sesión
+    }
+  };
+
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  if (loggedIn) {
+    return <Navigate to="/resumen" />;
+  }
 
   return (
     <BasicLayout image={bgImage}>
@@ -82,14 +105,15 @@ function Basic() {
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
-            <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
-            </MDBox>
-            <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
-            </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
+        <form onSubmit={handleSubmit}>
+          <MDBox mb={2}>
+            <MDInput type="text" label="Username" value={username} onChange={(e) => setUsername(e.target.value)} fullWidth />
+          </MDBox>
+          <MDBox mb={2}>
+            <MDInput type="password" label="Password" value={password}
+            onChange={(e) => setPassword(e.target.value)} fullWidth />
+          </MDBox>
+          <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
               <MDTypography
                 variant="button"
@@ -102,10 +126,11 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
+              <MDButton variant="gradient" color="info" onClick={handleSubmit} fullWidth>
                 sign in
               </MDButton>
             </MDBox>
+            {error && <div>{error}</div>}
             <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
                 Don&apos;t have an account?{" "}
@@ -121,7 +146,7 @@ function Basic() {
                 </MDTypography>
               </MDTypography>
             </MDBox>
-          </MDBox>
+          </form>
         </MDBox>
       </Card>
     </BasicLayout>

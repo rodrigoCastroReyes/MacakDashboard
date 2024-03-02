@@ -43,11 +43,10 @@ import TokenDetailHistory from "layouts/tokens/TokenDetailHistory";
 import PointOfSaleTransactionHistory from "layouts/transacciones/pointOfSaleTransactionHistory";
 /*import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
-import Notifications from "layouts/notifications";
+import Notifications from "layouts/notifications";*/
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";*/
-
+//import SignUp from "layouts/authentication/sign-up";
 // @mui icons
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
@@ -115,24 +114,18 @@ const routes = [
     icon: <Icon fontSize="small">notifications</Icon>,
     route: "/notifications",
     component: <Notifications />,
-  },
+  },*/
   {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
-    icon: <Icon fontSize="small">person</Icon>,
+    type: "route",
     route: "/profile",
     component: <Profile />,
   },
   {
-    type: "collapse",
-    name: "Sign In",
-    key: "sign-in",
-    icon: <Icon fontSize="small">login</Icon>,
+    type: "route",
     route: "/authentication/sign-in",
     component: <SignIn />,
   },
-  {
+  /*{
     type: "collapse",
     name: "Sign Up",
     key: "sign-up",

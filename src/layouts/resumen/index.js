@@ -32,13 +32,15 @@ import SalesSummary from "layouts/resumen/components/SalesSumary";
 import TransactionHistory from "layouts/transacciones/TransactionHistory";
 import { Card, Typography } from "@mui/material";
 import './style.css'
-import usePostAxios from "hooks/usePostAxios";
+//import usePostAxios from "hooks/usePostAxios";
 //import useGetAuthAxios from "hooks/useGetAuthAxios";
 import axios from "axios";
+import { useAuth } from 'context/authProvider';
 
 const Resumen = () => {
 
-  const [jwtToken, setJwtToken ] = useState(null);
+  const { authToken } = useAuth(); // Usar la función useAuth para acceder al token JWT
+  //const [jwtToken, setJwtToken ] = useState(null);
   const [event, setEvent ] = useState({
     amount_token_registered: 0,
     stores : []
@@ -46,8 +48,9 @@ const Resumen = () => {
   const [ eventSummary, setEventSummary ] = useState({
     totalSales : 0,
     totalRecharge : 0
-  })
-  const { data, loading, error } =  usePostAxios("https://biodynamics.tech/api_tokens/user/login",{
+  });
+
+  {/*const { data, loading, error } =  usePostAxios("https://biodynamics.tech/api_tokens/user/login",{
     username : 'event_123',
     password : 'abcd'
   });
@@ -69,9 +72,39 @@ const Resumen = () => {
       }
     }
     fetch_data()
-  }, [jwtToken]);
+  }, [jwtToken]);*/}
 
-  useEffect(()=>{
+
+  useEffect(() => {
+    const fetch_data = async () => {
+      try {
+        if (authToken) {
+          // Realizar solicitudes utilizando el token JWT
+          const eventResponse = await axios.get("https://biodynamics.tech/api_tokens/event?id=f9b857ac-16f2-4852-8981-b72831e7f67c", {
+            headers: {
+              'Authorization': authToken
+            }
+          });
+          // Actualizar el estado con la respuesta del evento
+          setEvent(eventResponse.data);
+          // Realizar otras solicitudes después del inicio de sesión
+          const salesResponse = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=order");
+          const rechargesResponse = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=recharge");
+          if (salesResponse && rechargesResponse) {
+            setEventSummary({
+              totalSales: salesResponse.data.total_value,
+              totalRecharge: rechargesResponse.data.total_value
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error en la solicitud de datos:', error);
+      }
+    };
+    fetch_data();
+  }, [authToken]);
+
+  {/*useEffect(()=>{
     async function fetch_data(){
       const sales_response = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=order");
       const recharges_response = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=recharge");
@@ -86,7 +119,7 @@ const Resumen = () => {
   })
 
   if (loading) return <div>Cargando...</div>;
-  if (error || data == null) return <div>Error al obtener los datos</div>;
+if (error || data == null) return <div>Error al obtener los datos</div>;*/}
 
   return (
     <DashboardLayout>
