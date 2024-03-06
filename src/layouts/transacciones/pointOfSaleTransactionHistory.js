@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import 'moment/locale/es'; // without this line it didn't work
 import Grid from "@mui/material/Grid";
@@ -8,11 +8,10 @@ import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+//import Footer from "examples/Footer";
 import useAxios from "hooks/useAxios";
 import MDBadge from "components/MDBadge";
 import DataTable from "examples/Tables/DataTable";
-import { useParams } from "react-router-dom";
 import "./styles.css";
 
 function PointOfSaleTransactionHistory() {
@@ -53,17 +52,21 @@ function PointOfSaleTransactionHistory() {
     {
       Header: "Fecha",
       accessor: "date",
+      fontFamily:"montserrat-semibold",
+      fontSize:"18px",
       width: "30%",
       align: "left",
     },
-    { Header: "Tipo", accessor: "type", align: "left" },
+    { Header: "Tipo", accessor: "type",fontFamily:"montserrat-semibold",fontSize:"18px", align: "left" },
     {
       Header: "Estado",
       accessor: "status",
+      fontFamily:"montserrat-semibold",
+      fontSize:"18px",
       align: "center",
     },
-    { Header: "Detalle", accessor: "detail", align: "left" },
-    { Header: "Monto", accessor: "amount", align: "center" },
+    { Header: "Detalle", accessor: "detail",fontFamily:"montserrat-semibold",fontSize:"18px", align: "left" },
+    { Header: "Monto", accessor: "amount",fontFamily:"montserrat-semibold", fontSize:"18px", align: "center" },
   ];
 
   const rows = sortTransactions.map((transaction) => ({
@@ -72,6 +75,7 @@ function PointOfSaleTransactionHistory() {
         variant="caption"
         color="text"
         fontFamily="poppins"
+        fontSize="16px"
         fontWeight="medium"
         style={{ color: transaction.status === "rejected" ? "red" : "inherit" }}
       >
@@ -82,12 +86,13 @@ function PointOfSaleTransactionHistory() {
     ),
     type: (
       <MDBox ml={-1}>
-        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="sm" />
+        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="medium" />
       </MDBox>
     ),
     status: (
       <MDTypography
         fontFamily="poppins"
+        fontSize="16px"
         variant="button"
         color="text"
         fontWeight="medium"
@@ -99,6 +104,7 @@ function PointOfSaleTransactionHistory() {
     detail: (
       <MDTypography
         fontFamily="poppins"
+        fontSize="16px"
         variant="button"
         color="text"
         fontWeight="medium"
@@ -110,6 +116,7 @@ function PointOfSaleTransactionHistory() {
     amount: (
       <MDTypography
         fontFamily="poppins"
+        fontSize="16px"
         variant="caption"
         color={ transaction.type === 'order' ? 'info' : 'success' }
         fontWeight="bold"
@@ -138,7 +145,7 @@ function PointOfSaleTransactionHistory() {
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography className="sale-transaction-title" color="white">
+                <MDTypography component="div" align="center" className="sale-transaction-title" color="white">
                   Historial de transacciones para {data.store.name}
                 </MDTypography>
               </MDBox>
@@ -170,7 +177,7 @@ function PointOfSaleTransactionHistory() {
           </Grid>
         </Grid>
       </MDBox>
-      <Footer />
+      {/*<Footer />*/}
     </DashboardLayout>
   );
 }

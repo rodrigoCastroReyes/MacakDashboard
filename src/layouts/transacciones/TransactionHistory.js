@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import moment from "moment";
 import 'moment/locale/es'; // without this line it didn't work
 import MDTypography from "components/MDTypography";
@@ -7,12 +7,15 @@ import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
 import MDBox from "components/MDBox";
 import MDBadge from "components/MDBadge";
+import MDInput from "components/MDInput";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 moment.locale('es');
 
-function TransactionHistory({numRows}) {
+function TransactionHistory({ numRows }) {
   const [refreshing, setRefreshing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const { data, loading, error, refetch } = useAxios(
     "https://biodynamics.tech/api_tokens/dashboard/event?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
@@ -22,61 +25,80 @@ function TransactionHistory({numRows}) {
     setRefreshing(false);
   };
 
+  const filterByCode = (tokens, searchTerm) => {
+    return tokens.filter(token => token.code.includes(searchTerm));
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredTokens = useMemo(() => {
+    if (!searchTerm) {
+      return data?.transactions || [];
+    }
+    return filterByCode(data?.transactions || [], searchTerm);
+  }, [data?.transactions, searchTerm]);
+
   if (loading) return <div>Cargando...</div>;
   if (error || !data?.event_id || !data?.transactions) return <div>Error al obtener los datos</div>;
   let transactions;
   if(numRows === -1){
-    transactions = data?.transactions;
+    transactions = filteredTokens;
   }else{
-    transactions = data?.transactions.slice(0,numRows);
+    transactions = filteredTokens.slice(0,numRows);
   }
 
   const columns = [
     {
       Header: "Fecha",
       accessor: "date",
+      fontFamily: "montserrat-semibold",
+      fontSize:"18px",
       width: "30%",
       align: "left",
     },
-    { Header: "Tipo", accessor: "type", align: "left" },
+    { Header: "Tipo", accessor: "type",fontFamily: "montserrat-semibold", fontSize:"18px", align: "left" },
     {
       Header: "Estado",
       accessor: "status",
+      fontFamily: "montserrat-semibold",
+      fontSize:"16px",
       align: "center",
     },
-    { Header: "Token", accessor: "token", align: "left" },
-    { Header: "Detalle", accessor: "detail", align: "left" },
-    { Header: "Monto", accessor: "amount", align: "center" },
+    { Header: "Token", accessor: "token",fontFamily: "montserrat-semibold", fontSize:"18px", align: "left" },
+    { Header: "Detalle", accessor: "detail",fontFamily: "montserrat-semibold",fontSize:"18px", align: "left" },
+    { Header: "Monto", accessor: "amount",fontFamily: "montserrat-semibold",fontSize:"18px", align: "center" },
   ];
 
   const rows = transactions.map((transaction) => ({
     date: (
-      <MDTypography fontFamily="poppins" variant="button" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }}>
+      <MDTypography fontFamily="poppins" fontSize="16px" variant="button" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }}>
         {moment(transaction.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
       </MDTypography>
     ),
     type: (
       <MDBox ml={-1}>
-        <MDBadge fontFamily="poppins" badgeContent= {transaction.type === "order" ? "Compra" : "Carga"}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="sm" />
+        <MDBadge fontFamily="poppins" badgeContent= {transaction.type === "order" ? "Compra" : "Carga"}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="medium"/>
       </MDBox>
     ),
     status: (
-      <MDTypography fontFamily="poppins" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
+      <MDTypography fontFamily="poppins" fontSize="16px" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
         {transaction.status === 'success' ? 'Exitosa' : 'Fallida'}
       </MDTypography>
     ),
     detail: (
-      <MDTypography fontFamily="poppins" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
+      <MDTypography fontFamily="poppins" fontSize="16px" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
         {transaction.description}
       </MDTypography>
     ),
     token: (
-      <MDTypography fontFamily="poppins" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
+      <MDTypography fontFamily="poppins" fontSize="16px" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
         <Link className='custom-link' to={`/token/${transaction.token_id._id}`}> {transaction.token_id.code} </Link>
       </MDTypography>
     ),
     amount: (
-      <MDTypography fontFamily="poppins" variant="caption" color={ transaction.type === 'order' ? 'info' : 'success' } fontWeight="bold" >
+      <MDTypography fontFamily="poppins" fontSize="16px" variant="caption" color={ transaction.type === 'order' ? 'info' : 'success' } fontWeight="bold" >
         ${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}
       </MDTypography>
     ),
@@ -85,6 +107,14 @@ function TransactionHistory({numRows}) {
   return (
     <>
       <div style={{ marginBottom: "2rem" }}>
+        <MDInput
+                    type="search"
+                    label="Buscar"
+                    style={{marginLeft:"48px"}}
+                    placeholder="Buscar por código..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                  />
         <button  className="refresh-button" onClick={handleRefresh} disabled={refreshing}>
           {refreshing ? "Refrescando..." : "Actualizar"}
         </button>
@@ -99,6 +129,10 @@ function TransactionHistory({numRows}) {
     </>
   );
 }
+
+TransactionHistory.propTypes = {
+  numRows: PropTypes.number,
+};
 
 export default TransactionHistory;
 

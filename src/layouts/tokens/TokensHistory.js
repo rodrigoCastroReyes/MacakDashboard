@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import Grid from "@mui/material/Grid";
@@ -6,15 +6,17 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+//import Footer from "examples/Footer";
 import MDTypography from "components/MDTypography";
 import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
 import 'moment/locale/es';
+import MDInput from "components/MDInput";
 
 function TokensHistory() {
   const [refreshing, setRefreshing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const { data, loading, error, refetch } = useAxios(
     "https://biodynamics.tech/api_tokens/event/tokens?id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
@@ -25,11 +27,25 @@ function TokensHistory() {
     setRefreshing(false);
   };
 
+  const filterByCode = (tokens, searchTerm) => {
+    return tokens.filter(token => token.code.includes(searchTerm));
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredTokens = useMemo(() => {
+    if (!searchTerm) {
+      return data?.tokens || [];
+    }
+    return filterByCode(data?.tokens || [], searchTerm);
+  }, [data?.tokens, searchTerm]);
+
   if (loading) return <div>Cargando...</div>;
   if (error || !data?._id || !data?.tokens)
     return <div>Error al obtener los datos</div>;
 
-  const tokens = data?.tokens;
 
   const columns = [
     {
@@ -47,24 +63,24 @@ function TokensHistory() {
     { Header: "Saldo", accessor: "balance", align: "center" },
   ];
 
-  const rows = tokens.map((token) => ({
+  const rows = filteredTokens.map((token) => ({
     code: (
       <MDTypography fontFamily="poppins" variant="button" color="text" fontWeight="medium">
         <Link className='custom-link' to={`/token/${token._id}`}>{token.code}</Link>
       </MDTypography>
     ),
     status: (
-      <MDTypography  fontFamily="poppins"  variant="button" color="text" fontWeight="medium">
+      <MDTypography  fontFamily="poppins" variant="button" color="text" fontWeight="medium">
         {token.status === "registered" ? "Registrado" : "No Registrado"}
       </MDTypography>
     ),
     registrationDate: (
-      <MDTypography  fontFamily="poppins"  variant="caption" color="text" fontWeight="medium">
+      <MDTypography  fontFamily="poppins" variant="caption" color="text" fontWeight="medium">
         {moment(token.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
       </MDTypography>
     ),
     balance: (
-      <MDTypography  fontFamily="poppins"  variant="caption" color="success" fontWeight="bold">
+      <MDTypography  fontFamily="poppins" variant="caption" color="success" fontWeight="bold">
         ${token.balance}
       </MDTypography>
     ),
@@ -82,18 +98,25 @@ function TokensHistory() {
                 mt={-3}
                 py={3}
                 px={2}
-                fontFamily='monteserrat'
                 variant="gradient"
                 bgColor="info"
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography fontFamily="poppins" variant="h6" color="white">
+                <MDTypography component="div" align="center" fontFamily="montserrant-semibold" fontSize="2rem" variant="h6" color="white">
                   Historial de registro de tokens
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>
-                <div style={{ marginBottom: "2rem" }}>
+                <div style={{ marginBottom: "2rem"}}>
+                  <MDInput
+                    type="search"
+                    label="Buscar"
+                    style={{marginLeft:"48px"}}
+                    placeholder="Buscar por código..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                  />
                   <button
                     className="refresh-button"
                     onClick={handleRefresh}
@@ -114,7 +137,7 @@ function TokensHistory() {
           </Grid>
         </Grid>
       </MDBox>
-      <Footer />
+      {/*<Footer />*/}
     </DashboardLayout>
   );
 }

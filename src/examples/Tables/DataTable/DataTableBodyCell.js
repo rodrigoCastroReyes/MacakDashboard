@@ -27,7 +27,7 @@ function DataTableBodyCell({ noBorder, align, children }) {
       py={1.5}
       px={3}
       sx={({ palette: { light }, typography: { size }, borders: { borderWidth } }) => ({
-        fontSize: size.sm,
+        fontSize: size.md,
         borderBottom: noBorder ? "none" : `${borderWidth[1]} solid ${light.main}`,
       })}
     >

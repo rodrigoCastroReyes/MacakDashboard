@@ -148,7 +148,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     >
       <MDBox pt={3} pb={1} px={4} textAlign="center">
         <MDBox
-         
           display={{ xs: "block", xl: "none" }}
           position="absolute"
           top={0}

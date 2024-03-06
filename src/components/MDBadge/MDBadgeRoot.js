@@ -16,6 +16,7 @@ Coded by www.creative-tim.com
 // @mui material components
 import Badge from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
+import "css/styles.css";
 
 export default styled(Badge)(({ theme, ownerState }) => {
   const { palette, typography, borders, functions } = theme;
@@ -35,7 +36,7 @@ export default styled(Badge)(({ theme, ownerState }) => {
   };
 
   // fontSize value
-  const fontSizeValue = size === "xs" ? fontSize.xxs : fontSize.xs;
+  const fontSizeValue = size === "md" ? fontSize.xxs : fontSize.xs;
 
   // border value
   const borderValue = border ? `${borderWidth[3]} solid ${white.main}` : "none";
@@ -102,7 +103,7 @@ export default styled(Badge)(({ theme, ownerState }) => {
     position: "static",
     marginLeft: pxToRem(8),
     transform: "none",
-    fontSize: pxToRem(9),
+    fontSize: pxToRem(16),
   });
 
   // styles for the badge with container={true}
@@ -115,6 +116,7 @@ export default styled(Badge)(({ theme, ownerState }) => {
     "& .MuiBadge-badge": {
       height: "auto",
       padding: paddings[size] || paddings.xs,
+      fontFamily:"poppins",
       fontSize: fontSizeValue,
       fontWeight: fontWeightBold,
       textTransform: "uppercase",
@@ -127,8 +129,8 @@ export default styled(Badge)(({ theme, ownerState }) => {
       ...(indicator && indicatorStyles(size)),
       ...(variant === "gradient" && gradientStyles(color)),
       ...(variant === "contained" && containedStyles(color)),
-      ...(!children && !container && standAloneStyles(color)),
-      ...(container && containerStyles(color)),
+      ...(!children && !container && standAloneStyles()),
+      ...(container && containerStyles()),
     },
   };
 });

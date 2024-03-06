@@ -25,7 +25,7 @@ import TransactionHistory from "layouts/transacciones/TransactionHistory";
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+//import Footer from "examples/Footer";
 
 function Transacciones() {
 
@@ -48,7 +48,9 @@ function Transacciones() {
               >
                 <MDTypography 
                   fontWeight="regular"
-                  fontFamily="montserrat"
+                  fontFamily="montserrat-semibold"
+                  fontSize="2rem"
+                  component="div" align="center"
                   variant="h6" color="white">
                   Historial de transacciones
                 </MDTypography>
@@ -60,7 +62,7 @@ function Transacciones() {
           </Grid>
         </Grid>
       </MDBox>
-      <Footer />
+      {/*<Footer />*/}
     </DashboardLayout>
   );
 }

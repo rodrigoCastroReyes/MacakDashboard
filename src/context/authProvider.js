@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -6,7 +6,14 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
+  const [authToken, setAuthToken] = useState();
+
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem('authToken');
+    if (storedToken) {
+      setAuthToken(storedToken);
+    }
+  }, [authToken]);
 
   const login = async (username, password) => {
     try {

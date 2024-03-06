@@ -16,25 +16,21 @@ Coded by www.creative-tim.com
 import { useState } from "react";
 
 // react-router-dom components
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from 'context/authProvider';
 
 // @mui material components
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
-import Grid from "@mui/material/Grid";
-import MuiLink from "@mui/material/Link";
-
-// @mui icons
-import FacebookIcon from "@mui/icons-material/Facebook";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import GoogleIcon from "@mui/icons-material/Google";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { IconButton, InputAdornment } from "@mui/material";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
+import MDAlert from "components/MDAlert";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -42,12 +38,15 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
+import "css/styles.css";
+
 function Basic() {
    const { login } = useAuth(); // Utilizar la función useAuth para acceder a la función login del AuthProvider
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -61,6 +60,16 @@ function Basic() {
     } catch (error) {
       setError('Credenciales incorrectas. Inténtalo de nuevo.'); // Manejar el error de inicio de sesión
     }
+  };
+
+  const alertContent = (errorText) => (
+    <MDTypography variant="body2" fontFamily="poppins" fontSize="12px" color="white">
+      {errorText}
+    </MDTypography>
+  );
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
@@ -83,35 +92,30 @@ function Basic() {
           mb={1}
           textAlign="center"
         >
-          <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Sign in
+          <MDTypography variant="h4" fontWeight="medium" fontFamily="montserrat-semibold" color="white" mt={1}>
+            Inicio de sesión
           </MDTypography>
-          <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
-            <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <FacebookIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-            <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <GitHubIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-            <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <GoogleIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-          </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
         <form onSubmit={handleSubmit}>
           <MDBox mb={2}>
-            <MDInput type="text" label="Username" value={username} onChange={(e) => setUsername(e.target.value)} fullWidth />
+            <MDInput type="text" label="Usuario" value={username} onChange={(e) => setUsername(e.target.value)} required={true} fullWidth />
           </MDBox>
           <MDBox mb={2}>
-            <MDInput type="password" label="Password" value={password}
-            onChange={(e) => setPassword(e.target.value)} fullWidth />
+            <MDInput type={showPassword ? "text" : "password"} label="Contraseña" value={password}
+            onChange={(e) => setPassword(e.target.value)} InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              aria-label="toggle password visibility"
+              onClick={handleClickShowPassword}
+              edge="end"
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }} required={true} fullWidth />
           </MDBox>
           <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -126,26 +130,13 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" onClick={handleSubmit} fullWidth>
-                sign in
+              <MDButton variant="gradient" color="info" fontFamily="montserrat" onClick={handleSubmit} fullWidth>
+                Iniciar sesión
               </MDButton>
             </MDBox>
-            {error && <div>{error}</div>}
-            <MDBox mt={3} mb={1} textAlign="center">
-              <MDTypography variant="button" color="text">
-                Don&apos;t have an account?{" "}
-                <MDTypography
-                  component={Link}
-                  to="/authentication/sign-up"
-                  variant="button"
-                  color="info"
-                  fontWeight="medium"
-                  textGradient
-                >
-                  Sign up
-                </MDTypography>
-              </MDTypography>
-            </MDBox>
+            {error && <MDAlert color="error" dismissible>
+                  {alertContent(error)}
+                </MDAlert>}
           </form>
         </MDBox>
       </Card>

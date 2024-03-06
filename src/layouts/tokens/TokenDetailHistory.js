@@ -9,7 +9,7 @@ import MDBox from "components/MDBox";
 import MDBadge from "components/MDBadge";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+//import Footer from "examples/Footer";
 import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
@@ -82,7 +82,7 @@ function TokenDetailHistory() {
     ),
     type: (
       <MDBox ml={-1}>
-        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "error" : "success"} variant="gradient" size="sm" />
+        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "error" : "success"} variant="gradient" size="medium"/>
       </MDBox>
     ),
     status: (
@@ -124,7 +124,7 @@ function TokenDetailHistory() {
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography fontFamily='poppins' variant="h6" color="white">
+                <MDTypography fontFamily='montserrant-semibold' fontSize="2rem" component="div" align="center" variant="h6" color="white">
                   Historial de transacciones de Token {data.token.code}
                 </MDTypography>
               </MDBox>
@@ -171,7 +171,7 @@ function TokenDetailHistory() {
           </Grid>
         </Grid>
       </MDBox>
-      <Footer />
+      {/*<Footer />*/}
     </DashboardLayout>
   );
 }

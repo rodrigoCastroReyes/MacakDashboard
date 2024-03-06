@@ -20,17 +20,18 @@ import Grid from "@mui/material/Grid";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
+import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+//import Footer from "examples/Footer";
 
 // Dashboard components
 import EventSummary from "layouts/resumen/components/EventSumary";
 import SalesSummary from "layouts/resumen/components/SalesSumary";
 import TransactionHistory from "layouts/transacciones/TransactionHistory";
-import { Card, Typography } from "@mui/material";
+import { Card } from "@mui/material";
 import './style.css'
 //import usePostAxios from "hooks/usePostAxios";
 //import useGetAuthAxios from "hooks/useGetAuthAxios";
@@ -141,11 +142,25 @@ if (error || data == null) return <div>Error al obtener los datos</div>;*/}
             </Grid>
             <Grid item xs={12} sm={12}>
               <Card>
-                <Typography 
-                  className="event-title"
-                >
-                Transacciones recientes
-                </Typography>
+                  <MDBox
+                mx={2}
+                mt={0}
+                py={3}
+                px={2}
+                variant="gradient"
+                bgColor="info"
+                borderRadius="lg"
+                coloredShadow="info"
+              >
+                <MDTypography
+                  fontWeight="regular"
+                  fontFamily="montserrat-semibold"
+                  fontSize="2rem"
+                  component="div" align="center"
+                  variant="h6" color="white">
+                  Historial de transacciones
+                </MDTypography>
+              </MDBox>
                 <MDBox pt={3}>
                   <TransactionHistory numRows="10" />
                 </MDBox>
@@ -153,7 +168,7 @@ if (error || data == null) return <div>Error al obtener los datos</div>;*/}
             </Grid>
           </Grid>
         </MDBox>
-      <Footer />
+      {/*<Footer />*/}
     </DashboardLayout>
   );
 }

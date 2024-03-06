@@ -3,7 +3,7 @@ import { Grid, Card } from "@mui/material";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
+//import Footer from "examples/Footer";
 import SalesPerProduct from "./components/SalesPerProduct";
 import QuantitySoldByProduct from "./components/QuantitySoldByProduct";
 
@@ -25,7 +25,7 @@ function Reports() {
           </Grid>
         </Grid>
       </MDBox>
-      <Footer />
+      {/*<Footer />*/}
     </DashboardLayout>
   );
 }

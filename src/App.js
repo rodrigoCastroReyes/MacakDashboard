@@ -21,10 +21,6 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import Icon from "@mui/material/Icon";
-
-// Material Dashboard 2 React components
-import MDBox from "components/MDBox";
 
 // Material Dashboard 2 React example components
 import Sidenav from "examples/Sidenav";
@@ -43,9 +39,10 @@ import { CacheProvider } from "@emotion/react";
 
 // Material Dashboard 2 React routes
 import routes from "routes";
+import { useAuth } from 'context/authProvider';
 
 // Material Dashboard 2 React contexts
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { useMaterialUIController, setMiniSidenav } from "context";
 
 // Images
 import brandWhite from "assets/images/logo-ct.png";
@@ -57,7 +54,6 @@ export default function App() {
     miniSidenav,
     direction,
     layout,
-    openConfigurator,
     sidenavColor,
     transparentSidenav,
     whiteSidenav,
@@ -66,6 +62,7 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [rtlCache, setRtlCache] = useState(null);
+   const { authToken } = useAuth();
   const { pathname } = useLocation();
 
   // Open sidenav when mouse enter on mini sidenav
@@ -84,9 +81,6 @@ export default function App() {
     }
   };
 
-  // Change the openConfigurator state
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-
   // Setting the dir attribute for the body element
   useEffect(() => {
     document.body.setAttribute("dir", direction);
@@ -100,41 +94,23 @@ export default function App() {
 
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
-      
+
       if (route.collapse) {
         return getRoutes(route.collapse);
       }
 
       if (route.route) {
+        // Protege la ruta si no es la de inicio de sesión
+        if (route.route !== "/authentication/sign-in") {
+          return <Route exact path={route.route} element={authToken ? route.component : <Navigate to="/authentication/sign-in" />} key={route.key} />;
+        }
+
+        // Ruta de inicio de sesión
         return <Route exact path={route.route} element={route.component} key={route.key} />;
       }
 
       return null;
     });
-
-  const configsButton = (
-    <MDBox
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      width="3.25rem"
-      height="3.25rem"
-      bgColor="white"
-      shadow="sm"
-      borderRadius="50%"
-      position="fixed"
-      right="2rem"
-      bottom="2rem"
-      zIndex={99}
-      color="dark"
-      sx={{ cursor: "pointer" }}
-      onClick={handleConfiguratorOpen}
-    >
-      <Icon fontSize="small" color="inherit">
-        settings
-      </Icon>
-    </MDBox>
-  );
 
   return direction === "rtl" ? (
     <CacheProvider value={rtlCache}>
@@ -150,8 +126,6 @@ export default function App() {
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />
-            <Configurator />
-            {configsButton}
           </>
         )}
         {layout === "vr" && <Configurator />}
@@ -174,8 +148,6 @@ export default function App() {
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
-          <Configurator />
-          {configsButton}
         </>
       )}
       {layout === "vr" && <Configurator />}

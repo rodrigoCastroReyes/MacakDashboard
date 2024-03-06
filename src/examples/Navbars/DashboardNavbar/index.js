@@ -25,25 +25,25 @@ import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
+//import Menu from "@mui/material/Menu";
+//import MenuItem from "@mui/material/MenuItem";
+//import ListItemIcon from "@mui/material/ListItemIcon";
 import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-import MDInput from "components/MDInput";
+import MDButton from "components/MDButton";
+//import MDInput from "components/MDInput";
 
 // Material Dashboard 2 React example components
 import Breadcrumbs from "examples/Breadcrumbs";
-import Item from "examples/Items/Item";
+//import Item from "examples/Items/Item";
 
 // Custom styles for DashboardNavbar
 import {
   navbar,
   navbarContainer,
   navbarRow,
-  navbarIconButton,
   navbarMobileMenu,
 } from "examples/Navbars/DashboardNavbar/styles";
 
@@ -52,16 +52,16 @@ import {
   useMaterialUIController,
   setTransparentNavbar,
   setMiniSidenav,
-  setOpenConfigurator,
 } from "context";
-import { useAuth } from 'context/authProvider';
+import { useAuth } from "context/authProvider";
+import "css/styles.css";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useMaterialUIController();
-  const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
-  const [openMenu, setOpenMenu] = useState(false);
-  const [openAccountMenu, setOpenAccountMenu] = useState(false);
+  const { miniSidenav, transparentNavbar, fixedNavbar, darkMode } = controller;
+  //const [openMenu, setOpenMenu] = useState(false);
+  //const [openAccountMenu, setOpenAccountMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
   const { logout } = useAuth();
 
@@ -75,7 +75,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
     // A function that sets the transparent state of the navbar.
     function handleTransparentNavbar() {
-      setTransparentNavbar(dispatch, (fixedNavbar && window.scrollY === 0) || !fixedNavbar);
+      setTransparentNavbar(
+        dispatch,
+        (fixedNavbar && window.scrollY === 0) || !fixedNavbar
+      );
     }
 
     /** 
@@ -92,19 +95,21 @@ function DashboardNavbar({ absolute, light, isMini }) {
   }, [dispatch, fixedNavbar]);
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-  const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
-  const handleCloseMenu = () => setOpenMenu(false);
-  const handleOpenAccountMenu = (event) => setOpenAccountMenu(event.currentTarget);
-  const handleCloseAccountMenu = () => setOpenAccountMenu(false);
+  //const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
+  //const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
+  //const handleCloseMenu = () => setOpenMenu(false);
+  //const handleOpenAccountMenu = (event) =>
+    //setOpenAccountMenu(event.currentTarget);
+  //const handleCloseAccountMenu = () => setOpenAccountMenu(false);
 
-   const handleLogout = () => {
+  const handleLogout = () => {
     logout(); // Llamar a la función de logout
     console.log("Cerrando sesion");
   };
 
   // Render the notifications menu
-  const renderMenu = () => (
+  {
+    /*const renderMenu = () => (
     <Menu
       anchorEl={openMenu}
       anchorReference={null}
@@ -120,9 +125,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
       <Item icon={<Icon>podcasts</Icon>} title="Manage Podcast sessions" />
       <Item icon={<Icon>shopping_cart</Icon>} title="Payment successfully completed" />
     </Menu>
-  );
+    );
 
-   const renderAccountMenu = () => (
+  const renderAccountMenu = () => (
     <Menu
       anchorEl={openAccountMenu}
       anchorReference={null}
@@ -138,18 +143,24 @@ function DashboardNavbar({ absolute, light, isMini }) {
         <MenuItem onClick={handleCloseAccountMenu}> <ListItemIcon>
           <Icon lineHeight={0.75}>person_search</Icon>
         </ListItemIcon>View Profile</MenuItem>
-      </Link>
-      {/* Call handleLogout function when clicking "Log Out" */}
+    </Link>
       <Link to="/authentication/sign-in">
-        <MenuItem onClick={handleLogout}> <ListItemIcon>
-          <Icon lineHeight={0.75}>logout</Icon>
-        </ListItemIcon>Log Out</MenuItem>
+        <MenuItem onClick={handleLogout}>
+          {" "}
+          <ListItemIcon>
+            <Icon lineHeight={0.75}>logout</Icon>
+          </ListItemIcon>
+          Cerrar sesión
+        </MenuItem>
       </Link>
     </Menu>
-  );
+  );*/}
 
   // Styles for the navbar icons
-  const iconsStyle = ({ palette: { dark, white, text }, functions: { rgba } }) => ({
+  const iconsStyle = ({
+    palette: { dark, white, text },
+    functions: { rgba },
+  }) => ({
     color: () => {
       let colorValue = light || darkMode ? white.main : dark.main;
 
@@ -165,19 +176,37 @@ function DashboardNavbar({ absolute, light, isMini }) {
     <AppBar
       position={absolute ? "absolute" : navbarType}
       color="inherit"
-      sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
+      sx={(theme) =>
+        navbar(theme, { transparentNavbar, absolute, light, darkMode })
+      }
     >
       <Toolbar sx={(theme) => navbarContainer(theme)}>
-        <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
-          <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
+        <MDBox
+          color="inherit"
+          mb={{ xs: 1, md: 0 }}
+          sx={(theme) => navbarRow(theme, { isMini })}
+        >
+          <Breadcrumbs
+            icon="home"
+            title={route[route.length - 1]}
+            route={route}
+            light={light}
+          />
         </MDBox>
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
-              <MDInput label="Search here" />
-            </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
-              <IconButton
+              <Link to="/authentication/sign-in">
+                <MDButton
+                  variant="contained"
+                  color="info"
+                  fontFamily="montserrat"
+                  onClick={handleLogout}
+                >
+                  <Icon>logout</Icon>&nbsp; Cerrar Sesión
+                </MDButton>
+              </Link>
+              {/*<IconButton
                 size="small"
                 disableRipple
                 color="inherit"
@@ -189,7 +218,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               >
                   <Icon sx={iconsStyle}>account_circle</Icon>
                 </IconButton>
-                {renderAccountMenu()}
+        {renderAccountMenu()}*/}
               <IconButton
                 size="small"
                 disableRipple
@@ -201,7 +230,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   {miniSidenav ? "menu_open" : "menu"}
                 </Icon>
               </IconButton>
-              <IconButton
+              {/*<IconButton
                 size="small"
                 disableRipple
                 color="inherit"
@@ -220,9 +249,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 variant="contained"
                 onClick={handleOpenMenu}
               >
-                <Icon sx={iconsStyle}>notifications</Icon>
+              <Icon sx={iconsStyle}>notifications</Icon>
               </IconButton>
-              {renderMenu()}
+        {renderMenu()}*/}
             </MDBox>
           </MDBox>
         )}
