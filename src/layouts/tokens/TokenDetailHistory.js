@@ -124,7 +124,7 @@ function TokenDetailHistory() {
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography fontFamily='montserrant-semibold' fontSize="2rem" component="div" align="center" variant="h6" color="white">
+                <MDTypography fontFamily='montserrat-semibold' fontSize="22px" component="div" align="center" variant="h6" color="white">
                   Historial de transacciones de Token {data.token.code}
                 </MDTypography>
               </MDBox>

@@ -103,13 +103,14 @@ function TokensHistory() {
                 borderRadius="lg"
                 coloredShadow="info"
               >
-                <MDTypography component="div" align="center" fontFamily="montserrant-semibold" fontSize="2rem" variant="h6" color="white">
+                <MDTypography component="div" align="center" fontFamily="montserrat-semibold" fontSize="22px" variant="h6" color="white">
                   Historial de registro de tokens
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>
                 <div style={{ marginBottom: "2rem"}}>
                   <MDInput
+                    fontFamily="poppins"
                     type="search"
                     label="Buscar"
                     style={{marginLeft:"48px"}}

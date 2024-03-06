@@ -155,10 +155,10 @@ if (error || data == null) return <div>Error al obtener los datos</div>;*/}
                 <MDTypography
                   fontWeight="regular"
                   fontFamily="montserrat-semibold"
-                  fontSize="2rem"
+                  fontSize="22px"
                   component="div" align="center"
                   variant="h6" color="white">
-                  Historial de transacciones
+                  Transacciones recientes
                 </MDTypography>
               </MDBox>
                 <MDBox pt={3}>

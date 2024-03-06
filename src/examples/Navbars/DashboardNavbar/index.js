@@ -198,9 +198,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
             <MDBox color={light ? "white" : "inherit"}>
               <Link to="/authentication/sign-in">
                 <MDButton
+                  
                   variant="contained"
                   color="info"
-                  fontFamily="montserrat"
+                  fontFamily="montserrat-semibold"
                   onClick={handleLogout}
                 >
                   <Icon>logout</Icon>&nbsp; Cerrar Sesión

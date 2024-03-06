@@ -54,51 +54,51 @@ function TransactionHistory({ numRows }) {
       Header: "Fecha",
       accessor: "date",
       fontFamily: "montserrat-semibold",
-      fontSize:"18px",
+      fontSize:"14px",
       width: "30%",
       align: "left",
     },
-    { Header: "Tipo", accessor: "type",fontFamily: "montserrat-semibold", fontSize:"18px", align: "left" },
+    { Header: "Tipo", accessor: "type",fontFamily: "montserrat", fontSize:"14px", align: "left" },
     {
       Header: "Estado",
       accessor: "status",
       fontFamily: "montserrat-semibold",
-      fontSize:"16px",
+      fontSize:"14px",
       align: "center",
     },
-    { Header: "Token", accessor: "token",fontFamily: "montserrat-semibold", fontSize:"18px", align: "left" },
-    { Header: "Detalle", accessor: "detail",fontFamily: "montserrat-semibold",fontSize:"18px", align: "left" },
-    { Header: "Monto", accessor: "amount",fontFamily: "montserrat-semibold",fontSize:"18px", align: "center" },
+    { Header: "Token", accessor: "token",fontFamily: "montserrat-semibold", fontSize:"14px", align: "left" },
+    { Header: "Detalle", accessor: "detail",fontFamily: "montserrat-semibold",fontSize:"14px", align: "left" },
+    { Header: "Monto", accessor: "amount",fontFamily: "montserrat-semibold",fontSize:"14px", align: "center" },
   ];
 
   const rows = transactions.map((transaction) => ({
     date: (
-      <MDTypography fontFamily="poppins" fontSize="16px" variant="button" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }}>
+      <MDTypography fontFamily="poppins" fontSize="14px" variant="button" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }}>
         {moment(transaction.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
       </MDTypography>
     ),
     type: (
       <MDBox ml={-1}>
-        <MDBadge fontFamily="poppins" badgeContent= {transaction.type === "order" ? "Compra" : "Carga"}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="medium"/>
+        <MDBadge class="customBadge" fontFamily="poppins" fontSize="14px" badgeContent= {transaction.type === "order" ? "Compra" : "Carga"}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient"/>
       </MDBox>
     ),
     status: (
-      <MDTypography fontFamily="poppins" fontSize="16px" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
+      <MDTypography fontFamily="poppins"fontSize="14px" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
         {transaction.status === 'success' ? 'Exitosa' : 'Fallida'}
       </MDTypography>
     ),
     detail: (
-      <MDTypography fontFamily="poppins" fontSize="16px" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
+      <MDTypography fontFamily="poppins" fontSize="14px" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
         {transaction.description}
       </MDTypography>
     ),
     token: (
-      <MDTypography fontFamily="poppins" fontSize="16px" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
+      <MDTypography fontFamily="poppins" fontSize="14px" variant="caption" color="text" fontWeight="medium" style={{ color: transaction.status === 'failed' ? 'error' : 'inherit' }} >
         <Link className='custom-link' to={`/token/${transaction.token_id._id}`}> {transaction.token_id.code} </Link>
       </MDTypography>
     ),
     amount: (
-      <MDTypography fontFamily="poppins" fontSize="16px" variant="caption" color={ transaction.type === 'order' ? 'info' : 'success' } fontWeight="bold" >
+      <MDTypography fontFamily="poppins" fontSize="14px" variant="caption" color={ transaction.type === 'order' ? 'info' : 'success' } fontWeight="bold" >
         ${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}
       </MDTypography>
     ),
@@ -107,14 +107,6 @@ function TransactionHistory({ numRows }) {
   return (
     <>
       <div style={{ marginBottom: "2rem" }}>
-        <MDInput
-                    type="search"
-                    label="Buscar"
-                    style={{marginLeft:"48px"}}
-                    placeholder="Buscar por código..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                  />
         <button  className="refresh-button" onClick={handleRefresh} disabled={refreshing}>
           {refreshing ? "Refrescando..." : "Actualizar"}
         </button>

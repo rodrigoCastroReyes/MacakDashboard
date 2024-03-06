@@ -49,7 +49,7 @@ function Transacciones() {
                 <MDTypography 
                   fontWeight="regular"
                   fontFamily="montserrat-semibold"
-                  fontSize="2rem"
+                  fontSize="22px"
                   component="div" align="center"
                   variant="h6" color="white">
                   Historial de transacciones
