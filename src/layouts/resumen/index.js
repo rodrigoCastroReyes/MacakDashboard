@@ -40,7 +40,7 @@ import { useAuth } from 'context/authProvider';
 
 const Resumen = () => {
 
-  const { authToken } = useAuth(); // Usar la función useAuth para acceder al token JWT
+  const { authToken, userId } = useAuth(); // Usar la función useAuth para acceder al token JWT
   //const [jwtToken, setJwtToken ] = useState(null);
   const [event, setEvent ] = useState({
     amount_token_registered: 0,
@@ -103,7 +103,7 @@ const Resumen = () => {
       }
     };
     fetch_data();
-  }, [authToken]);
+  }, [authToken,userId]);
 
   {/*useEffect(()=>{
     async function fetch_data(){

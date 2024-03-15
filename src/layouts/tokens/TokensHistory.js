@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import Grid from "@mui/material/Grid";
@@ -14,6 +15,26 @@ import "css/styles.css";
 import 'moment/locale/es';
 import MDInput from "components/MDInput";
 
+const SearchInput = styled(MDInput)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    width: "50%",
+  },
+  [theme.breakpoints.up("sm")]: {
+    width: "auto", // Ajusta el ancho según tus necesidades
+  },
+}));
+
+const RefreshButtonContainer = styled('div')(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  marginBottom: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
+  [theme.breakpoints.up("sm")]: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+}));
+
 function TokensHistory() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,7 +49,9 @@ function TokensHistory() {
   };
 
   const filterByCode = (tokens, searchTerm) => {
-    return tokens.filter(token => token.code.includes(searchTerm));
+    return tokens.filter((token) => {
+      return token?.code?.toLowerCase().includes(searchTerm.toLowerCase());
+    });
   };
 
   const handleSearchChange = (event) => {
@@ -46,8 +69,7 @@ function TokensHistory() {
   if (error || !data?._id || !data?.tokens)
     return <div>Error al obtener los datos</div>;
 
-
-  const columns = [
+const columns = [
     {
       Header: "Fecha de Registro",
       accessor: "registrationDate",
@@ -109,7 +131,7 @@ function TokensHistory() {
               </MDBox>
               <MDBox pt={3}>
                 <div style={{ marginBottom: "2rem"}}>
-                  <MDInput
+                  <SearchInput
                     fontFamily="poppins"
                     type="search"
                     label="Buscar"
@@ -118,6 +140,7 @@ function TokensHistory() {
                     value={searchTerm}
                     onChange={handleSearchChange}
                   />
+                  <RefreshButtonContainer>
                   <button
                     className="refresh-button"
                     onClick={handleRefresh}
@@ -125,6 +148,7 @@ function TokensHistory() {
                   >
                     {refreshing ? "Refrescando..." : "Actualizar"}
                   </button>
+                  </RefreshButtonContainer>
                 </div>
                 <DataTable
                   table={{ columns, rows }}

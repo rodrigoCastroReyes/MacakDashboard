@@ -28,7 +28,7 @@ const contained = {
     backgroundColor: white.main,
     minHeight: pxToRem(40),
     color: text.main,
-    padding: `${pxToRem(10)} ${pxToRem(24)}`,
+    padding: `${pxToRem(10)} ${pxToRem(32)}`,
 
     "&:hover": {
       backgroundColor: white.main,

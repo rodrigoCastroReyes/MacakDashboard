@@ -16,12 +16,11 @@ Coded by www.creative-tim.com
 import { useState } from "react";
 
 // react-router-dom components
-import { Navigate } from "react-router-dom";
 import { useAuth } from 'context/authProvider';
+import { useNavigate } from 'react-router-dom';
 
 // @mui material components
 import Card from "@mui/material/Card";
-import Switch from "@mui/material/Switch";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { IconButton, InputAdornment } from "@mui/material";
 
@@ -45,20 +44,23 @@ function Basic() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
+  //const [loggedIn, setLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  //const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+     e.preventDefault();
     try {
-      await login(username, password); // Llamar a la función login del AuthProvider con las credenciales
-      setError('');
-      setLoggedIn(true);
-      console.log('Inicio de sesión exitoso'); 
-
+      const response = await login(username, password);
+      console.log("Response: ", response);
+      if (response === "manager_admin") {
+        navigate("/resumen");
+      } else {
+        setError("Solo los manager_admin pueden iniciar sesión.");
+      }
     } catch (error) {
-      setError('Credenciales incorrectas. Inténtalo de nuevo.'); // Manejar el error de inicio de sesión
+      setError("Credenciales incorrectas. Inténtalo de nuevo.");
     }
   };
 
@@ -72,30 +74,14 @@ function Basic() {
     setShowPassword(!showPassword);
   };
 
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
-
-  if (loggedIn) {
-    return <Navigate to="/resumen" />;
-  }
+  //const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   return (
     <BasicLayout image={bgImage}>
       <Card>
-        <MDBox
-          variant="gradient"
-          bgColor="info"
-          borderRadius="lg"
-          coloredShadow="info"
-          mx={2}
-          mt={-3}
-          p={2}
-          mb={1}
-          textAlign="center"
-        >
-          <MDTypography variant="h4" fontWeight="medium" fontFamily="montserrat-semibold" color="white" mt={1}>
+        <MDTypography variant="h4" component="div" align="center" fontWeight="medium" fontFamily="montserrat" mt={1}>
             Inicio de sesión
-          </MDTypography>
-        </MDBox>
+        </MDTypography>
         <MDBox pt={4} pb={3} px={3}>
         <form onSubmit={handleSubmit}>
           <MDBox mb={2}>
@@ -117,20 +103,8 @@ function Basic() {
         ),
       }} required={true} fullWidth />
           </MDBox>
-          <MDBox display="flex" alignItems="center" ml={-1}>
-              <Switch checked={rememberMe} onChange={handleSetRememberMe} />
-              <MDTypography
-                variant="button"
-                fontWeight="regular"
-                color="text"
-                onClick={handleSetRememberMe}
-                sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-              >
-                &nbsp;&nbsp;Remember me
-              </MDTypography>
-            </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fontFamily="montserrat" onClick={handleSubmit} fullWidth>
+              <MDButton variant="gradient" color="info" onClick={handleSubmit} fullWidth>
                 Iniciar sesión
               </MDButton>
             </MDBox>

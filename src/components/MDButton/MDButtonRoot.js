@@ -17,6 +17,7 @@ Coded by www.creative-tim.com
 // @mui material components
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
+import 'css/styles.css';
 
 export default styled(Button)(({ theme, ownerState }) => {
   const { palette, functions, borders, boxShadows } = theme;
@@ -77,6 +78,8 @@ export default styled(Button)(({ theme, ownerState }) => {
       background: backgroundValue,
       color: colorValue,
       boxShadow: boxShadowValue,
+      fontFamily: 'montserrat',
+      fontSize: '14px',
 
       "&:hover": {
         backgroundColor: backgroundValue,
@@ -121,6 +124,8 @@ export default styled(Button)(({ theme, ownerState }) => {
       background: backgroundValue,
       color: colorValue,
       borderColor: borderColorValue,
+      fontFamily: 'montserrat',
+      fontSize: '14px',
 
       "&:hover": {
         background: transparent.main,
@@ -186,6 +191,8 @@ export default styled(Button)(({ theme, ownerState }) => {
       background: backgroundValue,
       color: colorValue,
       boxShadow: boxShadowValue,
+      fontFamily: 'montserrat',
+      fontSize: '14px',
 
       "&:hover": {
         boxShadow: hoveredBoxShadowValue,
@@ -212,6 +219,8 @@ export default styled(Button)(({ theme, ownerState }) => {
 
     return {
       color: colorValue,
+      fontFamily: 'montserrat',
+      fontSize: '14px',
 
       "&:hover": {
         color: focusedColorValue,
@@ -254,9 +263,10 @@ export default styled(Button)(({ theme, ownerState }) => {
       height: sizeValue,
       minHeight: sizeValue,
       padding: paddingValue,
+      fontFamily: 'montserrat',
 
       "& .material-icons": {
-        marginTop: 0,
+        //marginTop: 0,
       },
 
       "&:hover, &:focus, &:active": {

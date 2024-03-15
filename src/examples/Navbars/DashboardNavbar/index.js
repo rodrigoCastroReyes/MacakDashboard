@@ -99,7 +99,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   //const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   //const handleCloseMenu = () => setOpenMenu(false);
   //const handleOpenAccountMenu = (event) =>
-    //setOpenAccountMenu(event.currentTarget);
+  //setOpenAccountMenu(event.currentTarget);
   //const handleCloseAccountMenu = () => setOpenAccountMenu(false);
 
   const handleLogout = () => {
@@ -154,7 +154,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
         </MenuItem>
       </Link>
     </Menu>
-  );*/}
+  );*/
+  }
 
   // Styles for the navbar icons
   const iconsStyle = ({
@@ -197,15 +198,17 @@ function DashboardNavbar({ absolute, light, isMini }) {
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
             <MDBox color={light ? "white" : "inherit"}>
               <Link to="/authentication/sign-in">
-                <MDButton
-                  
-                  variant="contained"
-                  color="info"
-                  fontFamily="montserrat-semibold"
-                  onClick={handleLogout}
-                >
-                  <Icon>logout</Icon>&nbsp; Cerrar Sesión
-                </MDButton>
+                <button className="logout-button" onClick={handleLogout}>
+                  <Icon
+                    sx={{
+                      alignSelf: "center",
+                      color:"white",
+                    }}
+                  >
+                    logout
+                  </Icon>
+                  &nbsp; Cerrar Sesión
+                </button>
               </Link>
               {/*<IconButton
                 size="small"
@@ -221,7 +224,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 </IconButton>
         {renderAccountMenu()}*/}
               <IconButton
-                size="small"
+                size="large"
                 disableRipple
                 color="inherit"
                 sx={navbarMobileMenu}
