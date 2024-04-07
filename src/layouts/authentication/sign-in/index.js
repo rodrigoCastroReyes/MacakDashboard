@@ -53,11 +53,10 @@ function Basic() {
      e.preventDefault();
     try {
       const response = await login(username, password);
-      console.log("Response: ", response);
       if (response === "manager_admin") {
         navigate("/resumen");
       } else {
-        setError("Solo los manager_admin pueden iniciar sesión.");
+        setError("Solo los organizadores del evento pueden iniciar sesión.");
       }
     } catch (error) {
       setError("Credenciales incorrectas. Inténtalo de nuevo.");
@@ -80,7 +79,7 @@ function Basic() {
     <BasicLayout image={bgImage}>
       <Card>
         <MDTypography variant="h4" component="div" align="center" fontWeight="medium" fontFamily="montserrat" mt={1}>
-            Inicio de sesión
+          
         </MDTypography>
         <MDBox pt={4} pb={3} px={3}>
         <form onSubmit={handleSubmit}>
