@@ -31,30 +31,11 @@ function Transacciones() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar main_title="" />
-      <MDBox pt={6} pb={3}>
+      <DashboardNavbar main_title="Historial de transacciones" />
+      <MDBox pt={3} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography 
-                  fontWeight="regular"
-                  fontFamily="montserrat-semibold"
-                  fontSize="22px"
-                  component="div" align="center"
-                  variant="h6" color="white">
-                  Historial de transacciones
-                </MDTypography>
-              </MDBox>
               <MDBox pt={3}>
                 <TransactionHistory numRows={-1} />
               </MDBox>

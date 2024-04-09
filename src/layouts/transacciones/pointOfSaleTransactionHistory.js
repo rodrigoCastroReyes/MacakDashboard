@@ -40,6 +40,14 @@ function PointOfSaleTransactionHistory() {
     return prev + ( Math.abs(current.token_last_balance - current.token_new_balance) )
   }, 0);
 
+  const getTranslateStatus = (transaction) => {
+    if (transaction.status === "success") {
+      return "Exitosa";
+    } else {
+      return "Rechazada";
+    }
+  };
+
   const getTranslateTypes = (transaction) => {
     if (transaction.type === "order") {
       return "Orden";
@@ -55,20 +63,18 @@ function PointOfSaleTransactionHistory() {
       Header: "Fecha",
       accessor: "date",
       fontFamily:"montserrat-semibold",
-      fontSize:"18px",
+      fontSize:"16px",
       width: "30%",
-      align: "left",
+      align: "center",
     },
-    { Header: "Tipo", accessor: "type",fontFamily:"montserrat-semibold",fontSize:"18px", align: "left" },
     {
       Header: "Estado",
       accessor: "status",
       fontFamily:"montserrat-semibold",
-      fontSize:"18px",
+      fontSize:"16px",
       align: "center",
     },
-    { Header: "Detalle", accessor: "detail",fontFamily:"montserrat-semibold",fontSize:"18px", align: "left" },
-    { Header: "Monto", accessor: "amount",fontFamily:"montserrat-semibold", fontSize:"18px", align: "center" },
+    { Header: "Monto", accessor: "amount",fontFamily:"montserrat-semibold", fontSize:"16px", align: "center" },
   ];
 
   if (loading) return <div>Cargando...</div>;
@@ -102,38 +108,14 @@ function PointOfSaleTransactionHistory() {
         style={{ color: transaction.status === "rejected" ? "red" : "inherit" }}
       >
         {moment(transaction.__createdtime__).format(
-          "DD [de] MMMM YYYY HH:mm:ss A"
+          "DD [de] MMM YYYY HH:mm A"
         )}
       </MDTypography>
     ),
-    type: (
-      <MDBox ml={-1}>
-        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "info" : "success"} variant="gradient" size="medium" />
-      </MDBox>
-    ),
     status: (
-      <MDTypography
-        fontFamily="poppins"
-        fontSize="16px"
-        variant="button"
-        color="text"
-        fontWeight="medium"
-        style={{ color: transaction.status === "rejected" ? "red" : "inherit" }}
-      >
-        {transaction.status === "success" ? "Exitosa" : "Rechazada"}
-      </MDTypography>
-    ),
-    detail: (
-      <MDTypography
-        fontFamily="poppins"
-        fontSize="16px"
-        variant="button"
-        color="text"
-        fontWeight="medium"
-        style={{ color: transaction.type === "rejected" ? "red" : "inherit" }}
-      >
-        {transaction.description}
-      </MDTypography>
+      <MDBox ml={-1}>
+        <MDBadge fontFamily="poppins" badgeContent= {getTranslateStatus(transaction)}  color= {transaction.status === "order" ? "info" : "success"} variant="gradient" size="medium" />
+      </MDBox>
     ),
     amount: (
       <MDTypography
@@ -153,30 +135,22 @@ function PointOfSaleTransactionHistory() {
   return (
     <DashboardLayout>
       <DashboardNavbar main_title={`Historial de ventas de ${data.store.name}`} />
-      <MDBox pt={2} pb={2}>
+      <MDBox pt={1} pb={2}>
         <Grid container>
-          <Grid item xs={12} pt={1} pb={1}>
-             
-          </Grid>
           <Grid item xs={12} pt={1} pb={1}>
             <Card>
               <SalesPerProduct id_store={id}/>
             </Card>
           </Grid>
-          <Grid item xs={12} pt={1} pb={1}>
-            <Card>
-              <QuantitySoldByProduct id_store={id}/>
-            </Card>
-          </Grid>
         </Grid>
       </MDBox>
-      <MDBox pt={2} pb={2}>
+      <MDBox pt={1} pb={2}>
         <Grid container spacing={6}>
-          <Grid item xs={12}>
+          <Grid item xs={8}>
             <Card>
-              <MDBox pt={2}>
+              <MDBox pt={2} pb={2}>
                 <div style={{ marginBottom: "2rem", display: "flex", "justify-content": "space-between", "align-items": "center" }}>
-                  <MDTypography pt={2} pr={2} pl={2} component="div"
+                  <MDTypography pr={2} pl={2} component="div"
                     className="sale-transaction-title" color="text">
                     Historial de transacciones
                   </MDTypography>
@@ -198,9 +172,13 @@ function PointOfSaleTransactionHistory() {
               </MDBox>
             </Card>
           </Grid>
+          <Grid item xs={4}>
+            <Card>
+              <QuantitySoldByProduct id_store={id}/>
+            </Card>
+          </Grid>
         </Grid>
       </MDBox>
-      {/*<Footer />*/}
     </DashboardLayout>
   );
 }

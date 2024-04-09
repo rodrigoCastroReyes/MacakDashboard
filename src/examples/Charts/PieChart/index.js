@@ -60,20 +60,17 @@ function PieChart({ icon, title, description, height, chart }) {
               <Icon fontSize="medium">{icon.component}</Icon>
             </MDBox>
           )}
-          <MDBox mt={icon.component ? -2 : 0}>
-            {title && <MDTypography variant="h6">{title}</MDTypography>}
-            <MDBox mb={2}>
-              <MDTypography component="div" variant="button" color="text">
-                {description}
-              </MDTypography>
-            </MDBox>
+          <MDBox mt={icon.component ? -2 : 0} pt="2" pb="2" >
+            {title && <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat-semibold" component="div" align="center" >
+              {title} {description}
+            </MDTypography>}
           </MDBox>
         </MDBox>
       ) : null}
       {useMemo(
         () => (
           <MDBox height={height}>
-            <Pie data={data} options={options} redraw />
+            <Pie data={data} options={options} width="600" height="250" redraw />
           </MDBox>
         ),
         [chart, height]

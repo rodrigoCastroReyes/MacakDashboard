@@ -30,11 +30,11 @@ function SalesPerProduct({id_store}) {
   if (loading) return <div>Cargando...</div>;
   
   if (error || !data?.report || !data?.total)
-    return <div>Error al obtener los datos</div>;
+    return <div pt="2" pb="2" display="flex" justifyContent="center">Sin datos disponibles</div>;
 
   return (
-    <VerticalBarChart title="Total de ventas por producto" description={
-    `$${data.total}`} chart={chart} height="200px" />
+    <VerticalBarChart title="Total de ventas" description={
+    `$${data.total}`} chart={chart} height="250px" />
   );
 }
 

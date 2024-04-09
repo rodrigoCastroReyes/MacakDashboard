@@ -15,7 +15,7 @@ const EventSummary = ({
     <Card>
       <CardContent className="event-summary-container" >
         <Typography className="event-summary-title">
-          Resumen del evento
+          Estadísticas del evento
         </Typography>
         <MDBox py={3}>
           <Grid container spacing={3}>

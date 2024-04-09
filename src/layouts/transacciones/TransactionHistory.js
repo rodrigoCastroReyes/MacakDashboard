@@ -3,6 +3,7 @@ import { styled } from "@mui/system";
 import moment from "moment";
 import "moment/locale/es"; // without this line it didn't work
 import MDTypography from "components/MDTypography";
+import { Typography } from "@mui/material";
 import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
@@ -203,12 +204,14 @@ function TransactionHistory({ numRows }) {
 
   return (
     <>
-      <div style={{ marginBottom: "2rem" }}>
+      <Typography pr={2} pl={2} className="event-summary-title">
+        Transacciones recientes
+      </Typography>
+      <div style={{ margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }}>
         <SearchInput
           fontFamily="poppins"
           type="search"
           label="Buscar"
-          style={{ marginLeft: "48px" }}
           placeholder="Buscar por código..."
           value={searchTerm}
           onChange={handleSearchChange}

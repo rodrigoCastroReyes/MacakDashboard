@@ -87,14 +87,6 @@ const routes = [
     component: <TokenDetailHistory />,
   },
   {
-    type: "collapse",
-    name: "Reportes",
-    key: "reportes",
-    icon: <AnalyticsIcon fontFamily="montserrat" fontSize="small" color="white"></AnalyticsIcon>,
-    route: "/reportes",
-    component: <Reports />,
-  },
-  {
     type: "route",
     route: "/authentication/sign-in",
     component: <SignIn />,

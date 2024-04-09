@@ -62,6 +62,7 @@ const Resumen = () => {
           });
           // Actualizar el estado con la respuesta del evento
           setEvent(eventResponse.data);
+          
           // Realizar otras solicitudes después del inicio de sesión
           const salesResponse = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=order");
           const rechargesResponse = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=recharge");
@@ -81,7 +82,7 @@ const Resumen = () => {
   
   return (
     <DashboardLayout>
-      <DashboardNavbar main_title="" />
+      <DashboardNavbar main_title={`Resumen ${event.name}`} />
         <MDBox py={3}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
@@ -99,26 +100,7 @@ const Resumen = () => {
             </Grid>
             <Grid item xs={12} sm={12}>
               <Card>
-                <MDBox
-                    mx={2}
-                    mt={0}
-                    py={3}
-                    px={2}
-                    variant="gradient"
-                    bgColor="info"
-                    borderRadius="lg"
-                    coloredShadow="info"
-                  >
-                    <MDTypography
-                      fontWeight="regular"
-                      fontFamily="montserrat-semibold"
-                      fontSize="22px"
-                      component="div" align="center"
-                      variant="h6" color="white">
-                      Transacciones recientes
-                    </MDTypography>
-                </MDBox>
-                <MDBox pt={3}>
+                <MDBox pt={1}>
                   <TransactionHistory numRows={10} />
                 </MDBox>
               </Card>

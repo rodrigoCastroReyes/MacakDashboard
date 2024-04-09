@@ -7,6 +7,8 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { Typography } from "@mui/material";
+
 //import Footer from "examples/Footer";
 import MDTypography from "components/MDTypography";
 import useAxios from "hooks/useAxios";
@@ -110,32 +112,20 @@ const columns = [
 
   return (
     <DashboardLayout>
-      <DashboardNavbar main_title=""/>
-      <MDBox pt={6} pb={3}>
+      <DashboardNavbar main_title="Registro de Tokens"/>
+      <MDBox pt={3} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography component="div" align="center" fontFamily="montserrat-semibold" fontSize="22px" variant="h6" color="white">
-                  Historial de registro de tokens
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <div style={{ marginBottom: "2rem"}}>
+              <Typography pt={2} pr={2} pl={2} className="event-summary-title">
+                Historial de registro
+              </Typography>
+              <MDBox pt={1}>
+                <div style={{ margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }} >
                   <SearchInput
                     fontFamily="poppins"
                     type="search"
                     label="Buscar"
-                    style={{marginLeft:"48px"}}
                     placeholder="Buscar por código..."
                     value={searchTerm}
                     onChange={handleSearchChange}
