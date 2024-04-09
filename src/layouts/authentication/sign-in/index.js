@@ -40,7 +40,7 @@ import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import "css/styles.css";
 
 function Basic() {
-   const { login } = useAuth(); // Utilizar la función useAuth para acceder a la función login del AuthProvider
+  const { login } = useAuth(); // Utilizar la función useAuth para acceder a la función login del AuthProvider
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -79,10 +79,9 @@ function Basic() {
     <BasicLayout image={bgImage}>
       <Card>
         <MDTypography variant="h4" component="div" align="center" fontWeight="medium" fontFamily="montserrat" mt={1}>
-          
         </MDTypography>
         <MDBox pt={4} pb={3} px={3}>
-        <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
           <MDBox mb={2}>
             <MDInput type="text" label="Usuario" value={username} onChange={(e) => setUsername(e.target.value)} required={true} fullWidth />
           </MDBox>

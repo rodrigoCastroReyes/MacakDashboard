@@ -72,13 +72,13 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
   const { data, options } = configs(chart.labels || [], chartDatasets);
 
   const renderChart = (
-    <MDBox py={2} pr={2} pl={icon.component ? 1 : 2}>
+    <MDBox py={1} pr={2} pl={icon.component ? 1 : 2}>
       {title || description ? (
         <MDBox display="flex" px={description ? 1 : 0} pt={description ? 1 : 0}>
           {icon.component && (
             <MDBox
-              width="4rem"
-              height="4rem"
+              width="2rem"
+              height="2rem"
               bgColor={icon.color || "dark"}
               variant="gradient"
               coloredShadow={icon.color || "dark"}
@@ -94,12 +94,10 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
             </MDBox>
           )}
           <MDBox style={{margin:"auto"}} mt={icon.component ? -2 : 0}>
-            {title && <MDTypography color="black" fontWeight="medium" fontFamily="montserrat-semibold" component="div" align="center" >{title}</MDTypography>}
-            <MDBox mb={2}>
-              <MDTypography component="div" fontFamily="montserrat" fontWeight="regular"  color="black" align="center" fontSize="x-large">
-                {description}
-              </MDTypography>
-            </MDBox>
+            {title && <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat-semibold" component="div" align="center" >
+              {title}:  
+              {description}
+            </MDTypography>}
           </MDBox>
         </MDBox>
       ) : null}

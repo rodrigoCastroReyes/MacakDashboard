@@ -109,7 +109,7 @@ function TokenDetailHistory() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar main_title="" />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>

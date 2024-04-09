@@ -34,6 +34,7 @@ const MDButton = forwardRef(
         {...rest}
         ref={ref}
         color="primary"
+        fontFamily="montserrat" fontWeight="light"
         variant={variant === "gradient" ? "contained" : variant}
         size={size}
         ownerState={{ color, variant, size, circular, iconOnly, darkMode }}

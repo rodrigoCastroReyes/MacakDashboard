@@ -26,6 +26,8 @@ const EventSummary = ({
                   icon="weekend"
                   title="Ventas totales del evento"
                   count={ "$" + totalSales}
+                  url=""
+                  to_url={false}
                   percentage={{
                     color: "success",
                     amount: "",
@@ -40,6 +42,8 @@ const EventSummary = ({
                   icon="leaderboard"
                   title="Recargas de tokens"
                   count={ "$" + totalIncome }
+                  url=""
+                  to_url={false}
                   percentage={{
                     color: "success",
                     amount: "",
@@ -54,6 +58,8 @@ const EventSummary = ({
                   icon="leaderboard"
                   title="Tokens activados"
                   count={ activatedTokens}
+                  url=""
+                  to_url={false}
                   percentage={{
                     color: "success",
                     amount: "",
@@ -69,6 +75,8 @@ const EventSummary = ({
                   icon="store"
                   title="Puntos de venta"
                   count={ salesPoints}
+                  url=""
+                  to_url={false}
                   percentage={{
                     color: "success",
                     amount: "",
@@ -88,8 +96,7 @@ EventSummary.propTypes = {
   totalSales: PropTypes.number.isRequired,
   totalIncome: PropTypes.number.isRequired,
   activatedTokens: PropTypes.number.isRequired,
-  salesPoints: PropTypes.number.isRequired,
-  transactions: PropTypes.number.isRequired,
+  salesPoints: PropTypes.number.isRequired
 };
 
 export default EventSummary;

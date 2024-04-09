@@ -137,7 +137,7 @@ function TransactionHistory({ numRows }) {
     type: (
       <MDBox ml={-1}>
         <MDBadge
-          class="customBadge"
+          className="customBadge"
           fontFamily="poppins"
           fontSize="14px"
           badgeContent={transaction.type === "order" ? "Compra" : "Carga"}

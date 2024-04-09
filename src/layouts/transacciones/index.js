@@ -31,7 +31,7 @@ function Transacciones() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar main_title="" />
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
@@ -56,7 +56,7 @@ function Transacciones() {
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>
-                <TransactionHistory numRows="-1" />
+                <TransactionHistory numRows={-1} />
               </MDBox>
             </Card>
           </Grid>
