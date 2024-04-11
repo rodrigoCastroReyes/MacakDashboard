@@ -39,6 +39,7 @@ import axios from "axios";
 import { useAuth } from 'context/authProvider';
 
 const Resumen = () => {
+  const [ jwtToken, setJwtToken ] = useState(null);
   const { authToken, userId } = useAuth(); // Usar la función useAuth para acceder al token JWT
   //const [jwtToken, setJwtToken ] = useState(null);
   const [event, setEvent ] = useState({
@@ -51,13 +52,21 @@ const Resumen = () => {
   });
 
   useEffect(() => {
+    async function checkAuthentication(){
+      let token = await localStorage.getItem('authToken');
+      setJwtToken(token);
+    };
+    checkAuthentication();
+  },[setJwtToken]);
+
+  useEffect(() => {
     const fetch_data = async () => {
       try {
-        if (authToken) {
+        if (jwtToken) {
           // Realizar solicitudes utilizando el token JWT
           const eventResponse = await axios.get("https://biodynamics.tech/api_tokens/event?id=f9b857ac-16f2-4852-8981-b72831e7f67c", {
             headers: {
-              'Authorization': authToken
+              'Authorization': jwtToken
             }
           });
           // Actualizar el estado con la respuesta del evento
@@ -78,7 +87,7 @@ const Resumen = () => {
       }
     };
     fetch_data();
-  }, [authToken,userId]);
+  }, [jwtToken,userId]);
   
   return (
     <DashboardLayout>

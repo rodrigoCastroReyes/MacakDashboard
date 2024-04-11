@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // react-router-dom components
 import { useAuth } from 'context/authProvider';
@@ -48,6 +48,13 @@ function Basic() {
   const [showPassword, setShowPassword] = useState(false);
   //const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  /*
+  useEffect(async() => {
+    let jwtoken = await localStorage.getItem('authToken');
+    if (jwtoken) {
+      navigate('/resumen');
+    }
+  }, [navigate]);*/
 
   const handleSubmit = async (e) => {
      e.preventDefault();

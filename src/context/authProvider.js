@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
         navigate('/authentication/sign-in');
       }
     };
-    
     checkAuthentication();
   }, [authToken, managerAdminUserId, userId, navigate]);
 
