@@ -46,15 +46,23 @@ import SignIn from "layouts/authentication/sign-in";
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import AttachMoneySharpIcon from '@mui/icons-material/AttachMoneySharp';
+import CurrencyExchangeSharpIcon from '@mui/icons-material/CurrencyExchangeSharp';
+import DoNotDisturbOnSharpIcon from '@mui/icons-material/DoNotDisturbOnSharp';
+import NfcIcon from '@mui/icons-material/Nfc';
+import BarChartIcon from '@mui/icons-material/BarChart';
+
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import Reports from "layouts/reportes";
+import RefundedTransactions from "layouts/order_transactions";
+import AnulledTransactions from "layouts/anulled_transactions";
 
 const routes = [
   {
     type: "collapse",
     name: "Resumen",
     key: "resumen",
-    icon: <QueryStatsIcon fontSize="small" color="white"></QueryStatsIcon>,
+    icon: <BarChartIcon fontSize="small" color="white"></BarChartIcon>,
     route: "/resumen",
     component: <Resumen />,
   },
@@ -62,7 +70,7 @@ const routes = [
     type: "collapse",
     name: "Tokens",
     key: "tokens",
-    icon: <CreditCardIcon fontSize="small" color="white"></CreditCardIcon>,
+    icon: <NfcIcon fontSize="small" color="white"></NfcIcon>,
     route: "/tokens",
     component: <Tokens />,
   },
@@ -70,15 +78,31 @@ const routes = [
     type: "route",
     key: "transaccion",
     route: "/transaccion/:id",
-    component: <PointOfSaleTransactionHistory />,
+    component: <PointOfSaleIcon />,
   },
   {
     type: "collapse",
     name: "Transacciones",
     key: "transacciones",
-    icon: <PointOfSaleIcon  fontSize="small" color="white"></PointOfSaleIcon>,
+    icon: <AttachMoneySharpIcon  fontSize="small" color="white"></AttachMoneySharpIcon>,
     route: "/transacciones",
     component: <Transacciones />,
+  },
+  {
+    type: "collapse",
+    name: "Anulaciones",
+    key: "recharged_anulled",
+    icon: <DoNotDisturbOnSharpIcon  fontSize="small" color="white"></DoNotDisturbOnSharpIcon>,
+    route: "/recharge_canceled",
+    component: <AnulledTransactions />,
+  },
+  {
+    type: "collapse",
+    name: "Reembolsos",
+    key: "refunding",
+    icon: <CurrencyExchangeSharpIcon  fontSize="small" color="white"></CurrencyExchangeSharpIcon>,
+    route: "/refunded",
+    component: <RefundedTransactions />,
   },
   {
     type: "route",

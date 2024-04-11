@@ -121,7 +121,7 @@ const columns = [
                 Historial de registro
               </Typography>
               <MDBox pt={1}>
-                <div style={{ margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }} >
+                <div style={{  margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }} >
                   <SearchInput
                     fontFamily="poppins"
                     type="search"

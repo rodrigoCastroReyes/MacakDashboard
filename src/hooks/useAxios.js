@@ -10,13 +10,10 @@ const useAxios = (url) => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await axios.get(url);
-
       if (response.status !== 200) {
         throw new Error(`Request failed with status ${response.status}`);
       }
-
       setData(response.data);
     } catch (error) {
       setError(error);

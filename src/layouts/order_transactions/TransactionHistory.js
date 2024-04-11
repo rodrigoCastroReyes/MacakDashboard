@@ -39,7 +39,7 @@ function TransactionHistory({ numRows }) {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { data, loading, error, refetch } = useAxios(
-    "https://biodynamics.tech/api_tokens/dashboard/event?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
+    "https://biodynamics.tech/api_tokens/dashboard/order_anulled?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -51,17 +51,7 @@ function TransactionHistory({ numRows }) {
   return tokens.filter((token) => {
     return token?.token_id?.code?.toLowerCase() && token.token_id.code.toLowerCase().includes(searchTerm.toLowerCase());
   });
-  };
-
-  const parsePaymentMethod = (payment_method)=>{
-    if(payment_method == "cash"){
-      return "Efectivo";
-    }else if(payment_method == "credit_card"){
-      return "TC";
-    }else{
-      return "Efectivo";
-    }
-  }
+};
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -74,9 +64,11 @@ function TransactionHistory({ numRows }) {
     return filterByCode(data?.transactions || [], searchTerm);
   }, [data?.transactions, searchTerm]);
 
+  console.log(data);
   if (loading) return <div>Cargando...</div>;
-  if (error || !data?.event_id || !data?.transactions)
+  if (error || !data?.transactions)
     return <div>Error al obtener los datos</div>;
+
   let transactions;
   if (numRows === -1) {
     transactions = filteredTokens;
@@ -99,20 +91,6 @@ function TransactionHistory({ numRows }) {
       fontFamily: "montserrat",
       fontSize: "14px",
       align: "left",
-    },
-    {
-      Header: "Detalle",
-      accessor: "detail",
-      fontFamily: "montserrat-semibold",
-      fontSize: "14px",
-      align: "left",
-    },
-    {
-      Header: "Estado",
-      accessor: "status",
-      fontFamily: "montserrat-semibold",
-      fontSize: "14px",
-      align: "center",
     },
     {
       Header: "Token",
@@ -151,35 +129,11 @@ function TransactionHistory({ numRows }) {
           className="customBadge"
           fontFamily="poppins"
           fontSize="14px"
-          badgeContent={transaction.type === "order" ? "Compra" : "Carga"}
-          color={transaction.type === "order" ? "info" : "success"}
+          badgeContent={transaction.type === "order" ? "Compra" : "Carga anulada"}
+          color="primary"
           variant="gradient"
         />
       </MDBox>
-    ),
-    detail: (
-      <MDTypography
-        fontFamily="poppins"
-        fontSize="14px"
-        variant="caption"
-        color="text"
-        fontWeight="medium"
-        style={{ color: transaction.payment_method === "cash" ? "info" : "success" }}
-      >
-        { parsePaymentMethod(transaction.payment_method)}
-      </MDTypography>
-    ),
-    status: (
-      <MDTypography
-        fontFamily="poppins"
-        fontSize="14px"
-        variant="caption"
-        color="text"
-        fontWeight="medium"
-        style={{ color: transaction.status === "failed" ? "error" : "inherit" }}
-      >
-        {transaction.status === "success" ? "Exitosa" : "Fallida"}
-      </MDTypography>
     ),
     token: (
       <MDTypography
@@ -190,7 +144,7 @@ function TransactionHistory({ numRows }) {
         fontWeight="medium"
         style={{ color: transaction.status === "failed" ? "error" : "inherit" }}
       >
-        <Link className="custom-link" to={`/token/${transaction.token_id._id}`}>
+        <Link className="custom-link" to={`/token/${transaction.token_id.code}`}>
           {" "}
           {transaction.token_id.code}{" "}
         </Link>
@@ -201,7 +155,7 @@ function TransactionHistory({ numRows }) {
         fontFamily="poppins"
         fontSize="14px"
         variant="caption"
-        color={transaction.type === "order" ? "info" : "success"}
+        color="primary"
         fontWeight="bold"
       >
         $
@@ -215,7 +169,7 @@ function TransactionHistory({ numRows }) {
   return (
     <>
       <Typography pr={2} pl={2} className="event-summary-title">
-        Transacciones
+        Lista de transacciones
       </Typography>
       <div style={{ margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }}>
         <SearchInput
