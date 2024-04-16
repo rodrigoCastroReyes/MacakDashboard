@@ -64,7 +64,7 @@ function configs(labels, datasets) {
             let datasets = ctx.chart.data.datasets;
             return value;
           },
-          color: "#fff",
+          color: "#7b809a",
           font: {
             size: 14,
             family: "montserrat-semibold",

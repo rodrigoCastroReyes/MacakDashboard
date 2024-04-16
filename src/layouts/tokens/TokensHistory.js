@@ -10,6 +10,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { Typography } from "@mui/material";
 import fileDownload from 'js-file-download'
 import MDBadge from "components/MDBadge";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 //import Footer from "examples/Footer";
 import MDTypography from "components/MDTypography";
@@ -34,6 +35,8 @@ const RefreshButtonContainer = styled('div')(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  marginRight: theme.spacing(3), // Agrega margen inferior para separar del campo de búsqueda
+  marginTop: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
   marginBottom: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
   [theme.breakpoints.up("sm")]: {
     flexDirection: "row",
@@ -154,10 +157,10 @@ const columns = [
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <Typography pt={2} pr={2} pl={2} className="event-summary-title">
-                Historial de registro de tokens
-              </Typography>
-              <MDBox pt={1}>
+              <MDBox pt={3} pr={2} pl={2} pb={3} >
+                <Typography pr={2} pl={2} className="event-title">
+                  Historial de registro de tokens
+                </Typography>
                 <div style={{  margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }} >
                   <SearchInput
                     fontFamily="poppins"
@@ -168,13 +171,9 @@ const columns = [
                     onChange={handleSearchChange}
                   />
                   <RefreshButtonContainer>
-                  <button
-                    className="refresh-button"
-                    onClick={handleRefresh}
-                    disabled={refreshing}
-                  >
-                    {refreshing ? "Refrescando..." : "Actualizar"}
-                  </button>
+                    <div>
+                      <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
+                    </div>
                   </RefreshButtonContainer>
                 </div>
                 <DataTable

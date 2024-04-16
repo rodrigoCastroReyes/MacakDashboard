@@ -12,6 +12,7 @@ import MDBadge from "components/MDBadge";
 import MDInput from "components/MDInput";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 moment.locale("es");
 
@@ -28,6 +29,8 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  marginRight: theme.spacing(3), // Agrega margen inferior para separar del campo de búsqueda
+  marginTop: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
   marginBottom: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
   [theme.breakpoints.up("sm")]: {
     flexDirection: "row",
@@ -112,7 +115,7 @@ function TransactionHistory({ numRows }) {
     date: (
       <MDTypography
         fontFamily="poppins"
-        fontSize="14px"
+        fontSize="12px"
         variant="button"
         color="text"
         fontWeight="medium"
@@ -128,8 +131,8 @@ function TransactionHistory({ numRows }) {
         <MDBadge
           className="customBadge"
           fontFamily="poppins"
-          fontSize="14px"
-          badgeContent={transaction.type === "order" ? "Compra" : "Carga anulada"}
+          fontSize="12px"
+          badgeContent={transaction.type === "order" ? "Compra anulada" : "Carga anulada"}
           color="primary"
           variant="gradient"
         />
@@ -138,7 +141,7 @@ function TransactionHistory({ numRows }) {
     token: (
       <MDTypography
         fontFamily="poppins"
-        fontSize="14px"
+        fontSize="12px"
         variant="caption"
         color="text"
         fontWeight="medium"
@@ -153,7 +156,7 @@ function TransactionHistory({ numRows }) {
     amount: (
       <MDTypography
         fontFamily="poppins"
-        fontSize="14px"
+        fontSize="12px"
         variant="caption"
         color="primary"
         fontWeight="bold"
@@ -167,8 +170,8 @@ function TransactionHistory({ numRows }) {
   }));
 
   return (
-    <>
-      <Typography pr={2} pl={2} className="event-summary-title">
+    <MDBox pt={3} pr={2} pl={2} pb={3}>
+      <Typography pr={2} pl={2} className="event-title">
         Lista de transacciones
       </Typography>
       <div style={{ margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }}>
@@ -181,13 +184,9 @@ function TransactionHistory({ numRows }) {
           onChange={handleSearchChange}
         />
         <RefreshButtonContainer>
-          <button
-            className="refresh-button"
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            {refreshing ? "Refrescando..." : "Actualizar"}
-          </button>
+          <div>
+            <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
+          </div>
         </RefreshButtonContainer>
       </div>
       <DataTable
@@ -197,7 +196,7 @@ function TransactionHistory({ numRows }) {
         showTotalEntries={false}
         noEndBorder
       />
-    </>
+     </MDBox>
   );
 }
 

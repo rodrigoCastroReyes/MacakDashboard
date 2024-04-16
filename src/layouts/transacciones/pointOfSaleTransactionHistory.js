@@ -16,6 +16,8 @@ import DataTable from "examples/Tables/DataTable";
 import "./styles.css";
 import SalesPerProduct from "layouts/reportes/components/SalesPerProduct";
 import QuantitySoldByProduct from "layouts/reportes/components/QuantitySoldByProduct";
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { styled } from "@mui/system";
 
 function PointOfSaleTransactionHistory() {
   moment.locale('es');
@@ -58,12 +60,23 @@ function PointOfSaleTransactionHistory() {
     }
   };
 
+  const RefreshButtonContainer = styled("div")(({ theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginRight: theme.spacing(3), // Agrega margen inferior para separar del campo de búsqueda
+    [theme.breakpoints.up("sm")]: {
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+  }));
+
   const columns = [
     {
       Header: "Fecha",
       accessor: "date",
       fontFamily:"montserrat-semibold",
-      fontSize:"16px",
+      fontSize:"14px",
       width: "30%",
       align: "center",
     },
@@ -71,10 +84,10 @@ function PointOfSaleTransactionHistory() {
       Header: "Estado",
       accessor: "status",
       fontFamily:"montserrat-semibold",
-      fontSize:"16px",
+      fontSize:"14px",
       align: "center",
     },
-    { Header: "Monto", accessor: "amount",fontFamily:"montserrat-semibold", fontSize:"16px", align: "center" },
+    { Header: "Monto", accessor: "amount",fontFamily:"montserrat-semibold", fontSize:"14px", align: "center" },
   ];
 
   if (loading) return <div>Cargando...</div>;
@@ -103,7 +116,7 @@ function PointOfSaleTransactionHistory() {
         variant="caption"
         color="text"
         fontFamily="poppins"
-        fontSize="16px"
+        fontSize="12px"
         fontWeight="medium"
         style={{ color: transaction.status === "rejected" ? "red" : "inherit" }}
       >
@@ -120,9 +133,9 @@ function PointOfSaleTransactionHistory() {
     amount: (
       <MDTypography
         fontFamily="poppins"
-        fontSize="16px"
+        fontSize="12px"
         variant="caption"
-        color={ transaction.type === 'order' ? 'info' : 'success' }
+        color={ transaction.type === 'order' ? '#7b809a' : 'success' }
         fontWeight="bold"
       >
         ${Math.abs(
@@ -151,16 +164,14 @@ function PointOfSaleTransactionHistory() {
               <MDBox pt={2} pb={2}>
                 <div style={{ marginBottom: "2rem", display: "flex", "justify-content": "space-between", "alignItems": "center" }}>
                   <MDTypography pr={2} pl={2} component="div"
-                    className="sale-transaction-title" color="text">
+                    className="event-title" color="text">
                     Historial de transacciones
                   </MDTypography>
-                  <button
-                    className="refresh-button"
-                    onClick={handleRefresh}
-                    disabled={refreshing}
-                  >
-                    {refreshing ? "Refrescando..." : "Actualizar"}
-                  </button>
+                  <RefreshButtonContainer>
+                    <div style={{ paddingTop: "10px", display: "flex", justifyContent: "center", alignItems: "center" }} >
+                      <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
+                    </div>
+                  </RefreshButtonContainer>
                 </div>
                 <DataTable
                   table={{ columns, rows }}

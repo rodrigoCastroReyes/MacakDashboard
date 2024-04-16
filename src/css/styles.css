@@ -154,3 +154,10 @@
   right: 0;
   margin-left: 1rem;
 }
+
+.event-title{
+  color: #344767 !important; 
+  font-family: 'montserrat-semibold' !important;
+  font-size: 20px;
+  font-weight: 800 !important;
+}

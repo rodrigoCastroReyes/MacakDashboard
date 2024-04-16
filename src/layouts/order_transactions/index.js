@@ -35,9 +35,7 @@ function RefundedTransactions() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <MDBox pt={3} pr={2} pl={2} pb={3}>
-                <TransactionHistory numRows={-1} />
-              </MDBox>
+              <TransactionHistory numRows={-1} />
             </Card>
           </Grid>
         </Grid>

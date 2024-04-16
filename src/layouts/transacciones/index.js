@@ -28,7 +28,6 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 //import Footer from "examples/Footer";
 
 function Transacciones() {
-
   return (
     <DashboardLayout>
       <DashboardNavbar main_title="Historial de transacciones" />
@@ -36,14 +35,11 @@ function Transacciones() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <MDBox pt={3}>
-                <TransactionHistory numRows={-1} />
-              </MDBox>
+              <TransactionHistory numRows={-1} />
             </Card>
           </Grid>
         </Grid>
       </MDBox>
-      {/*<Footer />*/}
     </DashboardLayout>
   );
 }

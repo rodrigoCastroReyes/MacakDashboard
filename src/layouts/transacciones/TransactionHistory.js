@@ -139,7 +139,7 @@ function TransactionHistory({ numRows }) {
     date: (
       <MDTypography
         fontFamily="poppins"
-        fontSize="14px"
+        fontSize="12px"
         variant="button"
         color="text"
         fontWeight="medium"
@@ -155,7 +155,7 @@ function TransactionHistory({ numRows }) {
         <MDBadge
           className="customBadge"
           fontFamily="poppins"
-          fontSize="14px"
+          fontSize="12px"
           badgeContent={transaction.type === "order" ? "Compra" : "Carga"}
           color={transaction.type === "order" ? "info" : "success"}
           variant="gradient"
@@ -165,7 +165,7 @@ function TransactionHistory({ numRows }) {
     detail: (
       <MDTypography
         fontFamily="poppins"
-        fontSize="14px"
+        fontSize="12px"
         variant="caption"
         color="text"
         fontWeight="medium"
@@ -189,7 +189,7 @@ function TransactionHistory({ numRows }) {
     token: (
       <MDTypography
         fontFamily="poppins"
-        fontSize="14px"
+        fontSize="12px"
         variant="caption"
         color="text"
         fontWeight="medium"
@@ -204,7 +204,7 @@ function TransactionHistory({ numRows }) {
     amount: (
       <MDTypography
         fontFamily="poppins"
-        fontSize="14px"
+        fontSize="12px"
         variant="caption"
         color={transaction.type === "order" ? "info" : "success"}
         fontWeight="bold"
@@ -218,8 +218,8 @@ function TransactionHistory({ numRows }) {
   }));
 
   return (
-    <>
-      <Typography pr={2} pl={2} className="event-summary-title">
+    <MDBox pt={3} pr={2} pl={2} pb={3}>
+      <Typography pr={2} pl={2} className="event-title">
         Transacciones
       </Typography>
       <div style={{ margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }}>
@@ -247,7 +247,7 @@ function TransactionHistory({ numRows }) {
         showTotalEntries={false}
         noEndBorder
       />
-    </>
+     </MDBox>
   );
 }
 
