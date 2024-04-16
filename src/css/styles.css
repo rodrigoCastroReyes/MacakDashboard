@@ -32,8 +32,17 @@
   font-family: 'poppins' !important;
 }*/
 
+.custom-btn-icon{
+  padding: 0px;
+  cursor: pointer;
+}
+
+.custom-btn-icon:hover {
+  color: #007bff !important; /* Color al pasar el mouse */
+}
+
 .custom-link {
-  color: #515355 !important;
+  color: #7b809a !important; 
   font-weight: 800;
   text-decoration: none !important;
 }
@@ -56,7 +65,7 @@
   border-radius: 5px;
   cursor: pointer;
   right: 0;
-  margin: 0px;
+  margin: 0px !important;
 }
 
 .refresh-button:hover {

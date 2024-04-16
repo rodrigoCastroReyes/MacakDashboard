@@ -37,7 +37,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 function PieChart({ icon, title, description, height, chart }) {
   const { data, options } = configs(chart.labels || [], chart.datasets || {});
-
+  
   const renderChart = (
     <MDBox py={2} pr={2} pl={icon.component ? 1 : 2}>
       {title || description ? (

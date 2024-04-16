@@ -149,7 +149,7 @@ function PointOfSaleTransactionHistory() {
           <Grid item xs={8}>
             <Card>
               <MDBox pt={2} pb={2}>
-                <div style={{ marginBottom: "2rem", display: "flex", "justify-content": "space-between", "align-items": "center" }}>
+                <div style={{ marginBottom: "2rem", display: "flex", "justify-content": "space-between", "alignItems": "center" }}>
                   <MDTypography pr={2} pl={2} component="div"
                     className="sale-transaction-title" color="text">
                     Historial de transacciones

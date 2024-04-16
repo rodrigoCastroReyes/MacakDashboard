@@ -78,7 +78,7 @@ const routes = [
     type: "route",
     key: "transaccion",
     route: "/transaccion/:id",
-    component: <PointOfSaleIcon />,
+    component: <PointOfSaleTransactionHistory />,
   },
   {
     type: "collapse",

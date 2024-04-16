@@ -16,6 +16,10 @@ Coded by www.creative-tim.com
 /* eslint-disable no-dupe-keys */
 // Material Dashboard 2 React base styles
 import colors from "assets/theme/base/colors";
+import { Chart as ChartJS } from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+ChartJS.register(ChartDataLabels)
 
 const { gradients, dark } = colors;
 
@@ -37,18 +41,38 @@ function configs(labels, datasets) {
       labels,
       datasets: [...datasets],
     },
+    plugins: [ChartDataLabels],
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      tooltips: {
+        enabled: false
+      },
       plugins: {
         legend: {
-          display: true,
+          labels: {
+            color: "#7b809a",
+            font: {
+              size: 12,
+              family: "montserrat-semibold",
+              style: "normal",
+            }
+          }
         },
-      },
-      interaction: {
-        intersect: false,
-        mode: "index",
-      },
+        datalabels: {
+          formatter: (value,ctx) => {
+            let datasets = ctx.chart.data.datasets;
+            return value;
+          },
+          color: "#fff",
+          font: {
+            size: 14,
+            family: "montserrat-semibold",
+            style: "normal",
+            lineHeight: 2,
+          }
+        }
+      }
     },
   };
 }

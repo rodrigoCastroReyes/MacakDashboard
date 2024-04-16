@@ -12,6 +12,8 @@ import MDBadge from "components/MDBadge";
 import MDInput from "components/MDInput";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import DownloadIcon from '@mui/icons-material/Download';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 moment.locale("es");
 
@@ -28,6 +30,7 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  marginTop: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
   marginBottom: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
   [theme.breakpoints.up("sm")]: {
     flexDirection: "row",
@@ -36,10 +39,12 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
 }));
 
 function TransactionHistory({ numRows }) {
+  const url = "https://biodynamics.tech/api_tokens/";
+  const event_id = "f9b857ac-16f2-4852-8981-b72831e7f67c";
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { data, loading, error, refetch } = useAxios(
-    "https://biodynamics.tech/api_tokens/dashboard/event?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
+    `${url}dashboard/event?event_id=${event_id}`
   );
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -227,13 +232,12 @@ function TransactionHistory({ numRows }) {
           onChange={handleSearchChange}
         />
         <RefreshButtonContainer>
-          <button
-            className="refresh-button"
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            {refreshing ? "Refrescando..." : "Actualizar"}
-          </button>
+          <div>
+            <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
+          </div>
+          <Link className='custom-btn-icon custom-link' to={`${url}report/generate_report_of_event?event_id=${event_id}`} target="_blank" download>
+            <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium"  />
+          </Link>
         </RefreshButtonContainer>
       </div>
       <DataTable
