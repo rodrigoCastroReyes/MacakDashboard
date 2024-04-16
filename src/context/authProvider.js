@@ -5,23 +5,19 @@ import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [authToken, setAuthToken] = useState(null);
+  const [authToken, setAuthToken] = useState(
+    localStorage.getItem("authToken") || null
+  );
   const [managerAdminUserId, setManagerAdminUserId] = useState(null);
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      let jwtoken = await localStorage.getItem('authToken');
-      /**!authToken || !managerAdminUserId || !userId */
-      if (jwtoken) {
-        return;
-      }else{
-        navigate('/authentication/sign-in');
-      }
+      if (!authToken) return;
     };
     checkAuthentication();
-  }, [authToken, managerAdminUserId, userId, navigate]);
+  }, [authToken, managerAdminUserId, userId]);
 
   const login = async (username, password) => {
     try {

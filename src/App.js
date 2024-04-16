@@ -63,9 +63,6 @@ export default function App() {
         return getRoutes(route.collapse, authToken);
       }
       if (route.route) {
-        if(route.route === "/authentication/sign-in"){
-          return <Route exact path={route.route} element={authToken ? route.component : <Navigate to="/resumen" />} key={route.key} />;
-        }
         if (route.route !== "/authentication/sign-in") {
           if (!authToken && route.route === "/resumen") {
             return null;

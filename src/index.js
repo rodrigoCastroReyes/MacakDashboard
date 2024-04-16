@@ -29,7 +29,7 @@ root.render(
   <BrowserRouter basename="/virtual_cash">
     <MaterialUIControllerProvider>
       <AuthProvider>
-      <App />
+        <App />
       </AuthProvider>
     </MaterialUIControllerProvider>
   </BrowserRouter>
