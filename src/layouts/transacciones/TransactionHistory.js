@@ -15,6 +15,9 @@ import PropTypes from "prop-types";
 import DownloadIcon from '@mui/icons-material/Download';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
+//Import del Filtro
+import Filtro from "components/MDFilter/index"
+
 moment.locale("es");
 
 const SearchInput = styled(MDInput)(({ theme }) => ({
@@ -58,6 +61,8 @@ function TransactionHistory({ numRows }) {
   });
   };
 
+  const [filtro, setFiltro] = useState({ carga: false, compra: false });
+
   const parsePaymentMethod = (payment_method)=>{
     if(payment_method == "cash"){
       return "Efectivo";
@@ -88,6 +93,19 @@ function TransactionHistory({ numRows }) {
   } else {
     transactions = filteredTokens.slice(0, numRows);
   }
+
+  const filteredTransactions = transactions.filter((transaction) => {
+    if (filtro.carga && filtro.compra) {
+      return true;
+    }
+    if (filtro.carga && transaction.type === 'order') {
+      return false;
+    }
+    if (filtro.compra && transaction.type !== 'order') {
+      return false;
+    }
+    return true;
+  });
 
   const columns = [
     {
@@ -135,7 +153,7 @@ function TransactionHistory({ numRows }) {
     },
   ];
 
-  const rows = transactions.map((transaction) => ({
+  const rows = filteredTransactions.map((transaction) => ({
     date: (
       <MDTypography
         fontFamily="poppins"
@@ -231,6 +249,9 @@ function TransactionHistory({ numRows }) {
           value={searchTerm}
           onChange={handleSearchChange}
         />
+
+        <Filtro onFilterChange={setFiltro} />
+
         <RefreshButtonContainer>
           <div>
             <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
