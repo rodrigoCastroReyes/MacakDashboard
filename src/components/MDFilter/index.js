@@ -15,13 +15,13 @@ const Filtro = ({ onFilterChange }) => {
 
 
     return (
-        <div style={{ marginTop: '-20px' }}>
-            <h4 style={{ fontWeight: 'bold' }} > Filtrar por:</h4>
-            <label style={{ marginRight: '20px' }} >
+        <div style={{ marginTop: '-10px', display: 'flex', alignItems: 'center' }}>
+            <h4 style={{ fontWeight: 'bold', marginRight: '15px' }} > Filtrar por: </h4>
+            <label style={{ marginRight: '15px' }} >
                 <input type="checkbox" name="carga" checked={selected.carga} onChange={handleChange} />
                 <h5 style={{ display: 'inline' }} > Carga </h5>
             </label>
-            <label style={{ marginRight: '20px' }} >
+            <label style={{ marginRight: '15px' }} >
                 <input type="checkbox" name="compra" checked={selected.compra} onChange={handleChange} />
                 <h5 style={{ display: 'inline' }} > Compra </h5>
             </label>

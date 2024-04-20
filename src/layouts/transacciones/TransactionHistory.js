@@ -240,27 +240,33 @@ function TransactionHistory({ numRows }) {
       <Typography pr={2} pl={2} className="event-title">
         Transacciones
       </Typography>
-      <div style={{ margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }}>
-        <SearchInput
-          fontFamily="poppins"
-          type="search"
-          label="Buscar"
-          placeholder="Buscar por código..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
+      <div style={{ margin: "1rem 1rem 0.5rem 1rem", display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent:"space-between" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+          <SearchInput
+            fontFamily="poppins"
+            type="search"
+            label="Buscar"
+            placeholder="Buscar por código..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+  
+          <RefreshButtonContainer>
+            <div>
+              <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
+            </div>
+            <Link className='custom-btn-icon custom-link' to={`${url}report/generate_report_of_event?event_id=${event_id}`} target="_blank" download>
+              <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium"  />
+            </Link>
+          </RefreshButtonContainer>
+        </div>
 
+        <div style={{ margin: "0rem 0rem 0rem 0.2rem" }}>
         <Filtro onFilterChange={setFiltro} />
+        </div>
 
-        <RefreshButtonContainer>
-          <div>
-            <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
-          </div>
-          <Link className='custom-btn-icon custom-link' to={`${url}report/generate_report_of_event?event_id=${event_id}`} target="_blank" download>
-            <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium"  />
-          </Link>
-        </RefreshButtonContainer>
       </div>
+  
       <DataTable
         table={{ columns, rows }}
         isSorted={false}
@@ -268,7 +274,7 @@ function TransactionHistory({ numRows }) {
         showTotalEntries={false}
         noEndBorder
       />
-     </MDBox>
+    </MDBox>
   );
 }
 
