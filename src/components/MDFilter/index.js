@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Filtro = ({ onFilterChange }) => {
-    const [selected, setSelected] = useState({ carga: false, compra: false });
+    const [selected, setSelected] = useState({ carga: true, compra: true });
+
+    useEffect(() => {
+        onFilterChange(selected);
+    }, []);
 
     const handleChange = (event) => {
         const newSelected = { ...selected, [event.target.name]: event.target.checked };
@@ -9,9 +13,10 @@ const Filtro = ({ onFilterChange }) => {
         onFilterChange(newSelected);
     };
 
+
     return (
         <div style={{ marginTop: '-20px' }}>
-            <h4 style={{ fontWeight: 'bold' }} >Filtrar por:</h4>
+            <h4 style={{ fontWeight: 'bold' }} > Filtrar por:</h4>
             <label style={{ marginRight: '20px' }} >
                 <input type="checkbox" name="carga" checked={selected.carga} onChange={handleChange} />
                 <h5 style={{ display: 'inline' }} > Carga </h5>

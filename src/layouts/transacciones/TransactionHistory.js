@@ -95,16 +95,16 @@ function TransactionHistory({ numRows }) {
   }
 
   const filteredTransactions = transactions.filter((transaction) => {
-    if (filtro.carga && filtro.compra) {
+    if (!filtro.carga && !filtro.compra) {
+      return false;
+    }
+    if (filtro.carga && transaction.type !== 'order') {
       return true;
     }
-    if (filtro.carga && transaction.type === 'order') {
-      return false;
+    if (filtro.compra && transaction.type === 'order') {
+      return true;
     }
-    if (filtro.compra && transaction.type !== 'order') {
-      return false;
-    }
-    return true;
+    return false;
   });
 
   const columns = [
