@@ -39,7 +39,7 @@ import axios from "axios";
 import { useAuth } from 'context/authProvider';
 
 const Resumen = () => {
-
+  const [ jwtToken, setJwtToken ] = useState(null);
   const { authToken, userId } = useAuth(); // Usar la función useAuth para acceder al token JWT
   //const [jwtToken, setJwtToken ] = useState(null);
   const [event, setEvent ] = useState({
@@ -51,43 +51,27 @@ const Resumen = () => {
     totalRecharge : 0
   });
 
-  {/*const { data, loading, error } =  usePostAxios("https://biodynamics.tech/api_tokens/user/login",{
-    username : 'event_123',
-    password : 'abcd'
-  });
-  useEffect(()=>{
-    if(data){
-      setJwtToken(data.jwtoken);
-    }
-  }, [data]);
-
   useEffect(() => {
-    async function fetch_data(){
-      if (jwtToken) {
-        const response = await axios.get("https://biodynamics.tech/api_tokens/event?id=f9b857ac-16f2-4852-8981-b72831e7f67c",{
-          headers: {
-            'Authorization': jwtToken
-          }
-        });
-        setEvent(response.data);
-      }
-    }
-    fetch_data()
-  }, [jwtToken]);*/}
-
+    async function checkAuthentication(){
+      let token = await localStorage.getItem('authToken');
+      setJwtToken(token);
+    };
+    checkAuthentication();
+  },[setJwtToken]);
 
   useEffect(() => {
     const fetch_data = async () => {
       try {
-        if (authToken) {
+        if (jwtToken) {
           // Realizar solicitudes utilizando el token JWT
           const eventResponse = await axios.get("https://biodynamics.tech/api_tokens/event?id=f9b857ac-16f2-4852-8981-b72831e7f67c", {
             headers: {
-              'Authorization': authToken
+              'Authorization': jwtToken
             }
           });
           // Actualizar el estado con la respuesta del evento
           setEvent(eventResponse.data);
+          
           // Realizar otras solicitudes después del inicio de sesión
           const salesResponse = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=order");
           const rechargesResponse = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=recharge");
@@ -103,28 +87,11 @@ const Resumen = () => {
       }
     };
     fetch_data();
-  }, [authToken,userId]);
-
-  {/*useEffect(()=>{
-    async function fetch_data(){
-      const sales_response = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=order");
-      const recharges_response = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=recharge");
-      if(sales_response && recharges_response){
-        setEventSummary({
-          totalSales : sales_response.data.total_value,
-          totalRecharge : recharges_response.data.total_value
-        });
-      }
-    }
-    fetch_data();
-  })
-
-  if (loading) return <div>Cargando...</div>;
-if (error || data == null) return <div>Error al obtener los datos</div>;*/}
-
+  }, [jwtToken,userId]);
+  
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar main_title={`Resumen ${event.name}`} />
         <MDBox py={3}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
@@ -142,27 +109,8 @@ if (error || data == null) return <div>Error al obtener los datos</div>;*/}
             </Grid>
             <Grid item xs={12} sm={12}>
               <Card>
-                  <MDBox
-                mx={2}
-                mt={0}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography
-                  fontWeight="regular"
-                  fontFamily="montserrat-semibold"
-                  fontSize="22px"
-                  component="div" align="center"
-                  variant="h6" color="white">
-                  Transacciones recientes
-                </MDTypography>
-              </MDBox>
-                <MDBox pt={3}>
-                  <TransactionHistory numRows="10" />
+                <MDBox pt={1}>
+                  <TransactionHistory numRows={10} />
                 </MDBox>
               </Card>
             </Grid>

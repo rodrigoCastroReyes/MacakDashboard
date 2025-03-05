@@ -20,22 +20,22 @@ import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import TransactionHistory from "layouts/transacciones/TransactionHistory";
+import TransactionHistory from "layouts/anulled_transactions/TransactionHistory";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 //import Footer from "examples/Footer";
 
-function Transacciones() {
+function AnulledTransactions() {
   return (
     <DashboardLayout>
-      <DashboardNavbar main_title="Historial de transacciones" />
+      <DashboardNavbar main_title="Historial de transacciones anuladas" />
       <MDBox pt={3} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <TransactionHistory numRows={-1} />
+              <TransactionHistory numRows={-1} />                
             </Card>
           </Grid>
         </Grid>
@@ -44,4 +44,4 @@ function Transacciones() {
   );
 }
 
-export default Transacciones;
+export default AnulledTransactions;

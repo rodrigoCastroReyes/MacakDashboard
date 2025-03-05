@@ -12,11 +12,7 @@ import MDBadge from "components/MDBadge";
 import MDInput from "components/MDInput";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import DownloadIcon from '@mui/icons-material/Download';
 import RefreshIcon from '@mui/icons-material/Refresh';
-
-//Import del Filtro
-import Filtro from "components/MDFilter/index"
 
 moment.locale("es");
 
@@ -33,6 +29,7 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  marginRight: theme.spacing(3), // Agrega margen inferior para separar del campo de búsqueda
   marginTop: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
   marginBottom: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
   [theme.breakpoints.up("sm")]: {
@@ -42,12 +39,10 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
 }));
 
 function TransactionHistory({ numRows }) {
-  const url = "https://biodynamics.tech/api_tokens/";
-  const event_id = "f9b857ac-16f2-4852-8981-b72831e7f67c";
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { data, loading, error, refetch } = useAxios(
-    `${url}dashboard/event?event_id=${event_id}`
+    "https://biodynamics.tech/api_tokens/dashboard/recharge_anulled?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -59,31 +54,7 @@ function TransactionHistory({ numRows }) {
   return tokens.filter((token) => {
     return token?.token_id?.code?.toLowerCase() && token.token_id.code.toLowerCase().includes(searchTerm.toLowerCase());
   });
-  };
-
-  const [filtro, setFiltro] = useState({ carga: false, compra: false });
-
-  const parseTypeOfTransaction = (transaction)=>{  
-    if  ( (transaction.token_last_balance - transaction.token_new_balance) == 0 ) {
-      return "activación";
-    } else {
-      if(transaction.type == "order"){
-        return "compra";  
-      }else{  
-        return "carga";
-      }
-    }
-  }
-
-  const parsePaymentMethod = (payment_method)=>{
-    if(payment_method == "cash"){
-      return "Efectivo";
-    }else if(payment_method == "credit_card"){
-      return "TC";
-    }else{
-      return "Efectivo";
-    }
-  }
+};
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -96,28 +67,17 @@ function TransactionHistory({ numRows }) {
     return filterByCode(data?.transactions || [], searchTerm);
   }, [data?.transactions, searchTerm]);
 
+  console.log(data);
   if (loading) return <div>Cargando...</div>;
-  if (error || !data?.event_id || !data?.transactions)
+  if (error || !data?.transactions)
     return <div>Error al obtener los datos</div>;
+
   let transactions;
   if (numRows === -1) {
     transactions = filteredTokens;
   } else {
     transactions = filteredTokens.slice(0, numRows);
   }
-
-  const filteredTransactions = transactions.filter((transaction) => {
-    if (!filtro.carga && !filtro.compra) {
-      return false;
-    }
-    if (filtro.carga && transaction.type !== 'order') {
-      return true;
-    }
-    if (filtro.compra && transaction.type === 'order') {
-      return true;
-    }
-    return false;
-  });
 
   const columns = [
     {
@@ -136,20 +96,6 @@ function TransactionHistory({ numRows }) {
       align: "left",
     },
     {
-      Header: "Detalle",
-      accessor: "detail",
-      fontFamily: "montserrat-semibold",
-      fontSize: "14px",
-      align: "left",
-    },
-    {
-      Header: "Estado",
-      accessor: "status",
-      fontFamily: "montserrat-semibold",
-      fontSize: "14px",
-      align: "center",
-    },
-    {
       Header: "Token",
       accessor: "token",
       fontFamily: "montserrat-semibold",
@@ -165,7 +111,7 @@ function TransactionHistory({ numRows }) {
     },
   ];
 
-  const rows = filteredTransactions.map((transaction) => ({
+  const rows = transactions.map((transaction) => ({
     date: (
       <MDTypography
         fontFamily="poppins"
@@ -186,35 +132,11 @@ function TransactionHistory({ numRows }) {
           className="customBadge"
           fontFamily="poppins"
           fontSize="12px"
-          badgeContent={parseTypeOfTransaction(transaction)}
-          color={transaction.type === "order" ? "info" : "success"}
+          badgeContent={transaction.type === "order" ? "Compra" : "Carga anulada"}
+          color="primary"
           variant="gradient"
         />
       </MDBox>
-    ),
-    detail: (
-      <MDTypography
-        fontFamily="poppins"
-        fontSize="12px"
-        variant="caption"
-        color="text"
-        fontWeight="medium"
-        style={{ color: transaction.payment_method === "cash" ? "info" : "success" }}
-      >
-        { parsePaymentMethod(transaction.payment_method)}
-      </MDTypography>
-    ),
-    status: (
-      <MDTypography
-        fontFamily="poppins"
-        fontSize="14px"
-        variant="caption"
-        color="text"
-        fontWeight="medium"
-        style={{ color: transaction.status === "failed" ? "error" : "inherit" }}
-      >
-        {transaction.status === "success" ? "Exitosa" : "Fallida"}
-      </MDTypography>
     ),
     token: (
       <MDTypography
@@ -225,7 +147,7 @@ function TransactionHistory({ numRows }) {
         fontWeight="medium"
         style={{ color: transaction.status === "failed" ? "error" : "inherit" }}
       >
-        <Link className="custom-link" to={`/token/${transaction.token_id._id}`}>
+        <Link className="custom-link" to={`/token/${transaction.token_id.code}`}>
           {" "}
           {transaction.token_id.code}{" "}
         </Link>
@@ -236,7 +158,7 @@ function TransactionHistory({ numRows }) {
         fontFamily="poppins"
         fontSize="12px"
         variant="caption"
-        color={transaction.type === "order" ? "info" : "success"}
+        color="primary"
         fontWeight="bold"
       >
         $
@@ -250,35 +172,23 @@ function TransactionHistory({ numRows }) {
   return (
     <MDBox pt={3} pr={2} pl={2} pb={3}>
       <Typography pr={2} pl={2} className="event-title">
-        Transacciones
+        Lista de transacciones
       </Typography>
-      <div style={{ margin: "1rem 1rem 0.5rem 1rem", display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent:"space-between" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-          <SearchInput
-            fontFamily="poppins"
-            type="search"
-            label="Buscar"
-            placeholder="Buscar por código..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-  
-          <RefreshButtonContainer>
-            <div>
-              <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
-            </div>
-            <Link className='custom-btn-icon custom-link' to={`${url}report/generate_report_of_event?event_id=${event_id}`} target="_blank" download>
-              <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium"  />
-            </Link>
-          </RefreshButtonContainer>
-        </div>
-
-        <div style={{ margin: "0rem 0rem 0rem 0.2rem" }}>
-        <Filtro onFilterChange={setFiltro} />
-        </div>
-
+      <div style={{ margin: "1rem 1rem 2rem 1rem", display: "flex", alignItems: "center", justifyContent:"space-between" }}>
+        <SearchInput
+          fontFamily="poppins"
+          type="search"
+          label="Buscar"
+          placeholder="Buscar por código..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        <RefreshButtonContainer>
+          <div>
+            <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
+          </div>
+        </RefreshButtonContainer>
       </div>
-  
       <DataTable
         table={{ columns, rows }}
         isSorted={false}

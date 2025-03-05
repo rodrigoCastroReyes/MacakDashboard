@@ -73,19 +73,19 @@ const SalesSummary = () => {
               <React.Fragment key={name}>
                 <Grid item xs={12} md={6} lg={3}>
                   <MDBox mb={1.5}>
-                  <Link to={`/transaccion/${store_id}`}>
                     <ComplexStatisticsCard
                       color="dark"
                       icon="store"
                       title={ name }
                       count={ "$"+ total }
+                      url={`/transaccion/${store_id}`}
+                      to_url={true}
                       percentage={{
                       color: "success",
                       amount: "",
                       label: "Suma de ventas",
                       }}
-                      />
-                  </Link>
+                    />
                   </MDBox>
                 </Grid>
               </React.Fragment>

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { styled } from "@mui/system";
+
 import moment from "moment";
 import 'moment/locale/es'; // without this line it didn't work
 import Grid from "@mui/material/Grid";
@@ -13,6 +15,8 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
+import { Typography } from "@mui/material";
+import TokenAnulledHistory from "./TokenAnnulledHistory";
 
 function TokenDetailHistory() {
   const { id } = useParams();
@@ -22,18 +26,15 @@ function TokenDetailHistory() {
     `https://biodynamics.tech/api_tokens/dashboard/token?token_id=${id}`
   );
 
-  moment().locale('es');
   const handleRefresh = async () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
   };
-
-  if (loading) return <div>Cargando...</div>;
-  if (error || !data?.token || !data?.transactions) return <div>Error al obtener los datos</div>;
-
+  moment().locale('es');
+  if (loading  ) return <div>Cargando...</div>;
+  if (error || !data?.token || !data?.transactions ) return <div>Error al obtener los datos</div>;
   const transactions = data?.transactions;
-
   const getTranslateTypes = (transaction) =>{
     if (transaction.type === "order") {
       return "Compra";
@@ -45,6 +46,17 @@ function TokenDetailHistory() {
       return "";
     }
   };
+
+  const RefreshButtonContainer = styled("div")(({ theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
+    [theme.breakpoints.up("sm")]: {
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+  }));
 
   const getBalanceChangeDisplay = (transaction) => {
     if (transaction.status === "rejected") {
@@ -73,7 +85,7 @@ function TokenDetailHistory() {
     { Header: "Detalle", accessor: "detail", align: "left" },
     { Header: "Monto", accessor: "balance", align: "center" },
   ];
-
+  
   const rows = transactions.map((transaction) => ({
     registrationDate: (
       <MDTypography fontFamily='poppins' variant="caption" color="text" fontWeight="medium">
@@ -109,63 +121,51 @@ function TokenDetailHistory() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
-      <MDBox pt={6} pb={3}>
+      <DashboardNavbar main_title="Historial de transacciones por token" />
+      <MDBox pt={3} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography fontFamily='montserrat-semibold' fontSize="22px" component="div" align="center" variant="h6" color="white">
-                  Historial de transacciones de Token {data.token.code}
-                </MDTypography>
-              </MDBox>
-              <MDBox
-                pt={3}
-                px={2}
-                style={{ display: "flex", justifyContent: "flex-end" }}
-              >
-                <MDTypography
-                  fontFamily='poppins'
-                  fontWeight="regular"
-                  variant="body1"
-                  style={{ position: "realtive", marginRight: "1rem" }}
-                >
-                  Saldo disponible: ${data.token.balance}
-                  {/* Aquí va el saldo disponible */}
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <div style={{ marginBottom: "2rem" }}>
-                  <button
-                    className="return-button"
-                    onClick={() => navigate("/tokens")}
-                  >
+              <MDBox pt={3} pr={2} pl={2}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent:"space-between" }}>
+                  <button className="return-button"onClick={() => navigate("/tokens")}>
                     Volver
                   </button>
-                  <button
-                    className="refresh-button"
-                    onClick={handleRefresh}
-                    disabled={refreshing}
-                  >
-                    {refreshing ? "Refrescando..." : "Actualizar"}
-                  </button>
+                  <RefreshButtonContainer>
+                    <button
+                      className="refresh-button"
+                      onClick={handleRefresh}
+                      disabled={refreshing}
+                    >
+                      {refreshing ? "Refrescando..." : "Actualizar"}
+                    </button>
+                  </RefreshButtonContainer>
                 </div>
+                <Typography pr={2} pl={2} fontFamily='montserrat-semibold' fontSize="22px" className="event-summary-title">
+                  Historial de transacciones del Token {data.token.code}
+                </Typography>
+                <MDBox pr={2} pl={2} style={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDTypography
+                    fontFamily='poppins'
+                    fontWeight="regular"
+                    variant="body1"
+                    style={{ position: "realtive", marginRight: "1rem" }}
+                  >
+                  Saldo disponible: ${data.token.balance}
+                </MDTypography>
+                </MDBox>
                 <DataTable
+                  pb={2}
                   table={{ columns, rows }}
                   isSorted={false}
                   entriesPerPage={false}
                   showTotalEntries={false}
                   noEndBorder
                 />
+                <Typography pt={4} pr={2} pl={2} fontFamily='montserrat-semibold' fontSize="22px" className="event-summary-title">
+                  Historial de transacciones anuladas
+                </Typography>
+                <TokenAnulledHistory id={id}/>
               </MDBox>
             </Card>
           </Grid>

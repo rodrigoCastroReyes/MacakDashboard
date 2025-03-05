@@ -10,7 +10,7 @@ import QuantitySoldByProduct from "./components/QuantitySoldByProduct";
 function Reports() {
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar main_title="" />
       <MDBox py={3}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
@@ -19,9 +19,11 @@ function Reports() {
             </Card>
           </Grid>
           <Grid item xs={12} sm={12}>
-            <Card>
-              <QuantitySoldByProduct />
-            </Card>
+            <MDBox py={3} >
+              <Grid container spacing={2}>
+                <SalesPerProduct />
+              </Grid>
+            </MDBox>
           </Grid>
         </Grid>
       </MDBox>

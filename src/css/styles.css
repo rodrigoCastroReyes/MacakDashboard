@@ -32,8 +32,17 @@
   font-family: 'poppins' !important;
 }*/
 
+.custom-btn-icon{
+  padding: 0px;
+  cursor: pointer;
+}
+
+.custom-btn-icon:hover {
+  color: #007bff !important; /* Color al pasar el mouse */
+}
+
 .custom-link {
-  color: #515355 !important;
+  color: #7b809a !important; 
   font-weight: 800;
   text-decoration: none !important;
 }
@@ -55,9 +64,8 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  position: absolute;
   right: 0;
-  margin-right: 1rem;
+  margin: 0px !important;
 }
 
 .refresh-button:hover {
@@ -73,7 +81,6 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  position: absolute;
   left: 0;
   margin-left: 1rem;
 }
@@ -146,4 +153,11 @@
   position: absolute;
   right: 0;
   margin-left: 1rem;
+}
+
+.event-title{
+  color: #344767 !important; 
+  font-family: 'montserrat-semibold' !important;
+  font-size: 20px;
+  font-weight: 800 !important;
 }

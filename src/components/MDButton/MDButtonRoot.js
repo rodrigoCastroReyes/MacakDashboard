@@ -124,8 +124,8 @@ export default styled(Button)(({ theme, ownerState }) => {
       background: backgroundValue,
       color: colorValue,
       borderColor: borderColorValue,
-      fontFamily: 'montserrat',
-      fontSize: '14px',
+      fontFamily: 'poppins',
+      fontSize: '30px',
 
       "&:hover": {
         background: transparent.main,

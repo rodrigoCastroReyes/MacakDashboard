@@ -19,7 +19,9 @@ export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, direction, layout, sidenavColor, transparentSidenav, whiteSidenav, darkMode } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
-  const { authToken, userId, managerAdminUserId } = useAuth();
+  //const { authToken, userId, managerAdminUserId } = useAuth();
+  const [authToken, setAuthToken ] = useState(null);
+  
   const { pathname } = useLocation();
 
   const handleOnMouseEnter = () => {
@@ -41,6 +43,14 @@ export default function App() {
   }, [direction]);
 
   useEffect(() => {
+    async function checkAuthentication(){
+      let jwtoken = await localStorage.getItem('authToken');
+      setAuthToken(jwtoken);
+    };
+    checkAuthentication();
+  },[setAuthToken]);
+
+  useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
@@ -48,22 +58,22 @@ export default function App() {
   const isAuthenticated = !!authToken;
 
   function getRoutes(allRoutes, authToken) {
-  return allRoutes.map((route) => {
-    if (route.collapse) {
-      return getRoutes(route.collapse, authToken);
-    }
-    if (route.route) {
-      if (route.route !== "/authentication/sign-in") {
-        if (!authToken && route.route === "/resumen") {
-          return null;
-        }
-        return <Route exact path={route.route} element={authToken ? route.component : <Navigate to="/authentication/sign-in" />} key={route.key} />;
+    return allRoutes.map((route) => {
+      if (route.collapse) {
+        return getRoutes(route.collapse, authToken);
       }
-      return <Route exact path={route.route} element={route.component} key={route.key} />;
-    }
-    return null;
-  });
-}
+      if (route.route) {
+        if (route.route !== "/authentication/sign-in") {
+          if (!authToken && route.route === "/resumen") {
+            return null;
+          }
+          return <Route exact path={route.route} element={authToken ? route.component : <Navigate to="/authentication/sign-in" />} key={route.key} />;
+        }
+        return <Route exact path={route.route} element={route.component} key={route.key} />;
+      }
+      return null;
+    });
+  }
 
   return direction === "rtl" ? (
     <CacheProvider>
@@ -93,7 +103,7 @@ export default function App() {
         <Sidenav
           color={sidenavColor}
           brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-          brandName="Tokens NFC"
+          brandName="Virtual Cash"
           routes={routes}
           onMouseEnter={handleOnMouseEnter}
           onMouseLeave={handleOnMouseLeave}

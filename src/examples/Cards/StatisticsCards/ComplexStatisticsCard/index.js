@@ -24,8 +24,11 @@ import Icon from "@mui/material/Icon";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MuiLink from "@mui/material/Link";
+import MDButton from "components/MDButton";
+import { Link } from "react-router-dom";
 
-function ComplexStatisticsCard({ color, title, count, percentage, icon }) {
+function ComplexStatisticsCard({ color, title, count, percentage, icon, to_url, url }) {
   return (
     <Card>
       <MDBox display="flex" justifyContent="space-between" pt={1} px={2}>
@@ -50,15 +53,24 @@ function ComplexStatisticsCard({ color, title, count, percentage, icon }) {
           <MDTypography fontFamily="poppins" variant="button" fontWeight="light" color="text">
             {title}
           </MDTypography>
-          <MDTypography fontFamily="Montserrat" variant="h5">{count}</MDTypography>
+          <MDTypography fontFamily="montserrat" variant="h5">{count}</MDTypography>
         </MDBox>
       </MDBox>
       <Divider />
-      <MDBox pb={2} px={2}>
-        <MDTypography textAlign="center" fontFamily="poppins" component="p" variant="button" color="text" display="flex">
-          {percentage.label}
-        </MDTypography>
-      </MDBox>
+        { to_url && 
+          <MDBox pb={2} px={2} display="flex" justifyContent="center" >
+            <Link to={url}>
+              <MDButton color="info"> Ver más </MDButton>
+            </Link>
+          </MDBox>
+        }
+        { !to_url && 
+          <MDBox pb={2} px={2} display="flex" justifyContent="center">
+            <MDTypography textAlign="center" fontFamily="poppins" component="p" variant="button" color="text" display="flex">
+             {percentage.label}
+            </MDTypography>
+          </MDBox>
+        }
     </Card>
   );
 }

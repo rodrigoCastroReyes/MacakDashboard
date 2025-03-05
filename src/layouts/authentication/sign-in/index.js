@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // react-router-dom components
 import { useAuth } from 'context/authProvider';
@@ -40,7 +40,7 @@ import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import "css/styles.css";
 
 function Basic() {
-   const { login } = useAuth(); // Utilizar la función useAuth para acceder a la función login del AuthProvider
+  const { login } = useAuth(); // Utilizar la función useAuth para acceder a la función login del AuthProvider
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -48,16 +48,22 @@ function Basic() {
   const [showPassword, setShowPassword] = useState(false);
   //const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  /*
+  useEffect(async() => {
+    let jwtoken = await localStorage.getItem('authToken');
+    if (jwtoken) {
+      navigate('/resumen');
+    }
+  }, [navigate]);*/
 
   const handleSubmit = async (e) => {
      e.preventDefault();
     try {
       const response = await login(username, password);
-      console.log("Response: ", response);
       if (response === "manager_admin") {
         navigate("/resumen");
       } else {
-        setError("Solo los manager_admin pueden iniciar sesión.");
+        setError("Solo los organizadores del evento pueden iniciar sesión.");
       }
     } catch (error) {
       setError("Credenciales incorrectas. Inténtalo de nuevo.");
@@ -80,10 +86,9 @@ function Basic() {
     <BasicLayout image={bgImage}>
       <Card>
         <MDTypography variant="h4" component="div" align="center" fontWeight="medium" fontFamily="montserrat" mt={1}>
-            Inicio de sesión
         </MDTypography>
         <MDBox pt={4} pb={3} px={3}>
-        <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
           <MDBox mb={2}>
             <MDInput type="text" label="Usuario" value={username} onChange={(e) => setUsername(e.target.value)} required={true} fullWidth />
           </MDBox>

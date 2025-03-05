@@ -15,21 +15,23 @@ const EventSummary = ({
     <Card>
       <CardContent className="event-summary-container" >
         <Typography className="event-summary-title">
-          Resumen del evento
+          Estadísticas del evento
         </Typography>
         <MDBox py={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={3}>
               <MDBox mb={1.5}>
                 <ComplexStatisticsCard
-                  color="dark"
-                  icon="weekend"
-                  title="Ventas totales del evento"
+                  color="info"
+                  icon="attach_money"
+                  title="Ventas"
                   count={ "$" + totalSales}
+                  url=""
+                  to_url={false}
                   percentage={{
-                    color: "success",
+                    color: "info",
                     amount: "",
-                    label: "Ventas de todos los puntos de venta",
+                    label: "Suma total de ventas",
                   }}
                 />
               </MDBox>
@@ -37,11 +39,13 @@ const EventSummary = ({
             <Grid item xs={12} md={6} lg={3}>
               <MDBox mb={1.5}>
                 <ComplexStatisticsCard
-                  icon="leaderboard"
-                  title="Recargas de tokens"
+                  icon="point_of_sale"
+                  title="Recargas"
                   count={ "$" + totalIncome }
+                  url=""
+                  to_url={false}
                   percentage={{
-                    color: "success",
+                    color: "info",
                     amount: "",
                     label: "Suma de todas las recargas",
                   }}
@@ -51,13 +55,15 @@ const EventSummary = ({
             <Grid item xs={12} md={6} lg={3}>
               <MDBox mb={1.5}>
                 <ComplexStatisticsCard
-                  icon="leaderboard"
-                  title="Tokens activados"
+                  icon="nfc"
+                  title="Activaciones"
                   count={ activatedTokens}
+                  url=""
+                  to_url={false}
                   percentage={{
-                    color: "success",
+                    color: "info",
                     amount: "",
-                    label: "Tokens registrados al evento",
+                    label: "Número de tokens registrados al evento",
                   }}
                 />
               </MDBox>
@@ -65,14 +71,16 @@ const EventSummary = ({
             <Grid item xs={12} md={6} lg={3}>
               <MDBox mb={1.5}>
                 <ComplexStatisticsCard
-                  color="success"
+                  color="info"
                   icon="store"
-                  title="Puntos de venta"
+                  title="Tiendas"
                   count={ salesPoints}
+                  url=""
+                  to_url={false}
                   percentage={{
                     color: "success",
                     amount: "",
-                    label: "Numero de tiendas registradas",
+                    label: "Numero de puntos de ventas registrados",
                   }}
                 />
               </MDBox>
@@ -88,8 +96,7 @@ EventSummary.propTypes = {
   totalSales: PropTypes.number.isRequired,
   totalIncome: PropTypes.number.isRequired,
   activatedTokens: PropTypes.number.isRequired,
-  salesPoints: PropTypes.number.isRequired,
-  transactions: PropTypes.number.isRequired,
+  salesPoints: PropTypes.number.isRequired
 };
 
 export default EventSummary;
