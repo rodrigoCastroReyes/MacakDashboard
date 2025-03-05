@@ -56,6 +56,7 @@ import AnalyticsIcon from '@mui/icons-material/Analytics';
 import Reports from "layouts/reportes";
 import RefundedTransactions from "layouts/order_transactions";
 import AnulledTransactions from "layouts/anulled_transactions";
+import Boleteria from "layouts/tickets_manager";
 
 const routes = [
   {
@@ -109,6 +110,14 @@ const routes = [
     key: "token",
     route: "/token/:id",
     component: <TokenDetailHistory />,
+  },
+  {
+    type: "collapse",
+    name: "Boleteria",
+    key: "boleteria",
+    icon: <BarChartIcon fontSize="small" color="white"></BarChartIcon>,
+    route: "/boleteria",
+    component: <Boleteria />,
   },
   {
     type: "route",

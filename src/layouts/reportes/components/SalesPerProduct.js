@@ -14,6 +14,7 @@ function SalesPerProduct({id_store}) {
       return value.toFixed(2);
     }
   };
+  
   const chart = useMemo(() => {
     return {
       labels: data?.report.map((product) => product.description),

@@ -63,6 +63,18 @@ function TransactionHistory({ numRows }) {
 
   const [filtro, setFiltro] = useState({ carga: false, compra: false });
 
+  const parseTypeOfTransaction = (transaction)=>{  
+    if  ( (transaction.token_last_balance - transaction.token_new_balance) == 0 ) {
+      return "activación";
+    } else {
+      if(transaction.type == "order"){
+        return "compra";  
+      }else{  
+        return "carga";
+      }
+    }
+  }
+
   const parsePaymentMethod = (payment_method)=>{
     if(payment_method == "cash"){
       return "Efectivo";
@@ -174,7 +186,7 @@ function TransactionHistory({ numRows }) {
           className="customBadge"
           fontFamily="poppins"
           fontSize="12px"
-          badgeContent={transaction.type === "order" ? "Compra" : "Carga"}
+          badgeContent={parseTypeOfTransaction(transaction)}
           color={transaction.type === "order" ? "info" : "success"}
           variant="gradient"
         />
