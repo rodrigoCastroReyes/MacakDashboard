@@ -61,9 +61,15 @@ function PieChart({ icon, title, description, height, chart }) {
             </MDBox>
           )}
           <MDBox mt={icon.component ? -2 : 0} pt="2" pb="2" >
-            {title && <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat-semibold" component="div" align="center" >
-              {title} {description}
-            </MDTypography>}
+            {
+              title && 
+              <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat-semibold" component="div" align="left" style={{ fontSize: "1rem" }} >
+                {title}
+              </MDTypography>
+            }
+            <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat" component="div" align="left" style={{ fontSize: "2rem" }} >
+              {description}
+            </MDTypography>
           </MDBox>
         </MDBox>
       ) : null}

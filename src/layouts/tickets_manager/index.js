@@ -98,7 +98,7 @@ const Boleteria = () => {
     <DashboardLayout>
       <DashboardNavbar main_title={`Boleteria`} />
         <Typography className="event-summary-title">
-          Estadísticas de la boletería
+          Estadísticas
         </Typography>
         <MDBox py={3}>
           <Grid container spacing={4}>
@@ -106,7 +106,7 @@ const Boleteria = () => {
               <MDBox mb={1.5}>
                 <ComplexStatisticsCard
                   color="info"
-                  icon="attach_money"
+                  icon="confirmation_number"
                   title="Boletos"
                   count={  ticketSummary.ticketsCapacity}
                   url=""
@@ -122,7 +122,7 @@ const Boleteria = () => {
             <Grid item xs={12} md={6} lg={4}>
               <MDBox mb={1.5}>
                 <ComplexStatisticsCard
-                  icon="point_of_sale"
+                  icon="local_activity"
                   title="Boletos vendidos"
                   count={ ticketSummary.ticketsSold }
                   url=""
@@ -138,7 +138,7 @@ const Boleteria = () => {
             <Grid item xs={12} md={6} lg={4}>
               <MDBox mb={1.5}>
                 <ComplexStatisticsCard
-                  icon="nfc"
+                  icon="book_online"
                   title="Boletos disponibles"
                   count={ ticketSummary.ticketsAvailable}
                   url=""
@@ -154,15 +154,17 @@ const Boleteria = () => {
 
           </Grid>
         </MDBox>
-        <MDBox>
+        <MDBox py={1}>
           <Grid item xs={12} md={6} lg={3}>
             <SalesPerTicket data={tickets} />
           </Grid>
+        </MDBox>
+        <MDBox py={1}>
           <Grid item xs={12} md={6} lg={3}>
             <QuantitySoldByTicket data={tickets} />
           </Grid>
         </MDBox>
-        <MDBox>
+        <MDBox py={1}>
           <Grid item xs={12} md={6} lg={3}>
             <PurchaseTicketsTransactions id_event={id_event} />
           </Grid>

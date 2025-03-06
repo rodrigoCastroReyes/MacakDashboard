@@ -161,12 +161,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           </MDTypography>
         </MDBox>
         <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="2rem" />}
+          {brand && <MDBox component="img" src={brand} alt="Brand" width="4rem" />}
           <MDBox
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
-            <MDTypography component="h6" variant="button" fontWeight="medium" fontFamily="montserrat" color={textColor}>
+            <MDTypography component="h6" variant="button" fontWeight="medium" fontFamily="montserrat" color={textColor} style={{ fontSize: "1rem" }}>
               {brandName}
             </MDTypography>
           </MDBox>

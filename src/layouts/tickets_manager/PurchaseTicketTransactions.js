@@ -24,8 +24,8 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
       accessor: "assistant",
       align: "center",
     },
-    { Header: "Monto", accessor: "amount", align: "center" },
-    { Header: "Precarga", accessor: "precharge", align: "center" },
+    { Header: "Monto de compra", accessor: "amount", align: "center" },
+    { Header: "Saldo precargado", accessor: "precharge", align: "center" },
   ];
 
   if (loading) return <div>Cargando...</div>;
@@ -36,7 +36,7 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
   const rows = data.map((transaction) => ({
     date: (
       <MDTypography variant="caption" fontWeight="medium" style={{ color: 'inherit' }}>
-        {moment(transaction.__createdtime__).format("DD MMM YYYY HH:mm")}
+        {moment(transaction.__updatedtime__).format("DD MMM YYYY HH:mm")}
       </MDTypography>
     ),
     assistant: (
@@ -46,12 +46,12 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     ),
     amount: (
       <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
-        {transaction.total_amount}
+       $ {transaction.total_amount}
       </MDTypography>
     ),
     precharge: (
       <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
-        {transaction.precharge_amount}
+       $ {transaction.precharge_amount}
       </MDTypography>
     ),
   }));
@@ -59,7 +59,7 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
   return (
     <Card>
       <CardContent>
-        <MDTypography variant="h6" gutterBottom>
+        <MDTypography colorVerticalBarChart="dark" fontWeight="bold" fontFamily="montserrat-semibold" component="div" align="left" style={{ fontSize: "1rem" }} >
           Historial de ordenes
         </MDTypography>
         <DataTable
