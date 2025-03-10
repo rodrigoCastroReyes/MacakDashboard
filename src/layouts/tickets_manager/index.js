@@ -146,7 +146,7 @@ const Boleteria = () => {
                   percentage={{
                     color: "info",
                     amount: "",
-                    label: "Número de boletos disponibles",
+                    label: "Número de Boletos disponibles",
                   }}
                 />
               </MDBox>

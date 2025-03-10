@@ -51,12 +51,14 @@ import CurrencyExchangeSharpIcon from '@mui/icons-material/CurrencyExchangeSharp
 import DoNotDisturbOnSharpIcon from '@mui/icons-material/DoNotDisturbOnSharp';
 import NfcIcon from '@mui/icons-material/Nfc';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import PeopleIcon from '@mui/icons-material/People';
 
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import Reports from "layouts/reportes";
 import RefundedTransactions from "layouts/order_transactions";
 import AnulledTransactions from "layouts/anulled_transactions";
 import Boleteria from "layouts/tickets_manager";
+import Asistentes from "layouts/assistants";
 
 const routes = [
   {
@@ -118,6 +120,14 @@ const routes = [
     icon: <BarChartIcon fontSize="small" color="white"></BarChartIcon>,
     route: "/boleteria",
     component: <Boleteria />,
+  },
+  {
+    type: "collapse",
+    name: "Asistentes",
+    key: "asistentes",
+    icon: <PeopleIcon fontSize="small" color="white"></PeopleIcon>,
+    route: "/asistentes",
+    component: <Asistentes />,
   },
   {
     type: "route",
