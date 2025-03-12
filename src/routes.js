@@ -60,6 +60,8 @@ import AnulledTransactions from "layouts/anulled_transactions";
 import Boleteria from "layouts/tickets_manager";
 import Asistentes from "layouts/assistants";
 
+import ClientDetail from "layouts/assistants/ClientDetail";
+
 const routes = [
   {
     type: "collapse",
@@ -134,6 +136,15 @@ const routes = [
     route: "/authentication/sign-in",
     component: <SignIn />,
   },
+  {
+    type: "route",
+    key: "cliente",
+    route: "/cliente/:id", // Ruta para ver los detalles de un cliente
+    component: <ClientDetail />, // El componente que mostrará los detalles del cliente
+  }
+  
+  
+
 ];
 
 export default routes;
