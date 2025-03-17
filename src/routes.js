@@ -58,9 +58,9 @@ import Reports from "layouts/reportes";
 import RefundedTransactions from "layouts/order_transactions";
 import AnulledTransactions from "layouts/anulled_transactions";
 import Boleteria from "layouts/tickets_manager";
-import Asistentes from "layouts/assistants";
 
-import ClientDetail from "layouts/assistants/ClientDetail";
+import Asistentes from "layouts/assistants";
+import AttenderDetails from "layouts/assistants/AttenderDetails";
 
 const routes = [
   {
@@ -138,13 +138,10 @@ const routes = [
   },
   {
     type: "route",
-    key: "cliente",
-    route: "/cliente/:id", // Ruta para ver los detalles de un cliente
-    component: <ClientDetail />, // El componente que mostrará los detalles del cliente
+    key: "attender-details",
+    route: "/attender-details/:id",
+    component: <AttenderDetails />,
   }
-  
-  
-
 ];
 
 export default routes;
