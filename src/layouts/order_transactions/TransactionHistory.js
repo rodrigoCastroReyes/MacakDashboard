@@ -66,8 +66,6 @@ function TransactionHistory({ numRows }) {
     }
     return filterByCode(data?.transactions || [], searchTerm);
   }, [data?.transactions, searchTerm]);
-
-  console.log(data);
   if (loading) return <div>Cargando...</div>;
   if (error || !data?.transactions)
     return <div>Error al obtener los datos</div>;

@@ -39,10 +39,12 @@ import SalesPerTicket from "./SalesPerTicket";
 import QuantitySoldByTicket from "./QuantitySoldByTicket";
 import PurchaseTicketsTransactions from "./PurchaseTicketTransactions";
 
+
 const Boleteria = () => {
   const [ jwtToken, setJwtToken ] = useState(null);
   const { authToken, userId } = useAuth(); // Usar la función useAuth para acceder al token JWT
   //const [jwtToken, setJwtToken ] = useState(null);
+
   const [event, setEvent ] = useState({
     amount_token_registered: 0,
     stores : []
@@ -69,12 +71,13 @@ const Boleteria = () => {
       try {
         if (jwtToken) {
           // Realizar solicitudes utilizando el token JWT
-          const eventResponse = await axios.get("https://biodynamics.tech/macak_dev/ticket/event?id=3f6d7c67-7a83-4d50-875e-cdd31fe7fcea", {
+          const eventResponse = await axios.get(`https://biodynamics.tech/macak_dev/ticket/event?id=${id_event}`, {
             headers: {
               'Authorization': jwtToken
             }
           });
           // Actualizar el estado con la respuesta del evento
+
           setTickets(eventResponse.data);
           // Sumar el campo max_quantity de cada tipo de tickets
           const ticketsCapacity = eventResponse.data.reduce((acc, store) => acc + store.max_quantity, 0);

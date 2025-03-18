@@ -57,6 +57,7 @@ import Reports from "layouts/reportes";
 import RefundedTransactions from "layouts/order_transactions";
 import AnulledTransactions from "layouts/anulled_transactions";
 import Boleteria from "layouts/tickets_manager";
+import OrderTicketManager from "layouts/tickets_manager/OrderTicketManager";
 
 const routes = [
   {
@@ -118,6 +119,12 @@ const routes = [
     icon: <BarChartIcon fontSize="small" color="white"></BarChartIcon>,
     route: "/boleteria",
     component: <Boleteria />,
+  },
+  {
+    type: "route",
+    key: "order_ticket",
+    route: "/orden_boleteria/:id",
+    component: <OrderTicketManager />,
   },
   {
     type: "route",
