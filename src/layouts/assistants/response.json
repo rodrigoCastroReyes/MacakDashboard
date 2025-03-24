@@ -1,0 +1,35 @@
+[
+  {
+    "_id": "f19b412c-f3e7-4801-ad0c-aa4a872a057b",
+    "__createdtime__": 1742238486509,
+    "__updatedtime__": 1742238486509,
+    "code": "05890071B6E200",
+    "status": "registered",
+    "event_id": "d112db44-a8d4-4ccd-b70f-44a3c4f21914",
+    "balance": 6.67,
+    "attender_id": "e453c1c7-8420-4677-b510-78f548dc58a2",
+    "__v": 0
+  },
+  {
+    "_id": "75bb1ae1-45d4-43fc-9568-584d1692d8c7",
+    "__createdtime__": 1742238486509,
+    "__updatedtime__": 1742238486509,
+    "code": "8CCD2AD3",
+    "status": "registered",
+    "event_id": "d112db44-a8d4-4ccd-b70f-44a3c4f21914",
+    "balance": 6.67,
+    "attender_id": "e453c1c7-8420-4677-b510-78f548dc58a2",
+    "__v": 0
+  },
+  {
+    "_id": "f9d2ca0f-350f-4747-b034-1a49cb5bfaed",
+    "__createdtime__": 1742238486509,
+    "__updatedtime__": 1742238486509,
+    "code": "6D3D7AFA",
+    "status": "registered",
+    "event_id": "d112db44-a8d4-4ccd-b70f-44a3c4f21914",
+    "balance": 6.67,
+    "attender_id": "e453c1c7-8420-4677-b510-78f548dc58a2",
+    "__v": 0
+  }
+]

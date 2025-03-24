@@ -35,14 +35,13 @@ const AttenderDetails = () => {
     );
   }
 
-  // tokens del id de usuario actual
   const userTokens = tokensData.tokens.find((tokenData) => tokenData.user_id === attender.id)?.tokens || [];
 
   const orderHistoryTable = {
     columns: [
       { Header: "Fecha", accessor: "date", align: "center" },
       { Header: "Descripción de Orden", accessor: "detail", align: "center" },
-      { Header: "Monto de la Orden ($)", accessor: "amount", align: "center" },
+      { Header: "Monto de la Orden", accessor: "amount", align: "center" },
       { Header: "Acciones", accessor: "actions", align: "center" }
     ],
     rows: attender.purchase_tickets?.flatMap((ticket) =>
@@ -78,7 +77,7 @@ const AttenderDetails = () => {
       { Header: "Identificador de Token", accessor: "id", align: "center" },
       { Header: "Estado", accessor: "status", align: "center" },
       { Header: "Fecha de Registro", accessor: "date", align: "center" },
-      { Header: "Monto ($)", accessor: "amount", align: "center" }
+      { Header: "Monto", accessor: "amount", align: "center" }
     ],
     rows: userTokens.map((token) => ({
       id: (
@@ -110,38 +109,45 @@ const AttenderDetails = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar main_title="Detalles del Asistente" />
-      <Box sx={{ p: 3 }}>
-        <Grid container spacing={3}>
-          
-          {/* Información del usuario */}
-          <Grid item xs={12}>
-            <Card sx={{ p: 3, display: "flex"}}>
-              <Box 
-                sx={{ 
-                  width: 80, height: 80, 
-                  display: "flex", justifyContent: "center", alignItems: "center", 
-                  bgcolor: "primary.main", borderRadius: "10px", mr: 3 
-                }}
-              >
-                <AccountBoxIcon fontSize="large" sx={{ color: "white" }} />
+      <Box sx={{ px: 3, py: 2 }}>
+        <Grid container spacing={2}>
+
+          {/* INFO Usuario IZQ */}
+          <Grid item xs={12} md={3}>
+            <Card sx={{p:4, display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+              <Box sx={{
+                width: 100,
+                height: 100,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+              }}>
+                <AccountBoxIcon fontSize = "large" color= "secondary" />
               </Box>
-              <Box>
-                <Typography variant="subtitle1">
-                  Usuario : {attender.full_name}
-                </Typography>
-                <Typography variant="subtitle1" color="textSecondary">
-                  Cédula : {attender.id_document}
-                </Typography>
-                <Typography variant="subtitle1" color="textSecondary">
-                  Email: {attender.email}
-                </Typography>
-              </Box>
+            </Card>
+          </Grid>
+
+          {/* INFO Usuario DRC */}
+          <Grid item xs={12} md={9}>
+            <Card sx={{ p: 4, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <Typography variant="h3" fontWeight="bold" gutterBottom>
+                {attender.full_name}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Cédula: {attender.id_document}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Email: {attender.email}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Fecha de Registro: {moment(attender.__createdtime__).format("DD/MM/YYYY")}
+              </Typography>
             </Card>
           </Grid>
 
           {/* Historial de Órdenes */}
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
+            <Card sx={{ p: 4 }}>
               <Typography variant="h5" sx={{ mb: 2 }}>Historial de Órdenes</Typography>
               {orderHistoryTable.rows.length > 0 ? (
                 <DataTable
@@ -161,7 +167,7 @@ const AttenderDetails = () => {
 
           {/* Tokens Activados */}
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
+            <Card sx={{ p: 4 }}>
               <Typography variant="h5" sx={{ mb: 2 }}>Tokens Activados</Typography>
               {tokensTable.rows.length > 0 ? (
                 <DataTable
