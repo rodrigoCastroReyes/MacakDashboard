@@ -33,8 +33,19 @@ const ClientList = () => {
 
   const resetSearch = () => setSearchTerm("");
 
-  if (loading) return <div>Cargando asistentes...</div>;
-  if (error) return <div>Error al cargar los asistentes.</div>;
+  if (loading || error) {
+    return (
+      <DashboardLayout>
+        <DashboardNavbar main_title="Asistentes" />
+        <MDBox pt={6} pb={3} display="flex" minHeight="50vh">
+          <div variant="h6">
+            {error ? "Error al obtener los datos" : "Cargando..."}
+          </div>
+        </MDBox>
+      </DashboardLayout>
+    );
+  }
+  
 
   return (
     <DashboardLayout>

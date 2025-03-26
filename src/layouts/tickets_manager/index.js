@@ -54,7 +54,7 @@ const Boleteria = () => {
   });
 
   const [ tickets, setTickets ] = useState( [] );
-  const id_event = "3f6d7c67-7a83-4d50-875e-cdd31fe7fcea";
+  const id_event = "f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb";
 
   useEffect(() => {
     async function checkAuthentication(){
@@ -66,10 +66,10 @@ const Boleteria = () => {
 
   useEffect(() => {
     const fetch_data = async () => {
-      try {
+      try { 
         if (jwtToken) {
           // Realizar solicitudes utilizando el token JWT
-          const eventResponse = await axios.get("https://biodynamics.tech/macak_dev/ticket/event?id=3f6d7c67-7a83-4d50-875e-cdd31fe7fcea", {
+          const eventResponse = await axios.get("https://biodynamics.tech/macak_dev/ticket/event?id=f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb", {
             headers: {
               'Authorization': jwtToken
             }

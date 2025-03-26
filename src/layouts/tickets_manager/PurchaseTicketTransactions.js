@@ -14,18 +14,10 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     );
 
     const columns = [
-    {
-      Header: "Fecha",
-      accessor: "date",
-      align: "center",
-    },
-    {
-      Header: "Asistente",
-      accessor: "assistant",
-      align: "center",
-    },
-    { Header: "Monto", accessor: "amount", align: "center" },
-    { Header: "Precarga", accessor: "precharge", align: "center" },
+    {Header: "Fecha", accessor: "date", align: "center",},
+    {Header: "Asistente", accessor: "assistant", align: "center",},
+    {Header: "Monto", accessor: "amount", align: "center" },
+    {Header: "Precarga", accessor: "precharge", align: "center" },
   ];
 
   if (loading) return <div>Cargando...</div>;
