@@ -13,16 +13,43 @@ import MDBadge from "components/MDBadge";
 import moment from "moment";
 import "moment/locale/es";
 
-import attendeesData from "layouts/assistants/purchase-attender-event.json";
-import tokensData from "layouts/assistants/tokens.json"; 
+import useAxios from "hooks/useAxios";
 
 moment.locale("es");
 
-const AttenderDetails = () => {
-  const { id } = useParams();
-  const attender = attendeesData.attenders.find((a) => a.id === id);
+const eventId = "f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb"; // ID de evento fijo por ahora
 
-  if (!attender) {
+const AttenderDetails = () => {
+  const { id: attenderId } = useParams();
+
+  const {
+    data: attenderData,
+    loading: loadingAttender,
+    error: errorAttender
+  } = useAxios(
+    `https://biodynamics.tech/macak_dev/purchase_ticket/by_attender_event?attender_id=${attenderId}&event_id=${eventId}`
+  );
+
+  const {
+    data: tokensData,
+    loading: loadingTokens,
+    error: errorTokens
+  } = useAxios(
+    `https://biodynamics.tech/macak_dev/token/by_attender_event?attender_id=${attenderId}&event_id=${eventId}`
+  );
+
+  if (loadingAttender || loadingTokens) {
+    return (
+      <DashboardLayout>
+        <DashboardNavbar main_title="Detalles del Asistente" />
+        <Box sx={{ p: 3 }}>
+          <Typography variant="body1">Cargando detalles del asistente...</Typography>
+        </Box>
+      </DashboardLayout>
+    );
+  }
+
+  if (errorAttender || !attenderData || !attenderData.attender) {
     return (
       <DashboardLayout>
         <DashboardNavbar main_title="Detalles del Asistente" />
@@ -35,7 +62,7 @@ const AttenderDetails = () => {
     );
   }
 
-  const userTokens = tokensData.tokens.find((tokenData) => tokenData.user_id === attender.id)?.tokens || [];
+  const { attender, purchase_tickets = [] } = attenderData;
 
   const orderHistoryTable = {
     columns: [
@@ -44,13 +71,13 @@ const AttenderDetails = () => {
       { Header: "Monto de la Orden", accessor: "amount", align: "center" },
       { Header: "Acciones", accessor: "actions", align: "center" }
     ],
-    rows: attender.purchase_tickets?.flatMap((ticket) =>
+    rows: purchase_tickets.flatMap((ticket) =>
       ticket.purchase_ticket_items
         .filter(item => item.quantity > 0)
         .map((item) => ({
           date: (
             <MDTypography fontSize="12px" variant="button" color="text" fontWeight="medium" align="center">
-              {moment(ticket.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
+              {moment(ticket.created_time).format("DD [de] MMMM YYYY HH:mm:ss A")}
             </MDTypography>
           ),
           detail: (
@@ -69,38 +96,38 @@ const AttenderDetails = () => {
             </IconButton>
           )
         }))
-    ) ?? []
+    )
   };
 
   const tokensTable = {
     columns: [
-      { Header: "Identificador de Token", accessor: "id", align: "center" },
+      { Header: "Nombre", accessor: "name", align: "center" },
+      { Header: "Código", accessor: "code", align: "center" },
       { Header: "Estado", accessor: "status", align: "center" },
-      { Header: "Fecha de Registro", accessor: "date", align: "center" },
-      { Header: "Monto", accessor: "amount", align: "center" }
+      { Header: "Saldo", accessor: "balance", align: "center" }
     ],
-    rows: userTokens.map((token) => ({
-      id: (
+    rows: (tokensData || []).map((token) => ({
+      name: (
         <MDTypography fontSize="12px" variant="caption" color="text" align="center">
-          {token.id}
+          {token.name}
+        </MDTypography>
+      ),
+      code: (
+        <MDTypography fontSize="12px" variant="caption" color="text" align="center">
+          {token.code}
         </MDTypography>
       ),
       status: (
         <MDBadge
           fontSize="12px"
           badgeContent={token.status}
-          color={token.status === "active" ? "success" : "warning"}
+          color={token.status === "registered" ? "success" : "warning"}
           variant="gradient"
         />
       ),
-      date: (
-        <MDTypography fontSize="12px" variant="caption" color="text" align="center">
-          {moment(token.created_at).format("DD/MM/YYYY")}
-        </MDTypography>
-      ),
-      amount: (
+      balance: (
         <MDTypography fontSize="12px" variant="caption" color="success" fontWeight="bold" align="center">
-          ${token.amount.toFixed(2)}
+          ${token.balance.toFixed(2)}
         </MDTypography>
       )
     }))
@@ -111,10 +138,9 @@ const AttenderDetails = () => {
       <DashboardNavbar main_title="Detalles del Asistente" />
       <Box sx={{ px: 3, py: 2 }}>
         <Grid container spacing={2}>
-
-          {/* INFO Usuario IZQ */}
+          {/* INFO usuario IZQ */}
           <Grid item xs={12} md={3}>
-            <Card sx={{p:4, display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+            <Card sx={{ p: 4, display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
               <Box sx={{
                 width: 100,
                 height: 100,
@@ -122,12 +148,12 @@ const AttenderDetails = () => {
                 justifyContent: "center",
                 alignItems: "center"
               }}>
-                <AccountBoxIcon fontSize = "large" color= "secondary" />
+                <AccountBoxIcon fontSize="large" color="secondary" />
               </Box>
             </Card>
           </Grid>
 
-          {/* INFO Usuario DRC */}
+          {/* INFO usuario DRC */}
           <Grid item xs={12} md={9}>
             <Card sx={{ p: 4, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
               <Typography variant="h3" fontWeight="bold" gutterBottom>
@@ -140,7 +166,7 @@ const AttenderDetails = () => {
                 Email: {attender.email}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Fecha de Registro: {moment(attender.__createdtime__).format("DD/MM/YYYY")}
+                Fecha de Registro: {moment(attender.created_time).format("DD/MM/YYYY")}
               </Typography>
             </Card>
           </Grid>
@@ -173,7 +199,7 @@ const AttenderDetails = () => {
                 <DataTable
                   table={tokensTable}
                   isSorted={false}
-                  entriesPerPage={false}
+                  entriesPerPage={false}  
                   showTotalEntries={false}
                   noEndBorder
                 />
@@ -184,7 +210,6 @@ const AttenderDetails = () => {
               )}
             </Card>
           </Grid>
-
         </Grid>
       </Box>
     </DashboardLayout>

@@ -10,36 +10,37 @@ import MDTypography from "components/MDTypography";
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
-import attendeesData from 'layouts/assistants/purchase-attender-event.json';
+import useAxios from "hooks/useAxios";
+
+const eventId = "f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb"; // Constante que puede hacerse dinámica
 
 const ClientList = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Extrae la lista de asistentes desde el JSON
-  const attendeesList = useMemo(() => {
-    return attendeesData.attenders || [];
-  }, []);
+  const { data, loading, error } = useAxios(
+    `https://biodynamics.tech/macak_dev/purchase_ticket/attender_event?id=${eventId}`
+  );
 
-  // Filtro de asistentes por full_name y id_document
+  const attendeesList = useMemo(() => data || [], [data]);
+
   const filteredAttendees = useMemo(() => {
-    return attendeesList.filter((attender) => {
-      const lowerSearch = searchTerm.toLowerCase();
-      return (
-        attender.full_name.toLowerCase().includes(lowerSearch) ||
-        attender.id_document.includes(lowerSearch)
-      );
-    });
+    const lowerSearch = searchTerm.toLowerCase();
+    return attendeesList.filter((attender) =>
+      attender.full_name.toLowerCase().includes(lowerSearch) ||
+      attender.id_document.includes(lowerSearch)
+    );
   }, [searchTerm, attendeesList]);
 
-  // Reiniciar búsqueda
   const resetSearch = () => setSearchTerm("");
+
+  if (loading) return <div>Cargando asistentes...</div>;
+  if (error) return <div>Error al cargar los asistentes.</div>;
 
   return (
     <DashboardLayout>
       <DashboardNavbar main_title="Asistentes" />
       <MDBox pt={3} pr={2} pl={2} pb={3}>
         <Box sx={{ mb: 2 }}>
-          {/* Barra de búsqueda y botón de reiniciar */}
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <TextField
               label="Buscar"
@@ -54,7 +55,6 @@ const ClientList = () => {
             </IconButton>
           </Box>
 
-          {/* Contador de asistentes */}
           <MDTypography variant="body2" sx={{ marginTop: 1, fontSize: '0.7rem' }}>
             {filteredAttendees.length === 1 ? "asistente encontrado: " : "asistentes encontrados: "}
             {filteredAttendees.length}
@@ -63,8 +63,8 @@ const ClientList = () => {
 
         <Grid container spacing={3}>
           {filteredAttendees.map((attender) => (
-            <Grid item xs={12} sm={6} md={3} key={attender.id}>
-              <Link to={`/attender-details/${attender.id}`} style={{ textDecoration: 'none' }}>
+            <Grid item xs={12} sm={6} md={3} key={attender._id}>
+              <Link to={`/attender-details/${attender._id}`} style={{ textDecoration: 'none' }}>
                 <Card
                   sx={{
                     cursor: "pointer",
@@ -84,6 +84,12 @@ const ClientList = () => {
             </Grid>
           ))}
         </Grid>
+
+        {filteredAttendees.length === 0 && (
+          <MDTypography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
+            No se encontraron asistentes con ese criterio.
+          </MDTypography>
+        )}
       </MDBox>
     </DashboardLayout>
   );
