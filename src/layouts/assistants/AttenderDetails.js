@@ -71,33 +71,48 @@ const AttenderDetails = () => {
       { Header: "Monto de la Orden", accessor: "amount", align: "center" },
       { Header: "Acciones", accessor: "actions", align: "center" }
     ],
-    rows: purchase_tickets.flatMap((ticket) =>
-      ticket.purchase_ticket_items
-        .filter(item => item.quantity > 0)
-        .map((item) => ({
-          date: (
-            <MDTypography fontSize="12px" variant="button" color="text" fontWeight="medium" align="center">
-              {moment(ticket.created_time).format("DD [de] MMMM YYYY HH:mm:ss A")}
-            </MDTypography>
-          ),
-          detail: (
-            <MDTypography fontSize="12px" variant="caption" color="text" align="center">
-              {`${item.ticket} ${item.quantity}x`}
-            </MDTypography>
-          ),
-          amount: (
-            <MDTypography fontSize="12px" variant="caption" color="success" fontWeight="bold" align="center">
-              ${ (item.quantity * item.price).toFixed(2) }
-            </MDTypography>
-          ),
-          actions: (
-            <IconButton color="primary" title="Ver detalles">
-              <VisibilityIcon />
-            </IconButton>
-          )
-        }))
-    )
+    rows: purchase_tickets.flatMap((ticket) => {
+      // Agrupar por ticket_id
+      const grouped = ticket.purchase_ticket_items.reduce((acc, item) => {
+        if (!acc[item.ticket_id]) {
+          acc[item.ticket_id] = {
+            ticket_name: item.ticket_name,
+            ticket_id: item.ticket_id,
+            price: item.price,
+            quantity: 1
+          };
+        } else {
+          acc[item.ticket_id].quantity += 1;
+        }
+        return acc;
+      }, {});
+  
+      // Convertir grupos en filas para la tabla
+      return Object.values(grouped).map((item) => ({
+        date: (
+          <MDTypography fontSize="12px" variant="button" color="text" fontWeight="medium" align="center">
+            {moment(ticket.created_time).format("DD [de] MMMM YYYY HH:mm:ss A")}
+          </MDTypography>
+        ),
+        detail: (
+          <MDTypography fontSize="12px" variant="caption" color="text" align="center">
+            {`${item.ticket_name} ${item.quantity}x`}
+          </MDTypography>
+        ),
+        amount: (
+          <MDTypography fontSize="12px" variant="caption" color="success" fontWeight="bold" align="center">
+            ${ (item.quantity * item.price).toFixed(2) }
+          </MDTypography>
+        ),
+        actions: (
+          <IconButton color="primary" title="Ver detalles">
+            <VisibilityIcon />
+          </IconButton>
+        )
+      }));
+    })
   };
+  
 
   const tokensTable = {
     columns: [
