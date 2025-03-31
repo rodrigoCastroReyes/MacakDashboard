@@ -46,7 +46,7 @@ const RefreshButtonContainer = styled('div')(({ theme }) => ({
 
 function TokensHistory() {
   const url = "https://biodynamics.tech/macak_dev/";
-  const event_id = "f9b857ac-16f2-4852-8981-b72831e7f67c";
+  const event_id = localStorage.getItem("eventId");
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const { data, loading, error, refetch } = useAxios( url + `event/tokens?id=${event_id}` );
@@ -97,9 +97,18 @@ function TokensHistory() {
     return filterByCode(data?.tokens || [], searchTerm);
   }, [data?.tokens, searchTerm]);
 
-  if (loading) return <div>Cargando...</div>;
-  if (error || !data?._id || !data?.tokens)
-    return <div>Error al obtener los datos</div>;
+if (loading || error) {
+    return (
+      <DashboardLayout>
+        <DashboardNavbar main_title="Tokens" />
+        <MDBox pt={6} pb={3} display="flex" minHeight="50vh">
+          <div variant="h6">
+            {error ? "Error al obtener los datos" : "Cargando..."}
+          </div>
+        </MDBox>
+      </DashboardLayout>
+    );
+  }
 
 const columns = [
     {
