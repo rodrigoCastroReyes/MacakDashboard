@@ -19,11 +19,13 @@ import './style.css'
 const SalesSummary = () => {
   const [startIndex, setStartIndex] = useState(0);
   const { data, loading, error } = useAxios(
-    "https://biodynamics.tech/api_tokens/dashboard/summary_per_store?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
+    "https://biodynamics.tech/macak_dev/dashboard/summary_per_store?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
   
   if (loading) return <div>Cargando...</div>;
-  if (error || !data?.stores_summary)
+  if (!data?.stores_summary)
+    return <div>¡ Sin ventas !</div>;
+  if (error)
     return <div>Error al obtener los datos</div>;
   
   const stores_summary = data.stores_summary;

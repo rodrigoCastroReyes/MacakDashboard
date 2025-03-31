@@ -42,11 +42,11 @@ function TransactionHistory({ numRows }) {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   //const { data, loading, error, refetch } = useAxios(
-  //  "https://biodynamics.tech/api_tokens/dashboard/order_anulled?event_id=$eventId"
+  //  "https://biodynamics.tech/macak_dev/dashboard/order_anulled?event_id=$eventId"
   //);
 
   const eventId = localStorage.getItem("eventId");
-  const url = `https://biodynamics.tech/api_tokens/dashboard/order_anulled?event_id=${eventId}`;
+  const url = `https://biodynamics.tech/macak_dev/dashboard/order_anulled?event_id=${eventId}`;
   const { data, loading, error, refetch } = useAxios(url);
 
   const handleRefresh = async () => {

@@ -42,7 +42,7 @@ function TransactionHistory({ numRows }) {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { data, loading, error, refetch } = useAxios(
-    "https://biodynamics.tech/api_tokens/dashboard/recharge_anulled?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
+    "https://biodynamics.tech/macak_dev/dashboard/recharge_anulled?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
   );
   const handleRefresh = async () => {
     setRefreshing(true);

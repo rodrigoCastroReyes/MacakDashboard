@@ -27,7 +27,7 @@ function PointOfSaleTransactionHistory() {
     amount : 0 
   });
   const { data, loading, error, refetch } = useAxios(
-    `https://biodynamics.tech/api_tokens/dashboard/store?store_id=${id}`
+    `https://biodynamics.tech/macak_dev/dashboard/store?store_id=${id}`
   );
 
   const handleRefresh = async () => {

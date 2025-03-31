@@ -23,7 +23,7 @@ function TokenDetailHistory() {
   const navigate = useNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const { data, loading, error, refetch } = useAxios(
-    `https://biodynamics.tech/api_tokens/dashboard/token?token_id=${id}`
+    `https://biodynamics.tech/macak_dev/dashboard/token?token_id=${id}`
   );
 
   const handleRefresh = async () => {

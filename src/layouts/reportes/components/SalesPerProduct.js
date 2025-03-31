@@ -4,7 +4,7 @@ import VerticalBarChart from "examples/Charts/BarCharts/VerticalBarChart";
 
 function SalesPerProduct({id_store}) {
   const { data, loading, error } = useAxios(
-    `https://biodynamics.tech/api_tokens/dashboard/total_per_product?store_id=${id_store}`
+    `https://biodynamics.tech/macak_dev/dashboard/total_per_product?store_id=${id_store}`
   );
 
   const getProductValue = (value) => {

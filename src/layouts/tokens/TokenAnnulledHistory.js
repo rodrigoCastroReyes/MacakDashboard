@@ -21,7 +21,7 @@ function TokenAnulledHistory({id}) {
   const [refreshing, setRefreshing] = useState(false);
   const [ rows, setRows ] = useState(null);
   const { data, loading, err, refetch } = useAxios(
-    `https://biodynamics.tech/api_tokens/transaction/get_anulled_transactions_of_token?token_id=${id}`
+    `https://biodynamics.tech/macak_dev/transaction/get_anulled_transactions_of_token?token_id=${id}`
   );
 
   const handleRefresh = async () => {

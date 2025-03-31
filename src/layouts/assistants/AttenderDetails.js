@@ -16,12 +16,10 @@
 
   import useAxios from "hooks/useAxios";
 
-  moment.locale("es");
-  
-  const eventId = localStorage.getItem("eventId");
-
   const AttenderDetails = () => {
+    moment.locale("es");
     const { id: attenderId } = useParams();
+    const eventId = localStorage.getItem("eventId");
 
     const {
       data: attenderData,

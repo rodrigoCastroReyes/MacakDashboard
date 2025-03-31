@@ -5,7 +5,7 @@ import PieChart from "examples/Charts/PieChart";
 
 function QuantitySoldByProduct({id_store}) {
   const { data, loading, error } = useAxios(
-    `https://biodynamics.tech/api_tokens/dashboard/sold_products?store_id=${id_store}`
+    `https://biodynamics.tech/macak_dev/dashboard/sold_products?store_id=${id_store}`
   );
 
   const chart = useMemo(() => {

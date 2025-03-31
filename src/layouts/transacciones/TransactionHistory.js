@@ -42,7 +42,7 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
 }));
 
 function TransactionHistory({ numRows }) {
-  const url = "https://biodynamics.tech/api_tokens/";
+  const url = "https://biodynamics.tech/macak_dev/";
   const event_id = localStorage.getItem("eventId");
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");

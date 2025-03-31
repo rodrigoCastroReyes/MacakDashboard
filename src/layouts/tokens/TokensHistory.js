@@ -45,7 +45,7 @@ const RefreshButtonContainer = styled('div')(({ theme }) => ({
 }));
 
 function TokensHistory() {
-  const url = "https://biodynamics.tech/api_tokens/";
+  const url = "https://biodynamics.tech/macak_dev/";
   const event_id = "f9b857ac-16f2-4852-8981-b72831e7f67c";
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
