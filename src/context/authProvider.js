@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
       localStorage.setItem('authToken', jwtoken);
+      localStorage.setItem('eventId', event_id);
       setAuthToken(jwtoken);
       setUserId(id);
       const managerAdminResponse = await axios.post('https://biodynamics.tech/api_tokens/manager_admin', {
@@ -45,6 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('eventId');
     setAuthToken(null);
     setManagerAdminUserId(null);
     setUserId(null);

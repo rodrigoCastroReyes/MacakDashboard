@@ -12,7 +12,10 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 import useAxios from "hooks/useAxios";
 
-const eventId = "f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb"; // Constante que puede hacerse dinámica
+//const eventId = "f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb";
+//event_id en local Storage = f9b857ac-16f2-4852-8981-b72831e7f67c
+
+const eventId = localStorage.getItem("eventId");
 
 const ClientList = () => {
   const [searchTerm, setSearchTerm] = useState("");

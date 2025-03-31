@@ -60,11 +60,12 @@ const Resumen = () => {
   },[setJwtToken]);
 
   useEffect(() => {
+    const eventId = localStorage.getItem("eventId");
     const fetch_data = async () => {
       try {
         if (jwtToken) {
           // Realizar solicitudes utilizando el token JWT
-          const eventResponse = await axios.get("https://biodynamics.tech/api_tokens/event?id=f9b857ac-16f2-4852-8981-b72831e7f67c", {
+          const eventResponse = await axios.get( `https://biodynamics.tech/api_tokens/event?id=${eventId}`, {
             headers: {
               'Authorization': jwtToken
             }
@@ -73,8 +74,8 @@ const Resumen = () => {
           setEvent(eventResponse.data);
           
           // Realizar otras solicitudes después del inicio de sesión
-          const salesResponse = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=order");
-          const rechargesResponse = await axios.get("https://biodynamics.tech/api_tokens/dashboard/summary?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c&type=recharge");
+          const salesResponse = await axios.get(`https://biodynamics.tech/api_tokens/dashboard/summary?event_id=${eventId}&type=order`);
+          const rechargesResponse = await axios.get(`https://biodynamics.tech/api_tokens/dashboard/summary?event_id=${eventId}&type=recharge`);
           if (salesResponse && rechargesResponse) {
             setEventSummary({
               totalSales: salesResponse.data.total_value,

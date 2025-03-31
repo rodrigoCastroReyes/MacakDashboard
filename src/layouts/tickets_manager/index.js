@@ -65,11 +65,13 @@ const Boleteria = () => {
   },[setJwtToken]);
 
   useEffect(() => {
+    const eventId = localStorage.getItem("eventId");
     const fetch_data = async () => {
       try { 
         if (jwtToken) {
           // Realizar solicitudes utilizando el token JWT
-          const eventResponse = await axios.get("https://biodynamics.tech/macak_dev/ticket/event?id=f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb", {
+          const eventResponse = await axios.get(//"https://biodynamics.tech/macak_dev/ticket/event?id=f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb"
+            `https://biodynamics.tech/macak_dev/ticket/event?id=${eventId}`, {
             headers: {
               'Authorization': jwtToken
             }

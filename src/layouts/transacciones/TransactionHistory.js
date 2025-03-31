@@ -43,7 +43,7 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
 
 function TransactionHistory({ numRows }) {
   const url = "https://biodynamics.tech/api_tokens/";
-  const event_id = "f9b857ac-16f2-4852-8981-b72831e7f67c";
+  const event_id = localStorage.getItem("eventId");
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { data, loading, error, refetch } = useAxios(
