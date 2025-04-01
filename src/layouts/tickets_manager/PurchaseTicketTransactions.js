@@ -6,6 +6,9 @@ import { Card, CardContent } from '@mui/material';
 import DataTable from "examples/Tables/DataTable";
 import axios from "axios";
 
+// Variable Global
+import { API_BASE_URL } from '../../config';
+
 const PurchaseTicketsTransactions = ({ id_event }) => {
   const [transactions, setTransactions] = useState([]);
   const [attenders, setAttenders] = useState([]);
@@ -16,8 +19,8 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     const fetchData = async () => {
       try {
         const [transRes, attendersRes] = await Promise.all([
-          axios.get(`https://biodynamics.tech/macak_dev/purchase_ticket/event?id=${id_event}`),
-          axios.get(`https://biodynamics.tech/macak_dev/purchase_ticket/attender_event?id=${id_event}`)
+          axios.get(`${API_BASE_URL}/purchase_ticket/event?id=${id_event}`),
+          axios.get(`${API_BASE_URL}/purchase_ticket/attender_event?id=${id_event}`)
         ]);
 
         setTransactions(transRes.data);

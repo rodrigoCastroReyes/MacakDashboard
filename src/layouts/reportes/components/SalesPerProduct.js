@@ -2,9 +2,12 @@ import React, { useState, useMemo } from "react";
 import useAxios from "hooks/useAxios";
 import VerticalBarChart from "examples/Charts/BarCharts/VerticalBarChart";
 
+// URL
+import { API_BASE_URL } from '../../../config';
+
 function SalesPerProduct({id_store}) {
   const { data, loading, error } = useAxios(
-    `https://biodynamics.tech/macak_dev/dashboard/total_per_product?store_id=${id_store}`
+    `${API_BASE_URL}/dashboard/total_per_product?store_id=${id_store}`
   );
 
   const getProductValue = (value) => {

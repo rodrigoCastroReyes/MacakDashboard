@@ -17,13 +17,15 @@ import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
 import { Typography } from "@mui/material";
 import TokenAnulledHistory from "./TokenAnnulledHistory";
+// URL
+import { API_BASE_URL } from '../../config' ;
 
 function TokenDetailHistory() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const { data, loading, error, refetch } = useAxios(
-    `https://biodynamics.tech/macak_dev/dashboard/token?token_id=${id}`
+    `${API_BASE_URL}/dashboard/token?token_id=${id}`
   );
 
   const handleRefresh = async () => {

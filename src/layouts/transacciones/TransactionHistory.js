@@ -18,6 +18,9 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 //Import del Filtro
 import Filtro from "components/MDFilter/index"
 
+// URL
+import { API_BASE_URL } from '../../config';
+
 moment.locale("es");
 
 const SearchInput = styled(MDInput)(({ theme }) => ({
@@ -42,12 +45,11 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
 }));
 
 function TransactionHistory({ numRows }) {
-  const url = "https://biodynamics.tech/macak_dev/";
   const event_id = localStorage.getItem("eventId");
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { data, loading, error, refetch } = useAxios(
-    `${url}dashboard/event?event_id=${event_id}`
+    `${API_BASE_URL}/dashboard/event?event_id=${event_id}`
   );
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -267,7 +269,7 @@ function TransactionHistory({ numRows }) {
             <div>
               <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
             </div>
-            <Link className='custom-btn-icon custom-link' to={`${url}report/generate_report_of_event?event_id=${event_id}`} target="_blank" download>
+            <Link className='custom-btn-icon custom-link' to={`${API_BASE_URL}/report/generate_report_of_event?event_id=${event_id}`} target="_blank" download>
               <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium"  />
             </Link>
           </RefreshButtonContainer>

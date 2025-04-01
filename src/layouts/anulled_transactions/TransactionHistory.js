@@ -14,6 +14,9 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import RefreshIcon from '@mui/icons-material/Refresh';
 
+// URL
+import { API_BASE_URL } from '../../config';
+
 moment.locale("es");
 
 const SearchInput = styled(MDInput)(({ theme }) => ({
@@ -43,7 +46,7 @@ function TransactionHistory({ numRows }) {
   const [searchTerm, setSearchTerm] = useState("");
   const eventId = localStorage.getItem("eventId");
   const { data, loading, error, refetch } = useAxios(
-    `https://biodynamics.tech/macak_dev/dashboard/recharge_anulled?event_id=${eventId}`
+    `${API_BASE_URL}/dashboard/recharge_anulled?event_id=${eventId}`
   );
   const handleRefresh = async () => {
     setRefreshing(true);

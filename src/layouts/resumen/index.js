@@ -38,6 +38,9 @@ import './style.css'
 import axios from "axios";
 import { useAuth } from 'context/authProvider';
 
+// URL
+import { API_BASE_URL } from '../../config';
+
 const Resumen = () => {
   const [ jwtToken, setJwtToken ] = useState(null);
   const { authToken, userId } = useAuth(); // Usar la función useAuth para acceder al token JWT
@@ -65,7 +68,7 @@ const Resumen = () => {
       try {
         if (jwtToken) {
           // Realizar solicitudes utilizando el token JWT
-          const eventResponse = await axios.get( `https://biodynamics.tech/macak_dev/event?id=${eventId}`, {
+          const eventResponse = await axios.get( `${API_BASE_URL}/event?id=${eventId}`, {
             headers: {
               'Authorization': jwtToken
             }
@@ -74,8 +77,8 @@ const Resumen = () => {
           setEvent(eventResponse.data);
           
           // Realizar otras solicitudes después del inicio de sesión
-          const salesResponse = await axios.get(`https://biodynamics.tech/macak_dev/dashboard/summary?event_id=${eventId}&type=order`);
-          const rechargesResponse = await axios.get(`https://biodynamics.tech/macak_dev/dashboard/summary?event_id=${eventId}&type=recharge`);
+          const salesResponse = await axios.get(`${API_BASE_URL}/dashboard/summary?event_id=${eventId}&type=order`);
+          const rechargesResponse = await axios.get(`${API_BASE_URL}/dashboard/summary?event_id=${eventId}&type=recharge`);
           if (salesResponse && rechargesResponse) {
             setEventSummary({
               totalSales: salesResponse.data.total_value,

@@ -3,9 +3,12 @@ import useAxios from "hooks/useAxios";
 import VerticalBarChart from "examples/Charts/BarCharts/VerticalBarChart";
 import PieChart from "examples/Charts/PieChart";
 
+// URL
+import { API_BASE_URL } from '../../../config';
+
 function QuantitySoldByProduct({id_store}) {
   const { data, loading, error } = useAxios(
-    `https://biodynamics.tech/macak_dev/dashboard/sold_products?store_id=${id_store}`
+    `${API_BASE_URL}/dashboard/sold_products?store_id=${id_store}`
   );
 
   const chart = useMemo(() => {

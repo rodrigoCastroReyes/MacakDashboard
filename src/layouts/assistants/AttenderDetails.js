@@ -17,6 +17,9 @@ import "moment/locale/es";
 
 import useAxios from "hooks/useAxios";
 
+// URL
+import { API_BASE_URL } from '../../config';
+
 const AttenderDetails = () => {
   moment.locale("es");
   const { id: attenderId } = useParams();
@@ -28,7 +31,7 @@ const AttenderDetails = () => {
     error: errorAttender,
     refetch: refetchAttender
   } = useAxios(
-    `https://biodynamics.tech/macak_dev/purchase_ticket/by_attender_event?attender_id=${attenderId}&event_id=${eventId}`
+    `${API_BASE_URL}/purchase_ticket/by_attender_event?attender_id=${attenderId}&event_id=${eventId}`
   );
 
   const {
@@ -37,7 +40,7 @@ const AttenderDetails = () => {
     error: errorTokens,
     refetch: refetchTokens
   } = useAxios(
-    `https://biodynamics.tech/macak_dev/token/by_attender_event?attender_id=${attenderId}&event_id=${eventId}`
+    `${API_BASE_URL}/token/by_attender_event?attender_id=${attenderId}&event_id=${eventId}`
   );
 
   const handleRefresh = () => {

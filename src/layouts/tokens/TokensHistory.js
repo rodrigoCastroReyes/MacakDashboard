@@ -22,6 +22,9 @@ import MDInput from "components/MDInput";
 import DownloadIcon from '@mui/icons-material/Download';
 import axios from "axios";
 
+// URL
+import { API_BASE_URL } from '../../config';
+
 const SearchInput = styled(MDInput)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     width: "50%",
@@ -45,11 +48,10 @@ const RefreshButtonContainer = styled('div')(({ theme }) => ({
 }));
 
 function TokensHistory() {
-  const url = "https://biodynamics.tech/macak_dev/";
   const event_id = localStorage.getItem("eventId");
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const { data, loading, error, refetch } = useAxios( url + `event/tokens?id=${event_id}` );
+  const { data, loading, error, refetch } = useAxios(`${API_BASE_URL}/event/tokens?id=${event_id}` );
   moment().locale('es');
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -59,7 +61,7 @@ function TokensHistory() {
 
   const downloadReport = async(code) =>{
     try {
-      const response = await axios.get(url + `report/generate_report_of_token?token_code=${code}`,{
+      const response = await axios.get(`${API_BASE_URL}/report/generate_report_of_token?token_code=${code}`,{
         responseType: 'blob'
       });
       if (response.status !== 200) {
@@ -143,7 +145,7 @@ const columns = [
       </MDBox>
     ),
     download_report: (
-      <Link className='custom-link' to={`${url}report/generate_report_of_token?token_code=${token.code}`}  target="_blank" download>
+      <Link className='custom-link' to={`${API_BASE_URL}/report/generate_report_of_token?token_code=${token.code}`}  target="_blank" download>
         <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="small"  />
       </Link>
     ),

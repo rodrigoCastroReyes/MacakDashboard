@@ -18,6 +18,9 @@ import QuantitySoldByProduct from "layouts/reportes/components/QuantitySoldByPro
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { styled } from "@mui/system";
 
+// URL
+import { API_BASE_URL } from '../../config';
+
 function PointOfSaleTransactionHistory() {
   moment.locale('es');
   const { id } = useParams();
@@ -27,7 +30,7 @@ function PointOfSaleTransactionHistory() {
     amount : 0 
   });
   const { data, loading, error, refetch } = useAxios(
-    `https://biodynamics.tech/macak_dev/dashboard/store?store_id=${id}`
+    `${API_BASE_URL}/dashboard/store?store_id=${id}`
   );
 
   const handleRefresh = async () => {

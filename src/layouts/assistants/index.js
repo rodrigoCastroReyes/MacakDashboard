@@ -12,16 +12,17 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 import useAxios from "hooks/useAxios";
 
+// URL
+import { API_BASE_URL } from '../../config';
+
 //const eventId = "f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb";
 //event_id en local Storage = f9b857ac-16f2-4852-8981-b72831e7f67c
 
 const ClientList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const eventId = localStorage.getItem("eventId");
-  //https://biodynamics.tech/macak_dev/purchase_ticket/attender_event?id=f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb
-
   const { data, loading, error } = useAxios(
-    `https://biodynamics.tech/macak_dev/purchase_ticket/attender_event?id=${eventId}`
+    `${API_BASE_URL}/purchase_ticket/attender_event?id=${eventId}`
   );
 
   const attendeesList = useMemo(() => data || [], [data]);
