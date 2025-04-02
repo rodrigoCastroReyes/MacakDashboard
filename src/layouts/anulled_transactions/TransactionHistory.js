@@ -40,7 +40,7 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
     justifyContent: "center",
   },
 }));
-
+  
 function TransactionHistory({ numRows }) {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");

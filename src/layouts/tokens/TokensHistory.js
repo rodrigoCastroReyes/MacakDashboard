@@ -113,24 +113,11 @@ if (loading || error) {
   }
 
 const columns = [
-    {
-      Header: "Fecha de Registro",
-      accessor: "registrationDate",
-      align: "center",
-    },
-    {
-      Header: "Código",
-      accessor: "code",
-      width: "30%",
-      align: "center",
-    },
+    { Header: "Fecha de Registro", accessor: "registrationDate", align: "center" },
+    { Header: "Código", accessor: "code", width: "30%", align: "center" },
     { Header: "Estado", accessor: "status", align: "center" },
     { Header: "Saldo", accessor: "balance", align: "center" },
-    {
-      accessor: "download_report",
-      Header: "Descargas",
-      align: "center",
-    }
+    { Header: "Descargas", accessor: "download_report", align: "center" }
   ];
 
   const rows = filteredTokens.map((token) => ({
