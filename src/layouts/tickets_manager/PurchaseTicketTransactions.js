@@ -25,6 +25,8 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
 
         setTransactions(transRes.data);
         setAttenders(attendersRes.data);
+        console.log("Asistentes:", attendersRes.data);
+        console.log("Transacciones:", transRes.data);
         setLoading(false);
       } catch (err) {
         console.error("Error al obtener datos:", err);
