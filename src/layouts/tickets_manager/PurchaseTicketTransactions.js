@@ -84,9 +84,9 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     ),
     amount: (
       <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
-        <Link className="custom-link" to={`/orden_boleteria/${transaction._id}`}>
+        <Link className="custom-link" to={`${API_BASE_URL}/orden_boleteria/${transaction._id}`}>
           {"$"}
-          {transaction.total_amount}{" "}
+          {transaction.purchase_ticket.total_amount}{" "}
         </Link>       
       </MDTypography>
     ),
