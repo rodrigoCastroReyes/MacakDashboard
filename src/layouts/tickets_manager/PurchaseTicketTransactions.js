@@ -8,6 +8,10 @@ import useAxios from "hooks/useAxios";
 import { Link } from 'react-router-dom';
 import { styled } from "@mui/system";
 import DownloadIcon from '@mui/icons-material/Download';
+import axios from 'axios';
+
+// Variable Global
+import { API_BASE_URL } from '../../config';
 
 
 const RefreshButtonContainer = styled("div")(({ theme }) => ({
@@ -22,9 +26,6 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
     justifyContent: "space-between",
   },
 }));
-
-// Variable Global
-import { API_BASE_URL } from '../../config';
 
 const PurchaseTicketsTransactions = ({ id_event }) => {
   const [transactions, setTransactions] = useState([]);
@@ -102,7 +103,7 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
           <MDTypography colorVerticalBarChart="dark" fontWeight="bold" fontFamily="montserrat-semibold" component="div" align="left" style={{ fontSize: "1rem" }} >
             Historial de ordenes
           </MDTypography>
-          <Link className='custom-btn-icon custom-link' to={`${url}report/generate_report_of_ticket_manager?event_id=${id_event}`} target="_blank" download>
+          <Link className='custom-btn-icon custom-link' to={`${API_BASE_URL}/report/generate_report_of_ticket_manager?event_id=${id_event}`} target="_blank" download>
             <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium"  />
           </Link>
         </RefreshButtonContainer>
