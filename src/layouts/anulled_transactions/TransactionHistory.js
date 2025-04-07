@@ -14,6 +14,9 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import RefreshIcon from '@mui/icons-material/Refresh';
 
+// URL
+import { API_BASE_URL } from '../../config';
+
 moment.locale("es");
 
 const SearchInput = styled(MDInput)(({ theme }) => ({
@@ -37,12 +40,13 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
     justifyContent: "center",
   },
 }));
-
+  
 function TransactionHistory({ numRows }) {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const eventId = localStorage.getItem("eventId");
   const { data, loading, error, refetch } = useAxios(
-    "https://biodynamics.tech/api_tokens/dashboard/recharge_anulled?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
+    `${API_BASE_URL}/dashboard/recharge_anulled?event_id=${eventId}`
   );
   const handleRefresh = async () => {
     setRefreshing(true);

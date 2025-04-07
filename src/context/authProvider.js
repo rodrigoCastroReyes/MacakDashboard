@@ -2,6 +2,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+// URL
+import { API_BASE_URL } from '../config';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -21,16 +24,17 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post('https://biodynamics.tech/api_tokens/user/login', { username, password });
+      const response = await axios.post(`${API_BASE_URL}/user/login`, { username, password });
       const { id, jwtoken, event_id, role } = response.data;
       if(role != "manager_admin"){
         throw new Error('Error al iniciar sesión. Por favor, verifica tus credenciales.');
         return;
       }
       localStorage.setItem('authToken', jwtoken);
+      localStorage.setItem('eventId', event_id);
       setAuthToken(jwtoken);
       setUserId(id);
-      const managerAdminResponse = await axios.post('https://biodynamics.tech/api_tokens/manager_admin', {
+      const managerAdminResponse = await axios.post(`${API_BASE_URL}/manager_admin`, {
         user_id: id,
         event_id: event_id
       });
@@ -45,6 +49,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('eventId');
     setAuthToken(null);
     setManagerAdminUserId(null);
     setUserId(null);

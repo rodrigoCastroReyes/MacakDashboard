@@ -14,6 +14,9 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import RefreshIcon from '@mui/icons-material/Refresh';
 
+// URL
+import { API_BASE_URL } from '../../config';
+
 moment.locale("es");
 
 const SearchInput = styled(MDInput)(({ theme }) => ({
@@ -41,9 +44,11 @@ const RefreshButtonContainer = styled("div")(({ theme }) => ({
 function TransactionHistory({ numRows }) {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const { data, loading, error, refetch } = useAxios(
-    "https://biodynamics.tech/api_tokens/dashboard/order_anulled?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
-  );
+
+  const eventId = localStorage.getItem("eventId");
+  const url = `${API_BASE_URL}/dashboard/order_anulled?event_id=${eventId}`;
+  const { data, loading, error, refetch } = useAxios(url);
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await refetch();
@@ -66,8 +71,6 @@ function TransactionHistory({ numRows }) {
     }
     return filterByCode(data?.transactions || [], searchTerm);
   }, [data?.transactions, searchTerm]);
-
-  console.log(data);
   if (loading) return <div>Cargando...</div>;
   if (error || !data?.transactions)
     return <div>Error al obtener los datos</div>;

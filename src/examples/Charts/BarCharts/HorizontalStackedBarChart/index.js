@@ -20,7 +20,6 @@ import PropTypes from "prop-types";
 
 // react-chartjs-2 components
 import { Bar } from "react-chartjs-2";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,32 +38,22 @@ import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-// VerticalBarChart configurations
-import configs from "examples/Charts/BarCharts/VerticalBarChart/configs";
+// HorizontalBarChart configurations
+import configs from "examples/Charts/BarCharts/HorizontalStackedBarChart/configs";
 
 // Material Dashboard 2 React base styles
 import colors from "assets/theme/base/colors";
-import { fontSize } from "@mui/system";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-function VerticalBarChart({ icon, title, description, height, chart }) {
+function HorizontalStackedBarChart({ icon, title, description, height, chart }) {
   const chartDatasets = chart.datasets
     ? chart.datasets.map((dataset) => ({
         ...dataset,
         weight: 5,
         borderWidth: 0,
         borderRadius: 4,
-        backgroundColor: colors[dataset.color]
-          ? colors[dataset.color || "dark"].main
-          : colors.dark.main,
+        backgroundColor: dataset.color,
         fill: false,
         maxBarThickness: 35,
       }))
@@ -73,13 +62,13 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
   const { data, options } = configs(chart.labels || [], chartDatasets);
 
   const renderChart = (
-    <MDBox py={1} pr={2} pl={icon.component ? 1 : 2}>
+    <MDBox py={2} pr={2} pl={icon.component ? 1 : 2}>
       {title || description ? (
         <MDBox display="flex" px={description ? 1 : 0} pt={description ? 1 : 0}>
           {icon.component && (
             <MDBox
-              width="2rem"
-              height="2rem"
+              width="4rem"
+              height="4rem"
               bgColor={icon.color || "dark"}
               variant="gradient"
               coloredShadow={icon.color || "dark"}
@@ -94,26 +83,26 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
               <Icon fontSize="medium">{icon.component}</Icon>
             </MDBox>
           )}
-          <MDBox mt={icon.component ? -2 : 0} pt="2" pb="2">
+          <MDBox mt={icon.component ? -2 : 0} pt="2" pb="2" >
             {
               title && 
-              <MDTypography colorVerticalBarChart="dark" fontWeight="bold" fontFamily="montserrat-semibold" component="div" align="left" style={{ fontSize: "1rem" }} >
+              <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat-semibold" component="div" align="left" style={{ fontSize: "1rem" }} >
                 {title}
               </MDTypography>
             }
-              <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat" component="div" align="left" style={{ fontSize: "2rem" }}>
-                {description}
-              </MDTypography>
+            <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat" component="div" align="left" style={{ fontSize: "2rem" }} >
+              {description}
+            </MDTypography>
           </MDBox>
         </MDBox>
       ) : null}
       {useMemo(
         () => (
           <MDBox height={height}>
-            <Bar data={data} plugins={[ChartDataLabels]} options={options} redraw />
+            <Bar data={data} options={options} redraw />
           </MDBox>
         ),
-        [data, height, options]
+        [chart, height]
       )}
     </MDBox>
   );
@@ -121,16 +110,16 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
   return title || description ? <Card>{renderChart}</Card> : renderChart;
 }
 
-// Setting default values for the props of VerticalBarChart
-VerticalBarChart.defaultProps = {
+// Setting default values for the props of HorizontalBarChart
+HorizontalStackedBarChart.defaultProps = {
   icon: { color: "info", component: "" },
   title: "",
   description: "",
   height: "19.125rem",
 };
 
-// Typechecking props for the VerticalBarChart
-VerticalBarChart.propTypes = {
+// Typechecking props for the HorizontalBarChart
+HorizontalStackedBarChart.propTypes = {
   icon: PropTypes.shape({
     color: PropTypes.oneOf([
       "primary",
@@ -150,4 +139,4 @@ VerticalBarChart.propTypes = {
   chart: PropTypes.objectOf(PropTypes.array).isRequired,
 };
 
-export default VerticalBarChart;
+export default HorizontalStackedBarChart;

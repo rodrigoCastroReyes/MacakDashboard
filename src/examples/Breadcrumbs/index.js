@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // react-router-dom components
 import { Link } from "react-router-dom";
 
@@ -31,6 +16,10 @@ import 'css/styles.css';
 function Breadcrumbs({ icon, title, route, light }) {
   const routes = route.slice(0, -1);
 
+  const routeLabels = {
+    "attender-details": "Asistentes",
+  };
+
   return (
     <MDBox mr={{ xs: 0, xl: 8 }}>
       <MuiBreadcrumbs
@@ -40,7 +29,8 @@ function Breadcrumbs({ icon, title, route, light }) {
           },
         }}
       >
-        <Link to="/">
+        {/* Ícono Home clickeable */}
+        <Link to="/resumen">
           <MDTypography
             component="span"
             variant="body2"
@@ -51,22 +41,25 @@ function Breadcrumbs({ icon, title, route, light }) {
             <Icon>{icon}</Icon>
           </MDTypography>
         </Link>
+
+        {/* Segmentos intermedios no clickeables */}
         {routes.map((el) => (
-          <Link to={`/${el}`} key={el}>
-            <MDTypography
-              component="span"
-              variant="button"
-              fontWeight="regular"
-              fontFamily="montserrat"
-              textTransform="capitalize"
-              color={light ? "white" : "dark"}
-              opacity={light ? 0.8 : 0.5}
-              sx={{ lineHeight: 0 }}
-            >
-              {el}
-            </MDTypography>
-          </Link>
+          <MDTypography
+            key={el}
+            component="span"
+            variant="button"
+            fontWeight="regular"
+            fontFamily="montserrat"
+            textTransform="capitalize"
+            color={light ? "white" : "dark"}
+            opacity={light ? 0.8 : 0.5}
+            sx={{ lineHeight: 0 }}
+          >
+            {routeLabels[el] || el}
+          </MDTypography>
         ))}
+
+        {/* Último segmento (título actual de la página) */}
         <MDTypography
           variant="button"
           fontWeight="regular"
@@ -78,6 +71,8 @@ function Breadcrumbs({ icon, title, route, light }) {
           {title}
         </MDTypography>
       </MuiBreadcrumbs>
+
+      {/* Título grande debajo del breadcrumb */}
       <MDTypography
         fontWeight="bold"
         textTransform="capitalize"
@@ -93,12 +88,12 @@ function Breadcrumbs({ icon, title, route, light }) {
   );
 }
 
-// Setting default values for the props of Breadcrumbs
+// Default props
 Breadcrumbs.defaultProps = {
   light: false,
 };
 
-// Typechecking props for the Breadcrumbs
+// Prop types
 Breadcrumbs.propTypes = {
   icon: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,

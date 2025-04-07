@@ -16,17 +16,15 @@ import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
 import { Typography } from "@mui/material";
-import TokenAnulledHistory from "./TokenAnnulledHistory";
-// URL
-import { API_BASE_URL } from '../../config' ;
 
-function TokenDetailHistory() {
+function OrderTicketManager() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const { data, loading, error, refetch } = useAxios(
-    `${API_BASE_URL}/dashboard/token?token_id=${id}`
+    `https://biodynamics.tech/macak_dev/purchase_ticket_item/purchase_ticket/?id=${id}`
   );
+  //0a7e8544-ad2e-468a-a5f2-b7b440c24426
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -35,19 +33,10 @@ function TokenDetailHistory() {
   };
   moment().locale('es');
   if (loading  ) return <div>Cargando...</div>;
-  if (error || !data?.token || !data?.transactions ) return <div>Error al obtener los datos</div>;
-  const transactions = data?.transactions;
-  const getTranslateTypes = (transaction) =>{
-    if (transaction.type === "order") {
-      return "Compra";
-    } else if (transaction.type === "recharge") {
-      return "Carga";
-    } else if (transaction.type === "refund") {
-      return "Reembolso";
-    }else{
-      return "";
-    }
-  };
+  if (error ) return <div>Error al obtener los datos</div>;
+  
+  const order_ticket_items = data.filter(item => item.quantity > 0);
+  const total_amount = order_ticket_items.reduce((acc, x) => acc + x.total, 0);
 
   const RefreshButtonContainer = styled("div")(({ theme }) => ({
     display: "flex",
@@ -60,65 +49,41 @@ function TokenDetailHistory() {
     },
   }));
 
-  const getBalanceChangeDisplay = (transaction) => {
-    if (transaction.status === "rejected") {
-      return `$${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}`;
-    }
-
-    if (transaction.status === "success") {
-      if (transaction.type === "order") {
-        return `-$${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}`;
-      } else if (transaction.type === "charge" || transaction.type === "refund") {
-        return `+$${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}`;
-      }
-    }
-
-    return `$${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}`;
-  };
-
   const columns = [
-    {
-      Header: "Fecha",
-      accessor: "registrationDate",
-      align: "center",
-    },
-    { Header: "Tipo", accessor: "type", align: "left" },
-    { Header: "Estado", accessor: "status", align: "left" },
-    { Header: "Detalle", accessor: "detail", align: "left" },
-    { Header: "Monto", accessor: "balance", align: "center" },
+    { Header: "Localidad", accessor: "ticket_name", align: "left" },
+    { Header: "Tipo de boleto", accessor: "type", align: "center" },
+    { Header: "Cantidad de boletos", accessor: "quantity", align: "center" },
+    { Header: "Costo total", accessor: "total", align: "center" },
   ];
   
-  const rows = transactions.map((transaction) => ({
-    registrationDate: (
-      <MDTypography fontFamily='poppins' variant="caption" color="text" fontWeight="medium">
-        {moment(transaction.__updatedtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
+  const rows = order_ticket_items.map((ticket_item) => ({
+    ticket_name: (
+      <MDTypography fontFamily='poppins' variant="button" color="text" fontWeight="medium">
+        {ticket_item.ticket_name}
       </MDTypography>
     ),
     type: (
-      <MDBox ml={-1}>
-        <MDBadge fontFamily="poppins" badgeContent= {getTranslateTypes(transaction)}  color= {transaction.type === "order" ? "error" : "success"} variant="gradient" size="medium"/>
-      </MDBox>
-    ),
-    status: (
-      <MDTypography  fontFamily='poppins' variant="button" color="text" fontWeight="medium">
-        {transaction.status === "success" ? "Exitosa" : "Rechazada"}
-      </MDTypography>
-    ),
-    detail: (
       <MDTypography fontFamily='poppins' variant="button" color="text" fontWeight="medium">
-        {transaction.description}
+        <MDBadge
+          className="customBadge"
+          fontFamily="poppins"
+          fontSize="12px"
+          badgeContent={ticket_item.ticket_is_numered ? "Numerado" : "No numerado"}
+          color="primary"
+          variant="gradient"
+        />
       </MDTypography>
     ),
-    balance: (
-      <MDTypography
-       fontFamily='poppins'
-        variant="caption"
-        fontWeight="bold"
-        color={transaction.type === "recharge" ? "success" : "error" }
-      >
-        {getBalanceChangeDisplay(transaction)}
+    quantity: (
+      <MDTypography fontFamily='poppins' variant="button" color="text" fontWeight="medium">
+        {ticket_item.quantity}
       </MDTypography>
     ),
+    total: (
+      <MDTypography fontFamily='poppins' variant="button" color="text" fontWeight="medium">
+        {ticket_item.total}
+      </MDTypography>
+    )
   }));
 
   return (
@@ -130,7 +95,7 @@ function TokenDetailHistory() {
             <Card>
               <MDBox pt={3} pr={2} pl={2}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent:"space-between" }}>
-                  <button className="return-button"onClick={() => navigate("/tokens")}>
+                  <button className="return-button"onClick={() => navigate("/boleteria")}>
                     Volver
                   </button>
                   <RefreshButtonContainer>
@@ -144,7 +109,7 @@ function TokenDetailHistory() {
                   </RefreshButtonContainer>
                 </div>
                 <Typography pr={2} pl={2} fontFamily='montserrat-semibold' fontSize="22px" className="event-summary-title">
-                  Historial de transacciones del Token {data.token.code}
+                  Historial de la orden 
                 </Typography>
                 <MDBox pr={2} pl={2} style={{ display: "flex", justifyContent: "flex-start" }}>
                   <MDTypography
@@ -153,7 +118,7 @@ function TokenDetailHistory() {
                     variant="body1"
                     style={{ position: "realtive", marginRight: "1rem" }}
                   >
-                  Saldo disponible: ${data.token.balance}
+                  Monto total ${total_amount}
                 </MDTypography>
                 </MDBox>
                 <DataTable
@@ -164,10 +129,7 @@ function TokenDetailHistory() {
                   showTotalEntries={false}
                   noEndBorder
                 />
-                <Typography pt={4} pr={2} pl={2} fontFamily='montserrat-semibold' fontSize="22px" className="event-summary-title">
-                  Historial de transacciones anuladas
-                </Typography>
-                <TokenAnulledHistory id={id}/>
+                
               </MDBox>
             </Card>
           </Grid>
@@ -178,4 +140,4 @@ function TokenDetailHistory() {
   );
 }
 
-export default TokenDetailHistory;
+export default OrderTicketManager;

@@ -51,12 +51,17 @@ import CurrencyExchangeSharpIcon from '@mui/icons-material/CurrencyExchangeSharp
 import DoNotDisturbOnSharpIcon from '@mui/icons-material/DoNotDisturbOnSharp';
 import NfcIcon from '@mui/icons-material/Nfc';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import PeopleIcon from '@mui/icons-material/People';
 
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import Reports from "layouts/reportes";
 import RefundedTransactions from "layouts/order_transactions";
 import AnulledTransactions from "layouts/anulled_transactions";
 import Boleteria from "layouts/tickets_manager";
+import OrderTicketManager from "layouts/tickets_manager/OrderTicketManager";
+
+import Asistentes from "layouts/assistants";
+import AttenderDetails from "layouts/assistants/AttenderDetails";
 
 const routes = [
   {
@@ -120,10 +125,30 @@ const routes = [
     component: <Boleteria />,
   },
   {
+    type: "collapse",
+    name: "Asistentes",
+    key: "asistentes",
+    icon: <PeopleIcon fontSize="small" color="white"></PeopleIcon>,
+    route: "/asistentes",
+    component: <Asistentes />,
+  },
+  {
+    type: "route",
+    key: "order_ticket",
+    route: "/orden_boleteria/:id",
+    component: <OrderTicketManager />,
+  },
+  {
     type: "route",
     route: "/authentication/sign-in",
     component: <SignIn />,
   },
+  {
+    type: "route",
+    key: "attender-details",
+    route: "/attender-details/:id",
+    component: <AttenderDetails />,
+  }
 ];
 
 export default routes;

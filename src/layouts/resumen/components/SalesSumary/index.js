@@ -3,6 +3,9 @@ import PropTypes from "prop-types";
 import {Link} from 'react-router-dom';
 import useAxios from "hooks/useAxios";
 
+// URL
+import { API_BASE_URL } from '../../../../config';
+
 import {
   Typography,
   IconButton,
@@ -17,13 +20,16 @@ import MDBox from "components/MDBox";
 import './style.css'
 
 const SalesSummary = () => {
+  const event_id = localStorage.getItem("eventId");
   const [startIndex, setStartIndex] = useState(0);
   const { data, loading, error } = useAxios(
-    "https://biodynamics.tech/api_tokens/dashboard/summary_per_store?event_id=f9b857ac-16f2-4852-8981-b72831e7f67c"
+    `${API_BASE_URL}/dashboard/summary_per_store?event_id=${event_id}`
   );
   
   if (loading) return <div>Cargando...</div>;
-  if (error || !data?.stores_summary)
+  if (!data?.stores_summary)
+    return <div>¡ Sin ventas !</div>;
+  if (error)
     return <div>Error al obtener los datos</div>;
   
   const stores_summary = data.stores_summary;

@@ -16,12 +16,14 @@ import useAxios from "hooks/useAxios";
 import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
 import { Typography } from "@mui/material";
+// URL
+import { API_BASE_URL } from '../../config';
 
 function TokenAnulledHistory({id}) {
   const [refreshing, setRefreshing] = useState(false);
   const [ rows, setRows ] = useState(null);
   const { data, loading, err, refetch } = useAxios(
-    `https://biodynamics.tech/api_tokens/transaction/get_anulled_transactions_of_token?token_id=${id}`
+    `${API_BASE_URL}/transaction/get_anulled_transactions_of_token?token_id=${id}`
   );
 
   const handleRefresh = async () => {
