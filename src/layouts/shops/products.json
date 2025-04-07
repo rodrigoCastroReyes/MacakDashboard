@@ -1,0 +1,22 @@
+{
+    "products": [
+        {
+            "_id": "abc" ,
+            "description": "Product A",
+            "price": 29.99,
+            "img": "/img.png"
+        },
+        {   
+            "_id": "def" ,
+            "description": "Product A",
+            "price": 29.99,
+            "img": "/img.png"
+        },
+        {
+            "_id": "ghi" ,
+            "description": "Product A",
+            "price": 29.99,
+            "img": "/img.png"
+        }
+    ]
+}

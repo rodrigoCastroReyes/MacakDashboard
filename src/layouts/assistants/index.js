@@ -59,7 +59,7 @@ const ClientList = () => {
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <TextField
               label="Buscar"
-              placeholder="Buscar por nombre o ID"
+              placeholder="Buscar por nombre o Cédula"
               variant="outlined"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
