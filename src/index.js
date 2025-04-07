@@ -26,7 +26,7 @@ const container = document.getElementById("app");
 const root = createRoot(container);
 
 root.render(
-  <BrowserRouter basename="/virtual_cash">
+  <BrowserRouter basename="/macak">
     <MaterialUIControllerProvider>
       <AuthProvider>
         <App />

@@ -19,8 +19,16 @@ import { useMemo } from "react";
 import PropTypes from "prop-types";
 
 // react-chartjs-2 components
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -30,14 +38,29 @@ import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-// PieChart configurations
-import configs from "examples/Charts/PieChart/configs";
+// HorizontalBarChart configurations
+import configs from "examples/Charts/BarCharts/HorizontalStackedBarChart/configs";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+// Material Dashboard 2 React base styles
+import colors from "assets/theme/base/colors";
 
-function PieChart({ icon, title, description, height, chart }) {
-  const { data, options } = configs(chart.labels || [], chart.datasets || {});
-  
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+function HorizontalStackedBarChart({ icon, title, description, height, chart }) {
+  const chartDatasets = chart.datasets
+    ? chart.datasets.map((dataset) => ({
+        ...dataset,
+        weight: 5,
+        borderWidth: 0,
+        borderRadius: 4,
+        backgroundColor: dataset.color,
+        fill: false,
+        maxBarThickness: 35,
+      }))
+    : [];
+
+  const { data, options } = configs(chart.labels || [], chartDatasets);
+
   const renderChart = (
     <MDBox py={2} pr={2} pl={icon.component ? 1 : 2}>
       {title || description ? (
@@ -76,7 +99,7 @@ function PieChart({ icon, title, description, height, chart }) {
       {useMemo(
         () => (
           <MDBox height={height}>
-            <Pie data={data} options={options} width="600" height="250" redraw />
+            <Bar data={data} options={options} redraw />
           </MDBox>
         ),
         [chart, height]
@@ -87,16 +110,16 @@ function PieChart({ icon, title, description, height, chart }) {
   return title || description ? <Card>{renderChart}</Card> : renderChart;
 }
 
-// Setting default values for the props of PieChart
-PieChart.defaultProps = {
+// Setting default values for the props of HorizontalBarChart
+HorizontalStackedBarChart.defaultProps = {
   icon: { color: "info", component: "" },
   title: "",
   description: "",
   height: "19.125rem",
 };
 
-// Typechecking props for the PieChart
-PieChart.propTypes = {
+// Typechecking props for the HorizontalBarChart
+HorizontalStackedBarChart.propTypes = {
   icon: PropTypes.shape({
     color: PropTypes.oneOf([
       "primary",
@@ -113,7 +136,7 @@ PieChart.propTypes = {
   title: PropTypes.string,
   description: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  chart: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.array, PropTypes.object])).isRequired,
+  chart: PropTypes.objectOf(PropTypes.array).isRequired,
 };
 
-export default PieChart;
+export default HorizontalStackedBarChart;

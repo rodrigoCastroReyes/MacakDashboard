@@ -12,7 +12,7 @@ function SalesPerTicket({data}) {
       datasets: [
         {
           label: "Ventas por localidad",
-          color: "primary",
+          color: "success",
           data: data.map((ticket) =>  ticket.sold_quantity*ticket.price ),
         },
       ],
@@ -30,8 +30,7 @@ function SalesPerTicket({data}) {
     );
 
   return (
-    <VerticalBarChart title="Ventas por localidad" description={
-    `$${totalSales}`} chart={chart} height="250px" />
+    <VerticalBarChart title="Ventas por localidad" description={`$${totalSales}`} chart={chart} height="350px" />
   );
 }
 

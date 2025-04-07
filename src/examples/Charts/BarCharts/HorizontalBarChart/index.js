@@ -85,13 +85,16 @@ function HorizontalBarChart({ icon, title, description, height, chart }) {
               <Icon fontSize="medium">{icon.component}</Icon>
             </MDBox>
           )}
-          <MDBox mt={icon.component ? -2 : 0}>
-            {title && <MDTypography variant="h6">{title}</MDTypography>}
-            <MDBox mb={2}>
-              <MDTypography component="div" variant="button" color="text">
-                {description}
+          <MDBox mt={icon.component ? -2 : 0} pt="2" pb="2" >
+            {
+              title && 
+              <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat-semibold" component="div" align="left" style={{ fontSize: "1rem" }} >
+                {title}
               </MDTypography>
-            </MDBox>
+            }
+            <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat" component="div" align="left" style={{ fontSize: "2rem" }} >
+              {description}
+            </MDTypography>
           </MDBox>
         </MDBox>
       ) : null}

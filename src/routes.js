@@ -58,6 +58,7 @@ import Reports from "layouts/reportes";
 import RefundedTransactions from "layouts/order_transactions";
 import AnulledTransactions from "layouts/anulled_transactions";
 import Boleteria from "layouts/tickets_manager";
+import OrderTicketManager from "layouts/tickets_manager/OrderTicketManager";
 
 import Asistentes from "layouts/assistants";
 import AttenderDetails from "layouts/assistants/AttenderDetails";
@@ -130,6 +131,12 @@ const routes = [
     icon: <PeopleIcon fontSize="small" color="white"></PeopleIcon>,
     route: "/asistentes",
     component: <Asistentes />,
+  },
+  {
+    type: "route",
+    key: "order_ticket",
+    route: "/orden_boleteria/:id",
+    component: <OrderTicketManager />,
   },
   {
     type: "route",

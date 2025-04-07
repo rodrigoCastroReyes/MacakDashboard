@@ -51,7 +51,7 @@ function configs(labels, datasets) {
       plugins: {
         legend: {
           labels: {
-            color: "#7b809a",
+            color: "#344767",
             font: {
               size: 12,
               family: "montserrat-semibold",
@@ -64,7 +64,7 @@ function configs(labels, datasets) {
             let datasets = ctx.chart.data.datasets;
             return value;
           },
-          color: "#7b809a",
+          color: "#344767",
           font: {
             size: 14,
             family: "montserrat-semibold",
