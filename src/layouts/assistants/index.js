@@ -70,9 +70,8 @@ const ClientList = () => {
             </IconButton>
           </Box>
 
-          <MDTypography variant="body2" sx={{ marginTop: 1, fontSize: '0.7rem' }}>
-            {filteredAttendees.length === 1 ? "asistente encontrado: " : "asistentes encontrados: "}
-            {filteredAttendees.length}
+          <MDTypography variant="caption" sx={{ fontSize: '1rem' }}>
+            {filteredAttendees.length === 1 ? "1 asistente encontrado" : `${filteredAttendees.length} asistentes encontrados`}
           </MDTypography>
         </Box>
 

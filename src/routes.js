@@ -65,6 +65,7 @@ import Asistentes from "layouts/assistants";
 import AttenderDetails from "layouts/assistants/AttenderDetails";
 
 import Tiendas from "layouts/shops";
+import Products from "layouts/shops/Products";
 
 const routes = [
   {
@@ -159,6 +160,12 @@ const routes = [
     icon: <StoreIcon fontSize="small" color="white"></StoreIcon>,
     route: "/tiendas",
     component: <Tiendas />,
+  },
+  {
+    type: "route",
+    key: "shop-products",
+    route: "/shop-products/:id",
+    component: <Products />,
   }
 ];
 
