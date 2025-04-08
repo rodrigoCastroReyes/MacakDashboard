@@ -9,24 +9,28 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "examples/Tables/DataTable";
 import MDTypography from "components/MDTypography";
 
-// Importar imágenes locales
+// Imágenes locales
 import productAImg from "./productA.jpg";
 import productBImg from "./productB.jpg";
 import productCImg from "./productC.jpg";
 
-// Cargar JSON de productos
+// JSON con campo de descuento
 import productsData from "./products.json";
 
 const Products = () => {
   const { id: storeId } = useParams();
 
-  // Simulamos recarga con estado local (más adelante se reemplaza por fetch)
   const [productList, setProductList] = useState(productsData.products);
 
   const handleRefresh = () => {
-    // Por ahora simplemente se vuelve a cargar el JSON estático
     setProductList([...productsData.products]);
     console.log("Productos recargados");
+  };
+
+  const handleDiscountChange = (index, newDiscount) => {
+    const updatedProducts = [...productList];
+    updatedProducts[index].discount = parseFloat(newDiscount) || 0;
+    setProductList(updatedProducts);
   };
 
   const storeInfo = {
@@ -45,27 +49,79 @@ const Products = () => {
       { Header: "Imagen", accessor: "img", align: "center" },
       { Header: "Descripción", accessor: "description", align: "center" },
       { Header: "Precio", accessor: "price", align: "center" },
+      { Header: "Descuento (%)", accessor: "discount", align: "center" },
     ],
-    rows: productList.map((product) => ({
-      description: (
-        <MDTypography fontSize="12px" variant="caption" color="text" align="center">
-          {product.description}
-        </MDTypography>
-      ),
-      price: (
-        <MDTypography fontSize="12px" variant="caption" color="success" align="center">
-          ${product.price.toFixed(2)}
-        </MDTypography>
-      ),
-      img: (
-        <Box
-          component="img"
-          src={imageMap[product._id]}
-          alt={product.description}
-          sx={{ height: 60, objectFit: "contain", mx: "auto", borderRadius: 1 }}
-        />
-      ),
-    })),
+    rows: productList.map((product, index) => {
+      const hasDiscount = product.discount > 0;
+      const discountedPrice = product.price - (product.price * product.discount) / 100;
+
+      return {
+        description: (
+          <MDTypography fontSize="12px" variant="caption" color="text" align="center">
+            {product.description}
+          </MDTypography>
+        ),
+        discount: (
+          <Box textAlign="center">
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={product.discount}
+              onChange={(e) => handleDiscountChange(index, e.target.value)}
+              style={{
+                width: "80px",
+                height: "36px",
+                textAlign: "center",
+                fontSize: "18px",
+                padding: "4px 6px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                boxSizing: "border-box",
+              }}
+            />
+          </Box>
+        ),
+        price: hasDiscount ? (
+          <Box textAlign="center">
+            <MDTypography
+              fontSize="12px"
+              variant="caption"
+              color="text"
+              sx={{ textDecoration: "line-through", mr: 1 }}
+            >
+              ${product.price.toFixed(2)}
+            </MDTypography>
+            <MDTypography
+              fontSize="12px"
+              variant="caption"
+              color="warning"
+              fontWeight="bold"
+            >
+              ${discountedPrice.toFixed(2)}
+            </MDTypography>
+          </Box>
+        ) : (
+          <MDTypography
+            fontSize="12px"
+            variant="caption"
+            color="success"
+            fontWeight="bold"
+            align="center"
+          >
+            ${product.price.toFixed(2)}
+          </MDTypography>
+        ),
+        img: (
+          <Box
+            component="img"
+            src={imageMap[product._id]}
+            alt={product.description}
+            sx={{ height: 60, objectFit: "contain", mx: "auto", borderRadius: 1 }}
+          />
+        ),
+      };
+    }),
   };
 
   return (

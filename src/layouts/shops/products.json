@@ -4,18 +4,21 @@
         "_id": "abc",
         "description": "Product A",
         "price": 29.99,
+        "discount": 0,
         "img": "./productA.jpg"
       },
       {
         "_id": "def",
         "description": "Product B",
         "price": 29.99,
+        "discount": 0,
         "img": "./productB.jpg"
       },
       {
         "_id": "ghi",
         "description": "Product C",
         "price": 29.99,
+        "discount": 0,
         "img": "./productC.jpg"
       }
     ]
