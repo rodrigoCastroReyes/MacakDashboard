@@ -1,6 +1,6 @@
 // layouts/assistants/ClientList.js
 import React, { useState, useMemo } from "react";
-import { Grid, Card, TextField, Box, IconButton } from "@mui/material";
+import { Grid, Card, TextField, Box, IconButton, CircularProgress } from "@mui/material";
 import { Link } from "react-router-dom";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -13,7 +13,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import useAxios from "hooks/useAxios";
 
 // URL
-import { API_BASE_URL } from '../../config';
+import { API_BASE_URL } from "config";
 
 //const eventId = "f4812f9a-a9ec-45c4-a0a8-17e5fbf1a2fb";
 //event_id en local Storage = f9b857ac-16f2-4852-8981-b72831e7f67c
@@ -43,7 +43,8 @@ const ClientList = () => {
         <DashboardNavbar main_title="Asistentes" />
         <MDBox pt={6} pb={3} display="flex" minHeight="50vh">
           <div variant="h6">
-            {error ? "Error al obtener los datos" : "Cargando..."}
+            {error ? "Error al obtener los datos" : "Cargando..." }
+            <CircularProgress size={24} color="secondary" />
           </div>
         </MDBox>
       </DashboardLayout>

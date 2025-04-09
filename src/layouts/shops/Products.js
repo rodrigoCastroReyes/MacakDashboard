@@ -1,47 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Grid, Card, Typography, IconButton } from "@mui/material";
-import StorefrontIcon from "@mui/icons-material/Storefront";
-import RefreshIcon from "@mui/icons-material/Refresh";
-
+import { Box, Grid, Card, Typography, IconButton, CircularProgress, TextField } from "@mui/material";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "examples/Tables/DataTable";
 import MDTypography from "components/MDTypography";
 
-// Imágenes locales
-import productAImg from "./productA.jpg";
-import productBImg from "./productB.jpg";
-import productCImg from "./productC.jpg";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
-// JSON con campo de descuento
-import productsData from "./products.json";
+import { API_BASE_URL } from "config";
+import moment from "moment";
 
 const Products = () => {
   const { id: storeId } = useParams();
+  const eventId = localStorage.getItem("eventId");
 
-  const [productList, setProductList] = useState(productsData.products);
+  const [productList, setProductList] = useState([]);
+  const [storeInfo, setStoreInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [originalDiscount, setOriginalDiscount] = useState(0);
 
-  const handleRefresh = () => {
-    setProductList([...productsData.products]);
-    console.log("Productos recargados");
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/store/products?id=${storeId}`);
+      const data = await res.json();
+      const withDiscount = data.map((p) => ({ ...p, discount: 0 }));
+      setProductList(withDiscount);
+    } catch (err) {
+      console.error("Error al obtener productos:", err);
+    }
   };
+
+  const fetchStoreDetails = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/store/by_event?id=${eventId}`);
+      const data = await res.json();
+      const tienda = data.find((store) => store._id === storeId);
+      if (tienda) setStoreInfo(tienda);
+    } catch (err) {
+      console.error("Error al obtener tienda:", err);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setLoading(true);
+    await Promise.all([fetchProducts(), fetchStoreDetails()]);
+    setLoading(false);
+    setEditingIndex(null);
+  };
+
+  useEffect(() => {
+    handleRefresh();
+  }, [storeId]);
 
   const handleDiscountChange = (index, newDiscount) => {
-    const updatedProducts = [...productList];
-    updatedProducts[index].discount = parseFloat(newDiscount) || 0;
-    setProductList(updatedProducts);
+    const updated = [...productList];
+    updated[index].discount = parseFloat(newDiscount) || 0;
+    setProductList(updated);
   };
 
-  const storeInfo = {
-    name: `Tienda ${storeId.toUpperCase()}`,
-    id: storeId,
-  };
-
-  const imageMap = {
-    abc: productAImg,
-    def: productBImg,
-    ghi: productCImg,
+  const cancelEdit = () => {
+    const updated = [...productList];
+    if (editingIndex !== null) {
+      updated[editingIndex].discount = originalDiscount;
+    }
+    setProductList(updated);
+    setEditingIndex(null);
   };
 
   const productTable = {
@@ -57,35 +86,58 @@ const Products = () => {
 
       return {
         description: (
-          <MDTypography fontSize="12px" variant="caption" color="text" align="center">
+          <MDTypography fontSize="14px" variant="caption" color="text" align="center">
             {product.description}
           </MDTypography>
         ),
         discount: (
-          <Box textAlign="center">
-            <input
-              type="number"
-              min="0"
-              max="100"
-              value={product.discount}
-              onChange={(e) => handleDiscountChange(index, e.target.value)}
-              style={{
-                width: "80px",
-                height: "36px",
-                textAlign: "center",
-                fontSize: "18px",
-                padding: "4px 6px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-                boxSizing: "border-box",
-              }}
-            />
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1 }}>
+            {editingIndex === index ? (
+              <>
+                <TextField
+                  type="number"
+                  value={product.discount}
+                  onChange={(e) => handleDiscountChange(index, e.target.value)}
+                  size="14px"
+                  sx={{ width: 70 }}
+                  inputProps={{ min: 0, max: 100 }}
+                />
+                <IconButton
+                  size="small"
+                  onClick={() => setEditingIndex(null)}
+                  title="Aplicar descuento"
+                >
+                  <CheckIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={cancelEdit}
+                  title="Cancelar"
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </>
+            ) : (
+              <>
+                <Typography variant="caption" fontSize="14px">{product.discount}%</Typography>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setOriginalDiscount(product.discount);
+                    setEditingIndex(index);
+                  }}
+                  title="Editar descuento"
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </>
+            )}
           </Box>
         ),
         price: hasDiscount ? (
           <Box textAlign="center">
             <MDTypography
-              fontSize="12px"
+              fontSize="14px"
               variant="caption"
               color="text"
               sx={{ textDecoration: "line-through", mr: 1 }}
@@ -93,7 +145,7 @@ const Products = () => {
               ${product.price.toFixed(2)}
             </MDTypography>
             <MDTypography
-              fontSize="12px"
+              fontSize="14px"
               variant="caption"
               color="warning"
               fontWeight="bold"
@@ -103,7 +155,7 @@ const Products = () => {
           </Box>
         ) : (
           <MDTypography
-            fontSize="12px"
+            fontSize="14px"
             variant="caption"
             color="success"
             fontWeight="bold"
@@ -115,7 +167,7 @@ const Products = () => {
         img: (
           <Box
             component="img"
-            src={imageMap[product._id]}
+            src={product.img}
             alt={product.description}
             sx={{ height: 60, objectFit: "contain", mx: "auto", borderRadius: 1 }}
           />
@@ -126,63 +178,59 @@ const Products = () => {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar main_title={`Panel de tienda: ${storeId}`} />
+      <DashboardNavbar main_title="Panel de Tienda" />
       <Box sx={{ px: 3, py: 2 }}>
         <Grid container spacing={2}>
-          {/* Ícono de tienda */}
           <Grid item xs={12} md={3}>
-            <Card
-              sx={{
-                p: 4,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              }}
-            >
-              <StorefrontIcon fontSize="large" color="secondary" />
+            <Card sx={{ p: 4, display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+              <StorefrontIcon fontSize="large" sx={{ color: "secondary" }} />
             </Card>
           </Grid>
 
-          {/* Información de la tienda */}
           <Grid item xs={12} md={9}>
-            <Card
-              sx={{
-                p: 4,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <Typography variant="h4" fontWeight="bold" gutterBottom>
-                {storeInfo.name}
-              </Typography>
+            <Card sx={{ p: 4, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              {storeInfo ? (
+                <>
+                  <Typography variant="h4" fontWeight="bold" gutterBottom>
+                    {storeInfo.name}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Fecha de registro: {moment(storeInfo.__createdtime__).format("DD/MM/YYYY")}
+                  </Typography>
+                </>
+              ) : (
+                <Typography variant="body2" color="textSecondary">
+                  Cargando información de tienda...
+                </Typography>
+              )}
               <Typography variant="body2" color="textSecondary">
-                ID de tienda: {storeInfo.id}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Productos registrados: {productList.length}
+                Productos disponibles: {productList.length}
               </Typography>
             </Card>
           </Grid>
 
-          {/* Tabla de productos */}
           <Grid item xs={12}>
             <Card sx={{ p: 4 }}>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                <Typography variant="h5">Productos registrados</Typography>
+                <Typography variant="h5">Lista de Productos</Typography>
                 <IconButton title="Refrescar" onClick={handleRefresh}>
                   <RefreshIcon fontSize="medium" />
                 </IconButton>
               </Box>
-              <DataTable
-                table={productTable}
-                isSorted={false}
-                entriesPerPage={false}
-                showTotalEntries={false}
-                noEndBorder
-              />
+
+              {loading ? (
+                <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
+                  <CircularProgress size={24} color="secondary" />
+                </Box>
+              ) : (
+                <DataTable
+                  table={productTable}
+                  isSorted={false}
+                  entriesPerPage={false}
+                  showTotalEntries={false}
+                  noEndBorder
+                />
+              )}
             </Card>
           </Grid>
         </Grid>
