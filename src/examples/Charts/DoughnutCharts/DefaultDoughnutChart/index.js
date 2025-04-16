@@ -7,15 +7,12 @@
 * Copyright 2023 Creative Tim (https://www.creative-tim.com)
 
 Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+=========================================================
 */
 
 import { useMemo } from "react";
 
-// porp-types is a library for typechecking of props
+// prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
 
 // react-chartjs-2 components
@@ -33,10 +30,47 @@ import MDTypography from "components/MDTypography";
 // DefaultDoughnutChart configurations
 import configs from "examples/Charts/DoughnutCharts/DefaultDoughnutChart/configs";
 
+const centerTextPlugin = {
+  id: "centerText",
+  beforeDraw(chart) {
+    if (!chart.config?.type || chart.config.type !== "doughnut") return;
+
+    const pluginConfig = chart.config.options?.plugins?.centerText;
+
+    if (
+      !pluginConfig ||
+      typeof pluginConfig !== "object" ||
+      pluginConfig.enabled !== true ||
+      typeof pluginConfig.sold !== "number" ||
+      typeof pluginConfig.total !== "number" ||
+      pluginConfig.total === 0
+    ) {
+      return;
+    }
+
+    const { sold, total, color = "#666", fontSize = 16 } = pluginConfig;
+    const percentage = Math.round((sold / total) * 100);
+    const text = `${percentage}%`;
+
+    const { width, height, ctx } = chart;
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = color;
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    ctx.fillText(text, width / 2, height / 2);
+    ctx.restore();
+  },
+};
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 function DefaultDoughnutChart({ icon, title, description, height, chart }) {
-  const { data, options } = configs(chart.labels || [], chart.datasets || {}, chart.cutout);
+  const { data, options } = configs(
+    chart.labels || [],
+    chart.datasets || {},
+    chart.cutout
+  );
 
   const renderChart = (
     <MDBox py={2} pr={2} pl={icon.component ? 1 : 2}>
@@ -73,7 +107,12 @@ function DefaultDoughnutChart({ icon, title, description, height, chart }) {
       {useMemo(
         () => (
           <MDBox height={height}>
-            <Doughnut data={data} options={options} redraw />
+            <Doughnut
+              data={data}
+              options={options}
+              plugins={[centerTextPlugin]}
+              redraw
+            />
           </MDBox>
         ),
         [chart, height]
@@ -81,10 +120,15 @@ function DefaultDoughnutChart({ icon, title, description, height, chart }) {
     </MDBox>
   );
 
-  return title || description ? <Card>{renderChart}</Card> : renderChart;
+  return title || description ? (
+    <Card sx={{ backgroundColor: "transparent", boxShadow: "none" }}>
+      {renderChart}
+    </Card>
+  ) : (
+    renderChart
+  );
 }
 
-// Setting default values for the props of DefaultDoughnutChart
 DefaultDoughnutChart.defaultProps = {
   icon: { color: "info", component: "" },
   title: "",
@@ -92,7 +136,6 @@ DefaultDoughnutChart.defaultProps = {
   height: "19.125rem",
 };
 
-// Typechecking props for the DefaultDoughnutChart
 DefaultDoughnutChart.propTypes = {
   icon: PropTypes.shape({
     color: PropTypes.oneOf([
@@ -110,7 +153,9 @@ DefaultDoughnutChart.propTypes = {
   title: PropTypes.string,
   description: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  chart: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.array, PropTypes.object])).isRequired,
+  chart: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.array, PropTypes.object])
+  ).isRequired,
 };
 
 export default DefaultDoughnutChart;

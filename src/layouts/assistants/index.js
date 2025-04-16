@@ -9,6 +9,7 @@ import MDTypography from "components/MDTypography";
 
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import DownloadIcon from '@mui/icons-material/Download';
 
 import useAxios from "hooks/useAxios";
 
@@ -68,6 +69,9 @@ const ClientList = () => {
             />
             <IconButton onClick={resetSearch} sx={{ ml: 2 }} title="Reiniciar búsqueda">
               <RefreshIcon fontSize="medium" />
+            </IconButton>
+            <IconButton onClick={resetSearch} sx={{ ml: 2 }} title="Descargar Informe de Asistentes">
+              <DownloadIcon fontSize="medium" />
             </IconButton>
           </Box>
 
