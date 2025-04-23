@@ -11,7 +11,6 @@ export async function downloadAttendeesAsCSV(eventId) {
       "Nombre Completo",
       "Numero de Cedula",
       "Correo Electronico",
-      "Fecha de Registro",
       "Tickets Adquiridos",
       "Tokens Registrados",
     ];
@@ -25,10 +24,6 @@ export async function downloadAttendeesAsCSV(eventId) {
         );
         const ticketData = await ticketRes.json();
 
-        const createdDate = new Date(
-          ticketData.attender?.created_time || 0
-        ).toLocaleDateString("es-EC");
-
         const ticketCount =
           ticketData.purchase_tickets?.reduce((acc, ticket) => {
             return acc + (ticket.purchase_ticket_items?.length || 0);
@@ -40,14 +35,7 @@ export async function downloadAttendeesAsCSV(eventId) {
         const tokens = await tokenRes.json();
         const tokenCount = tokens?.length || 0;
 
-        return [
-          full_name,
-          id_document,
-          email,
-          createdDate,
-          ticketCount,
-          tokenCount,
-        ];
+        return [full_name, id_document, email, ticketCount, tokenCount];
       })
     );
 

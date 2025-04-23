@@ -92,7 +92,13 @@ function PointOfSaleTransactionHistory() {
     { Header: "Monto", accessor: "amount",fontFamily:"montserrat-semibold", fontSize:"14px", align: "center" },
   ];
 
-  if (loading) return <div>Cargando...</div>;
+  if (loading) 
+    return(
+      <DashboardLayout>
+        <DashboardNavbar main_title="Historial de ventas" />
+        <div>Cargando.....</div>
+      </DashboardLayout>
+    );
 
   if (error || !data?.store || !data?.transactions)
     return(
