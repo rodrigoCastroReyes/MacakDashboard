@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
-  Box, Grid, Card, Typography, IconButton, CircularProgress, TextField,
-  Dialog, DialogTitle, DialogContent, DialogActions, Button
+  Box,
+  Grid,
+  Card,
+  Typography,
+  IconButton,
+  CircularProgress,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -17,7 +27,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import DiscountIcon from '@mui/icons-material/Discount';
+import DiscountIcon from "@mui/icons-material/Discount";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
@@ -61,15 +71,18 @@ const Products = () => {
 
   const handleUpdateProduct = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/product?id=${selectedProduct._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          description: selectedProduct.description,
-          price: parseFloat(selectedProduct.price),
-          img: selectedProduct.img,
-        }),
-      });
+      const res = await fetch(
+        `${API_BASE_URL}/product?id=${selectedProduct._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            description: selectedProduct.description,
+            price: parseFloat(selectedProduct.price),
+            img: selectedProduct.img,
+          }),
+        }
+      );
 
       if (!res.ok) throw new Error("Error al actualizar producto");
 
@@ -88,11 +101,16 @@ const Products = () => {
   const confirmDeleteProduct = async () => {
     if (!productToDelete) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/product?id=${productToDelete._id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `${API_BASE_URL}/product?id=${productToDelete._id}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (!res.ok) throw new Error("Error al eliminar producto");
-      setProductList((prev) => prev.filter((p) => p._id !== productToDelete._id));
+      setProductList((prev) =>
+        prev.filter((p) => p._id !== productToDelete._id)
+      );
     } catch (err) {
       console.error("Error al eliminar producto:", err);
     } finally {
@@ -130,7 +148,9 @@ const Products = () => {
     setEditingIndex(null);
   };
 
-  useEffect(() => { handleRefresh(); }, [storeId]);
+  useEffect(() => {
+    handleRefresh();
+  }, [storeId]);
 
   const handleDiscountChange = (index, newDiscount) => {
     const updated = [...productList];
@@ -153,39 +173,79 @@ const Products = () => {
       { Header: "Descripción", accessor: "description", align: "center" },
       { Header: "Precio", accessor: "price", align: "center" },
       { Header: "Descuento", accessor: "discount", align: "center" },
-      ...(showActions ? [{ Header: "Acciones", accessor: "actions", align: "center" }] : []),
+      ...(showActions
+        ? [{ Header: "Acciones", accessor: "actions", align: "center" }]
+        : []),
     ],
     rows: productList.map((product, index) => {
       const parsedPrice = parseFloat(product.price);
       const hasDiscount = product.discount > 0;
-      const discountedPrice = parsedPrice - (parsedPrice * product.discount) / 100;
+      const discountedPrice =
+        parsedPrice - (parsedPrice * product.discount) / 100;
 
       return {
         description: (
-          <MDTypography fontSize="14px" variant="caption" color="text" align="center">
+          <MDTypography
+            fontSize="14px"
+            variant="caption"
+            color="text"
+            align="center"
+          >
             {product.description}
           </MDTypography>
         ),
         price: hasDiscount ? (
           <Box textAlign="center">
-            <MDTypography fontSize="14px" variant="caption" color="text" sx={{ textDecoration: "line-through", mr: 1 }}>
+            <MDTypography
+              fontSize="14px"
+              variant="caption"
+              color="text"
+              sx={{ textDecoration: "line-through", mr: 1 }}
+            >
               ${parsedPrice.toFixed(2)}
             </MDTypography>
-            <MDTypography fontSize="14px" variant="caption" color="warning" fontWeight="bold">
+            <MDTypography
+              fontSize="14px"
+              variant="caption"
+              color="warning"
+              fontWeight="bold"
+            >
               ${discountedPrice.toFixed(2)}
             </MDTypography>
           </Box>
         ) : (
-          <MDTypography fontSize="14px" variant="caption" color="success" fontWeight="bold" align="center">
+          <MDTypography
+            fontSize="14px"
+            variant="caption"
+            color="success"
+            fontWeight="bold"
+            align="center"
+          >
             ${parsedPrice.toFixed(2)}
           </MDTypography>
         ),
         img: (
-          <Box component="img" src={product.img} alt={product.description}
-            sx={{ height: 60, objectFit: "contain", mx: "auto", borderRadius: 1 }} />
+          <Box
+            component="img"
+            src={product.img}
+            alt={product.description}
+            sx={{
+              height: 60,
+              objectFit: "contain",
+              mx: "auto",
+              borderRadius: 1,
+            }}
+          />
         ),
         discount: (
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
             {editingIndex === index ? (
               <>
                 <TextField
@@ -201,16 +261,24 @@ const Products = () => {
                   onClick={async () => {
                     const updated = [...productList];
                     const currentProduct = updated[index];
-                    const newPrice = parsedPrice - (parsedPrice * currentProduct.discount) / 100;
+                    const newPrice =
+                      parsedPrice -
+                      (parsedPrice * currentProduct.discount) / 100;
 
                     try {
-                      const res = await fetch(`${API_BASE_URL}/product?id=${currentProduct._id}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ price: parseFloat(newPrice.toFixed(2)) }),
-                      });
+                      const res = await fetch(
+                        `${API_BASE_URL}/product?id=${currentProduct._id}`,
+                        {
+                          method: "PUT",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            price: parseFloat(newPrice.toFixed(2)),
+                          }),
+                        }
+                      );
 
-                      if (!res.ok) throw new Error("Error al actualizar el precio");
+                      if (!res.ok)
+                        throw new Error("Error al actualizar el precio");
 
                       currentProduct.price = parseFloat(newPrice.toFixed(2));
                       setProductList(updated);
@@ -242,7 +310,9 @@ const Products = () => {
               </>
             ) : (
               <>
-                <Typography variant="caption" fontSize="14px">{product.discount}%</Typography>
+                <Typography variant="caption" fontSize="14px">
+                  {product.discount}%
+                </Typography>
                 <IconButton
                   size="small"
                   onClick={() => {
@@ -261,7 +331,10 @@ const Products = () => {
           ? {
               actions: (
                 <Box display="flex" justifyContent="center" gap={1}>
-                  <IconButton title="Editar Producto" onClick={() => handleOpenEditDialog(product)}>
+                  <IconButton
+                    title="Editar Producto"
+                    onClick={() => handleOpenEditDialog(product)}
+                  >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
@@ -286,41 +359,110 @@ const Products = () => {
       <DashboardNavbar main_title="Panel de Tienda" />
       <Box sx={{ px: 3, py: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={3}>
-            <Card sx={{ p: 4, display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-              <StorefrontIcon fontSize="large" sx={{ color: "secondary" }} />
-            </Card>
+          <Grid container spacing={2} alignItems="stretch">
+            {/* Ícono de la tienda */}
+            <Grid item xs={12} md={3}>
+              <Card
+                sx={{
+                  p: 4,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <StorefrontIcon fontSize="large" sx={{ color: "secondary" }} />
+              </Card>
+            </Grid>
+
+            {/* Información + botones */}
+            <Grid item xs={12} md={9}>
+              <Card
+                sx={{
+                  p: 4,
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: { xs: "column", md: "row" }, // Responsive: columna en móvil, fila en desktop
+                  gap: 2,
+                }}
+              >
+                {/* Información de la tienda */}
+                <Box sx={{ flexGrow: 1 }}>
+                  {storeInfo ? (
+                    <>
+                      <Typography variant="h4" fontWeight="bold" gutterBottom>
+                        {storeInfo.name}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Fecha de registro:{" "}
+                        {moment(storeInfo.__createdtime__).format("DD/MM/YYYY")}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        sx={{ mt: 1 }}
+                      >
+                        Productos disponibles: {productList.length}
+                      </Typography>
+                    </>
+                  ) : (
+                    <Typography variant="body2" color="textSecondary">
+                      Cargando información de tienda...
+                    </Typography>
+                  )}
+                </Box>
+
+                {/* Botones de acción */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <IconButton title="Editar Tienda" color="secondary"  sx={{ opacity: 0.2 }}>
+                    <EditIcon fontSize="medium" />
+                  </IconButton>
+                  <IconButton title="Eliminar Tienda" sx={{ color : "red", opacity: 0.2 }}>
+                    <DeleteIcon fontSize="medium" />
+                  </IconButton>
+                </Box>
+              </Card>
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={9}>
-            <Card sx={{ p: 4 }}>
-              {storeInfo ? (
-                <>
-                  <Typography variant="h4" fontWeight="bold" gutterBottom>{storeInfo.name}</Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Fecha de registro: {moment(storeInfo.__createdtime__).format("DD/MM/YYYY")}
-                  </Typography>
-                </>
-              ) : (
-                <Typography variant="body2" color="textSecondary">Cargando información de tienda...</Typography>
-              )}
-              <Typography variant="body2" color="textSecondary">
-                Productos disponibles: {productList.length}
-              </Typography>
-            </Card>
-          </Grid>
+
           <Grid item xs={12}>
             <Card sx={{ p: 4 }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
                 <Typography variant="h5">Lista de Productos</Typography>
                 <Box>
-                  <IconButton title="Agregar producto" onClick={handleOpenAddDialog}>
+                  <IconButton
+                    title="Agregar producto"
+                    onClick={handleOpenAddDialog}
+                  >
                     <AddIcon fontSize="medium" />
                   </IconButton>
                   <IconButton
-                      title={showActions ? "Ocultar acciones" : "Mostrar acciones"}
-                      onClick={() => setShowActions((prev) => !prev)}
-                    >
-                      {showActions ? <VisibilityOffIcon fontSize="medium" /> : <VisibilityIcon fontSize="medium" />}
+                    title={
+                      showActions ? "Ocultar acciones" : "Mostrar acciones"
+                    }
+                    onClick={() => setShowActions((prev) => !prev)}
+                  >
+                    {showActions ? (
+                      <VisibilityOffIcon fontSize="medium" />
+                    ) : (
+                      <VisibilityIcon fontSize="medium" />
+                    )}
                   </IconButton>
                   <IconButton title="Refrescar" onClick={handleRefresh}>
                     <RefreshIcon fontSize="medium" />
@@ -345,33 +487,73 @@ const Products = () => {
         </Grid>
       </Box>
 
-      <Dialog open={openAddDialog} onClose={handleCloseAddDialog} maxWidth="sm" fullWidth>
-        <AddProductForm handleClose={handleCloseAddDialog} storeId={storeId} onRefresh={handleRefresh} />
+      <Dialog
+        open={openAddDialog}
+        onClose={handleCloseAddDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <AddProductForm
+          storeId={storeId}
+          handleClose={handleCloseAddDialog}
+          onRefresh={fetchProducts}
+          existingProducts={productList}
+        />
       </Dialog>
 
-      <Dialog open={editDialogOpen} onClose={handleCloseEditDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={editDialogOpen}
+        onClose={handleCloseEditDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Editar Producto</DialogTitle>
         {selectedProduct && (
           <>
             <DialogContent>
-              <TextField label="Descripción" name="description" value={selectedProduct.description}
-                onChange={handleEditFieldChange} fullWidth margin="normal" />
-              <TextField label="Precio" name="price" type="number" value={selectedProduct.price}
-                onChange={handleEditFieldChange} fullWidth margin="normal" />
-              <TextField label="Imagen (URL)" name="img" value={selectedProduct.img}
-                onChange={handleEditFieldChange} fullWidth margin="normal" />
+              <TextField
+                label="Descripción"
+                name="description"
+                value={selectedProduct.description}
+                onChange={handleEditFieldChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Precio"
+                name="price"
+                type="number"
+                value={selectedProduct.price}
+                onChange={handleEditFieldChange}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Imagen (URL)"
+                name="img"
+                value={selectedProduct.img}
+                onChange={handleEditFieldChange}
+                fullWidth
+                margin="normal"
+              />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseEditDialog}>Cancelar</Button>
-              <Button onClick={handleUpdateProduct} color="primary">Guardar</Button>
+              <Button onClick={handleUpdateProduct} color="primary">
+                Guardar
+              </Button>
             </DialogActions>
           </>
         )}
       </Dialog>
 
-      <Dialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)}>
+      <Dialog
+        open={openConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)}
+      >
         <DialogTitle>
-          ¿Seguro que deseas eliminar {productToDelete?.description || 'este producto'}?
+          ¿Seguro que deseas eliminar{" "}
+          {productToDelete?.description || "este producto"}?
         </DialogTitle>
         <DialogActions>
           <Button onClick={() => setOpenConfirmDialog(false)}>Cancelar</Button>

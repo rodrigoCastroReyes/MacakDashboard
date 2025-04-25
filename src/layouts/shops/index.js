@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Card, TextField, Box, IconButton, CircularProgress } from "@mui/material";
+import {
+  Grid,
+  Card,
+  TextField,
+  Box,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -9,6 +16,9 @@ import useAxios from "hooks/useAxios";
 
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+
+import AddShop from "./AddShop";
 
 import { API_BASE_URL } from "config";
 
@@ -18,12 +28,45 @@ const Shops = () => {
   const navigate = useNavigate();
   const eventId = localStorage.getItem("eventId");
 
-  // Obtener la lista de tiendas
-  const { data: stores, loading: storesLoading, error: storesError } = useAxios(
-    `${API_BASE_URL}/store/by_event?id=${eventId}`
-  );
-  
+  const {
+    data: stores,
+    loading: storesLoading,
+    error: storesError,
+  } = useAxios(`${API_BASE_URL}/store/by_event?id=${eventId}`);
+
+  const refreshStores = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/store/by_event?id=${eventId}`);
+      const newStores = await res.json();
+
+      const storesWithCounts = await Promise.all(
+        newStores.map(async (store) => {
+          try {
+            const response = await fetch(
+              `${API_BASE_URL}/store/products?id=${store._id}`
+            );
+            const products = await response.json();
+            return { ...store, productCount: products.length };
+          } catch (error) {
+            console.error(
+              `Error fetching products for store ${store._id}:`,
+              error
+            );
+            return { ...store, productCount: 0 };
+          }
+        })
+      );
+
+      setStoresWithProductCount(storesWithCounts);
+      setIsStoresReady(true);
+    } catch (err) {
+      console.error("Error al refrescar tiendas:", err);
+    }
+  };
+
   const [isStoresReady, setIsStoresReady] = useState(false);
+
+  const [openAddShopModal, setOpenAddShopModal] = useState(false);
 
   useEffect(() => {
     const fetchProductCounts = async () => {
@@ -31,23 +74,28 @@ const Shops = () => {
         const storesWithCounts = await Promise.all(
           stores.map(async (store) => {
             try {
-              const response = await fetch(`${API_BASE_URL}/store/products?id=${store._id}`);
+              const response = await fetch(
+                `${API_BASE_URL}/store/products?id=${store._id}`
+              );
               const products = await response.json();
               return { ...store, productCount: products.length };
             } catch (error) {
-              console.error(`Error fetching products for store ${store._id}:`, error);
+              console.error(
+                `Error fetching products for store ${store._id}:`,
+                error
+              );
               return { ...store, productCount: 0 };
             }
           })
         );
         setStoresWithProductCount(storesWithCounts);
-        setIsStoresReady(true); // <-- aquí
+        setIsStoresReady(true);
       }
     };
-  
+
     fetchProductCounts();
   }, [stores]);
-  
+
   const filteredStores = storesWithProductCount.filter((store) =>
     store.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -77,7 +125,9 @@ const Shops = () => {
       <DashboardLayout>
         <DashboardNavbar main_title="Tiendas" />
         <MDBox pt={6} pb={3} display="flex" justifyContent="center">
-          <MDTypography variant="h6">Error al obtener las tiendas.</MDTypography>
+          <MDTypography variant="h6">
+            Error al obtener las tiendas.
+          </MDTypography>
         </MDBox>
       </DashboardLayout>
     );
@@ -88,7 +138,13 @@ const Shops = () => {
       <DashboardNavbar main_title="Tiendas" />
       <MDBox pt={3} pr={2} pl={2} pb={3}>
         <Box sx={{ mb: 2 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <TextField
               label="Buscar tienda"
               placeholder="Buscar por nombre"
@@ -97,7 +153,11 @@ const Shops = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               sx={{ flex: 1 }}
             />
-            <IconButton onClick={resetSearch} sx={{ ml: 2 }} title="Reiniciar búsqueda">
+            <IconButton
+              onClick={resetSearch}
+              sx={{ ml: 2 }}
+              title="Reiniciar búsqueda"
+            >
               <RefreshIcon fontSize="medium" />
             </IconButton>
           </Box>
@@ -171,7 +231,70 @@ const Shops = () => {
               </Grid>
             </Grid>
           ))}
+
+          {/* Agregar Tienda condicionado al buscador */}
+          {searchTerm === "" && (
+            <Grid item xs={12} sm={6} md={4}>
+              <Card
+                onClick={() => setOpenAddShopModal(true)}
+                sx={{
+                  p: 4,
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  gap: 2,
+                  backgroundColor: "grey.200",
+                  border: "2px dashed grey",
+                  borderTopLeftRadius: 50,
+                  borderBottomLeftRadius: 50,
+                  borderTopRightRadius: 50,
+                  borderBottomRightRadius: 50,
+                  transition: "all 0.3s ease-in-out",
+                  "&:hover .hover-grow": {
+                    transform: "scale(1.1)",
+                  },
+                }}
+              >
+                <Box
+                  className="hover-grow"
+                  sx={{
+                    transition: "transform 0.3s ease-in-out",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <AddCircleOutlineIcon
+                    fontSize="large"
+                    sx={{ color: "grey.700" }}
+                  />
+                </Box>
+                <Box
+                  className="hover-grow"
+                  sx={{
+                    transition: "transform 0.3s ease-in-out",
+                  }}
+                >
+                  <MDTypography
+                    variant="h6"
+                    sx={{ textAlign: "center", color: "grey.700" }}
+                  >
+                    Agregar Tienda
+                  </MDTypography>
+                </Box>
+              </Card>
+            </Grid>
+          )}
         </Grid>
+        <AddShop
+          open={openAddShopModal}
+          onClose={() => setOpenAddShopModal(false)}
+          onRefresh={refreshStores}
+          existingStores={storesWithProductCount}
+        />
 
         {isStoresReady && filteredStores.length === 0 && (
           <MDTypography variant="body2" sx={{ mt: 3, textAlign: "center" }}>

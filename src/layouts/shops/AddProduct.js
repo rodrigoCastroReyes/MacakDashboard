@@ -1,18 +1,49 @@
-import React, { useState, useRef } from "react";
-import { Box, TextField, Button, DialogTitle, DialogContent, InputAdornment, IconButton, Typography } from "@mui/material";
-import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Box,
+  TextField,
+  Button,
+  DialogTitle,
+  DialogContent,
+  InputAdornment,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 
 import { API_BASE_URL } from "config";
 
-const AddProductForm = ({ handleClose, storeId, onRefresh }) => {
+const AddProductForm = ({
+  handleClose,
+  storeId,
+  onRefresh,
+  existingProducts = [],
+}) => {
   const [formData, setFormData] = useState({
     description: "",
     price: "",
     img: "",
   });
-
   const [filePreview, setFilePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [descriptionError, setDescriptionError] = useState("");
+
   const fileInputRef = useRef(null);
+
+  // 🔍 Validar duplicados en tiempo real
+  useEffect(() => {
+    const desc = formData.description.trim().toLowerCase();
+    const exists = existingProducts.some(
+      (p) =>
+        typeof p.description === "string" &&
+        p.description.trim().toLowerCase() === desc
+    );
+    if (desc && exists) {
+      setDescriptionError("Ya existe un producto con esta descripción.");
+    } else {
+      setDescriptionError("");
+    }
+  }, [formData.description, existingProducts]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -20,7 +51,7 @@ const AddProductForm = ({ handleClose, storeId, onRefresh }) => {
       [e.target.name]: e.target.value,
     }));
     if (e.target.name === "img") {
-      setFilePreview(null); // limpiar preview si se pega una URL
+      setFilePreview(null);
     }
   };
 
@@ -48,6 +79,7 @@ const AddProductForm = ({ handleClose, storeId, onRefresh }) => {
     };
 
     try {
+      setLoading(true);
       const res = await fetch(`${API_BASE_URL}/product`, {
         method: "POST",
         headers: {
@@ -61,11 +93,19 @@ const AddProductForm = ({ handleClose, storeId, onRefresh }) => {
       console.log("Producto agregado exitosamente");
       handleClose();
       if (onRefresh) onRefresh();
-
     } catch (err) {
       console.error("Error en el POST:", err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Desactivar botón de guardar si hay error o campos vacíos
+  const isSaveDisabled =
+    !formData.description.trim() ||
+    !formData.price ||
+    !!descriptionError ||
+    loading;
 
   return (
     <Box component="form" onSubmit={handleSubmit} p={2}>
@@ -78,6 +118,8 @@ const AddProductForm = ({ handleClose, storeId, onRefresh }) => {
           value={formData.description}
           onChange={handleChange}
           margin="normal"
+          error={!!descriptionError}
+          helperText={descriptionError || " "}
         />
         <TextField
           fullWidth
@@ -87,8 +129,13 @@ const AddProductForm = ({ handleClose, storeId, onRefresh }) => {
           value={formData.price}
           onChange={handleChange}
           margin="normal"
+          error={!formData.price && formData.price !== ""}
+          helperText={
+            !formData.price && formData.price !== ""
+              ? "El precio es obligatorio"
+              : " "
+          }
         />
-
         <TextField
           fullWidth
           label="Imagen (URL o subir)"
@@ -132,11 +179,16 @@ const AddProductForm = ({ handleClose, storeId, onRefresh }) => {
         )}
 
         <Box mt={4} display="flex" justifyContent="flex-end">
-          <Button onClick={handleClose} sx={{ mr: 2 }}>
+          <Button
+            onClick={handleClose}
+            sx={{ mr: 2 }}
+            color="secondary"
+            disabled={loading}
+          >
             Cancelar
           </Button>
-          <Button type="submit">
-            Guardar
+          <Button type="submit" color="primary" disabled={isSaveDisabled}>
+            {loading ? "Guardando..." : "Guardar"}
           </Button>
         </Box>
       </DialogContent>

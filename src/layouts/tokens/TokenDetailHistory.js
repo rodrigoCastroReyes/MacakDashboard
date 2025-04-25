@@ -34,7 +34,12 @@ function TokenDetailHistory() {
     setRefreshing(false);
   };
   moment().locale('es');
-  if (loading  ) return <div>Cargando...</div>;
+  if (loading) 
+  return 
+      <DashboardLayout>
+        <DashboardNavbar main_title="Historial de transacciones por token" />
+        <div>Cargando.....</div>
+      </DashboardLayout>
   if (error || !data?.token || !data?.transactions ) return <div>Error al obtener los datos</div>;
   const transactions = data?.transactions;
   const getTranslateTypes = (transaction) =>{

@@ -56,7 +56,7 @@ function QuantitySoldByTicket({ data }) {
           };
 
           return (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+            <Grid item xs={12} sm={6} md={6} key={index}>
               <DefaultDoughnutChart
                 title={ticket.name}
                 description={`Vendidos: ${sold} / ${ticket.max_quantity}`}
