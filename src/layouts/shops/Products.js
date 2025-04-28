@@ -7,12 +7,7 @@ import {
   Typography,
   IconButton,
   CircularProgress,
-  TextField,
   Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
 } from "@mui/material";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -22,16 +17,17 @@ import MDTypography from "components/MDTypography";
 
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import EditIcon from "@mui/icons-material/Edit";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import DiscountIcon from "@mui/icons-material/Discount";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-import AddProductForm from "layouts/shops/AddProduct";
+import AddProductForm from "./Components/AddProduct";
+import ProductActions from "./Components/ProductActions";
+import EditProductDialog from "./Components/EditProductDialog";
+import ConfirmDeleteDialog from "./Components/ConfirmDeleteDialog";
+
 import { API_BASE_URL } from "config";
 import moment from "moment";
 
@@ -42,12 +38,12 @@ const Products = () => {
   const [productList, setProductList] = useState([]);
   const [storeInfo, setStoreInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [originalDiscount, setOriginalDiscount] = useState(0);
-  const [openAddDialog, setOpenAddDialog] = useState(false);
   const [showActions, setShowActions] = useState(false);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
 
@@ -98,8 +94,7 @@ const Products = () => {
     }
   };
 
-  const confirmDeleteProduct = async () => {
-    if (!productToDelete) return;
+  const handleDeleteProduct = async () => {
     try {
       const res = await fetch(
         `${API_BASE_URL}/product?id=${productToDelete._id}`,
@@ -108,14 +103,14 @@ const Products = () => {
         }
       );
       if (!res.ok) throw new Error("Error al eliminar producto");
+
       setProductList((prev) =>
         prev.filter((p) => p._id !== productToDelete._id)
       );
-    } catch (err) {
-      console.error("Error al eliminar producto:", err);
-    } finally {
       setOpenConfirmDialog(false);
       setProductToDelete(null);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -123,10 +118,9 @@ const Products = () => {
     try {
       const res = await fetch(`${API_BASE_URL}/store/products?id=${storeId}`);
       const data = await res.json();
-      const withDiscount = data.map((p) => ({ ...p, discount: 0 }));
-      setProductList(withDiscount);
+      setProductList(data);
     } catch (err) {
-      console.error("Error al obtener productos:", err);
+      console.error(err);
     }
   };
 
@@ -137,7 +131,7 @@ const Products = () => {
       const tienda = data.find((store) => store._id === storeId);
       if (tienda) setStoreInfo(tienda);
     } catch (err) {
-      console.error("Error al obtener tienda:", err);
+      console.error(err);
     }
   };
 
@@ -145,213 +139,70 @@ const Products = () => {
     setLoading(true);
     await Promise.all([fetchProducts(), fetchStoreDetails()]);
     setLoading(false);
-    setEditingIndex(null);
   };
 
   useEffect(() => {
     handleRefresh();
   }, [storeId]);
 
-  const handleDiscountChange = (index, newDiscount) => {
-    const updated = [...productList];
-    updated[index].discount = parseFloat(newDiscount) || 0;
-    setProductList(updated);
-  };
-
-  const cancelEdit = () => {
-    const updated = [...productList];
-    if (editingIndex !== null) {
-      updated[editingIndex].discount = originalDiscount;
-    }
-    setProductList(updated);
-    setEditingIndex(null);
-  };
-
   const productTable = {
     columns: [
       { Header: "Imagen", accessor: "img", align: "center" },
       { Header: "Descripción", accessor: "description", align: "center" },
       { Header: "Precio", accessor: "price", align: "center" },
-      { Header: "Descuento", accessor: "discount", align: "center" },
       ...(showActions
         ? [{ Header: "Acciones", accessor: "actions", align: "center" }]
         : []),
     ],
-    rows: productList.map((product, index) => {
-      const parsedPrice = parseFloat(product.price);
-      const hasDiscount = product.discount > 0;
-      const discountedPrice =
-        parsedPrice - (parsedPrice * product.discount) / 100;
-
-      return {
-        description: (
-          <MDTypography
-            fontSize="14px"
-            variant="caption"
-            color="text"
-            align="center"
-          >
-            {product.description}
-          </MDTypography>
-        ),
-        price: hasDiscount ? (
-          <Box textAlign="center">
-            <MDTypography
-              fontSize="14px"
-              variant="caption"
-              color="text"
-              sx={{ textDecoration: "line-through", mr: 1 }}
-            >
-              ${parsedPrice.toFixed(2)}
-            </MDTypography>
-            <MDTypography
-              fontSize="14px"
-              variant="caption"
-              color="warning"
-              fontWeight="bold"
-            >
-              ${discountedPrice.toFixed(2)}
-            </MDTypography>
-          </Box>
-        ) : (
-          <MDTypography
-            fontSize="14px"
-            variant="caption"
-            color="success"
-            fontWeight="bold"
-            align="center"
-          >
-            ${parsedPrice.toFixed(2)}
-          </MDTypography>
-        ),
-        img: (
-          <Box
-            component="img"
-            src={product.img}
-            alt={product.description}
-            sx={{
-              height: 60,
-              objectFit: "contain",
-              mx: "auto",
-              borderRadius: 1,
-            }}
-          />
-        ),
-        discount: (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            {editingIndex === index ? (
-              <>
-                <TextField
-                  type="number"
-                  value={product.discount}
-                  onChange={(e) => handleDiscountChange(index, e.target.value)}
-                  size="14px"
-                  sx={{ width: 70 }}
-                  inputProps={{ min: 0, max: 100 }}
-                />
-                <IconButton
-                  size="small"
-                  onClick={async () => {
-                    const updated = [...productList];
-                    const currentProduct = updated[index];
-                    const newPrice =
-                      parsedPrice -
-                      (parsedPrice * currentProduct.discount) / 100;
-
-                    try {
-                      const res = await fetch(
-                        `${API_BASE_URL}/product?id=${currentProduct._id}`,
-                        {
-                          method: "PUT",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            price: parseFloat(newPrice.toFixed(2)),
-                          }),
-                        }
-                      );
-
-                      if (!res.ok)
-                        throw new Error("Error al actualizar el precio");
-
-                      currentProduct.price = parseFloat(newPrice.toFixed(2));
-                      setProductList(updated);
-                    } catch (err) {
-                      console.error(err);
-                    }
-
-                    setEditingIndex(null);
-                  }}
-                  title="Aplicar descuento"
-                >
-                  <CheckIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={cancelEdit} title="Cancelar">
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    const updated = [...productList];
-                    updated[index].discount = 0;
-                    setProductList(updated);
-                    setEditingIndex(null);
-                  }}
-                  title="Eliminar descuento"
-                >
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </>
-            ) : (
-              <>
-                <Typography variant="caption" fontSize="14px">
-                  {product.discount}%
-                </Typography>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setOriginalDiscount(product.discount);
-                    setEditingIndex(index);
-                  }}
-                  title="Editar descuento"
-                >
-                  <DiscountIcon fontSize="small" />
-                </IconButton>
-              </>
-            )}
-          </Box>
-        ),
-        ...(showActions
-          ? {
-              actions: (
-                <Box display="flex" justifyContent="center" gap={1}>
-                  <IconButton
-                    title="Editar Producto"
-                    onClick={() => handleOpenEditDialog(product)}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    title="Eliminar Producto"
-                    onClick={() => {
-                      setProductToDelete(product);
-                      setOpenConfirmDialog(true);
-                    }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-              ),
-            }
-          : {}),
-      };
-    }),
+    rows: productList.map((product) => ({
+      img: (
+        <Box
+          component="img"
+          src={product.img}
+          alt={product.description}
+          sx={{
+            height: 60,
+            objectFit: "contain",
+            mx: "auto",
+            borderRadius: 1,
+          }}
+        />
+      ),
+      description: (
+        <MDTypography
+          fontSize="14px"
+          variant="caption"
+          color="text"
+          align="center"
+        >
+          {product.description}
+        </MDTypography>
+      ),
+      price: (
+        <MDTypography
+          fontSize="14px"
+          variant="caption"
+          color="success"
+          fontWeight="bold"
+        >
+          ${parseFloat(product.price).toFixed(2)}
+        </MDTypography>
+      ),
+      ...(showActions
+        ? {
+            actions: (
+              <ProductActions
+                product={product}
+                onEdit={handleOpenEditDialog}
+                onDelete={(p) => {
+                  setProductToDelete(p);
+                  setOpenConfirmDialog(true);
+                }}
+              />
+            ),
+          }
+        : {}),
+    })),
   };
 
   return (
@@ -359,8 +210,7 @@ const Products = () => {
       <DashboardNavbar main_title="Panel de Tienda" />
       <Box sx={{ px: 3, py: 2 }}>
         <Grid container spacing={2}>
-          <Grid container spacing={2} alignItems="stretch">
-            {/* Ícono de la tienda */}
+          <Grid container spacing={2}>
             <Grid item xs={12} md={3}>
               <Card
                 sx={{
@@ -375,21 +225,19 @@ const Products = () => {
               </Card>
             </Grid>
 
-            {/* Información + botones */}
             <Grid item xs={12} md={9}>
               <Card
                 sx={{
                   p: 4,
                   height: "100%",
                   display: "flex",
-                  justifyContent: "space-between",
+                  flexDirection: { xs: "column", md: "row" },
                   alignItems: "center",
-                  flexDirection: { xs: "column", md: "row" }, // Responsive: columna en móvil, fila en desktop
+                  justifyContent: "space-between",
                   gap: 2,
                 }}
               >
-                {/* Información de la tienda */}
-                <Box sx={{ flexGrow: 1 }}>
+                <Box>
                   {storeInfo ? (
                     <>
                       <Typography variant="h4" fontWeight="bold" gutterBottom>
@@ -414,7 +262,6 @@ const Products = () => {
                   )}
                 </Box>
 
-                {/* Botones de acción */}
                 <Box
                   sx={{
                     display: "flex",
@@ -423,10 +270,13 @@ const Products = () => {
                     gap: 2,
                   }}
                 >
-                  <IconButton title="Editar Tienda" color="secondary"  sx={{ opacity: 0.2 }}>
+                  <IconButton title="Editar Tienda" sx={{ opacity: 0.2 }}>
                     <EditIcon fontSize="medium" />
                   </IconButton>
-                  <IconButton title="Eliminar Tienda" sx={{ color : "red", opacity: 0.2 }}>
+                  <IconButton
+                    title="Eliminar Tienda"
+                    sx={{ color: "red", opacity: 0.2 }}
+                  >
                     <DeleteIcon fontSize="medium" />
                   </IconButton>
                 </Box>
@@ -469,6 +319,7 @@ const Products = () => {
                   </IconButton>
                 </Box>
               </Box>
+
               {loading ? (
                 <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
                   <CircularProgress size={24} color="secondary" />
@@ -501,67 +352,20 @@ const Products = () => {
         />
       </Dialog>
 
-      <Dialog
+      <EditProductDialog
         open={editDialogOpen}
+        product={selectedProduct}
         onClose={handleCloseEditDialog}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Editar Producto</DialogTitle>
-        {selectedProduct && (
-          <>
-            <DialogContent>
-              <TextField
-                label="Descripción"
-                name="description"
-                value={selectedProduct.description}
-                onChange={handleEditFieldChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Precio"
-                name="price"
-                type="number"
-                value={selectedProduct.price}
-                onChange={handleEditFieldChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Imagen (URL)"
-                name="img"
-                value={selectedProduct.img}
-                onChange={handleEditFieldChange}
-                fullWidth
-                margin="normal"
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseEditDialog}>Cancelar</Button>
-              <Button onClick={handleUpdateProduct} color="primary">
-                Guardar
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
+        onChange={handleEditFieldChange}
+        onSave={handleUpdateProduct}
+      />
 
-      <Dialog
+      <ConfirmDeleteDialog
         open={openConfirmDialog}
         onClose={() => setOpenConfirmDialog(false)}
-      >
-        <DialogTitle>
-          ¿Seguro que deseas eliminar{" "}
-          {productToDelete?.description || "este producto"}?
-        </DialogTitle>
-        <DialogActions>
-          <Button onClick={() => setOpenConfirmDialog(false)}>Cancelar</Button>
-          <Button onClick={confirmDeleteProduct} color="secondary">
-            Eliminar
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={handleDeleteProduct}
+        productName={productToDelete?.description}
+      />
     </DashboardLayout>
   );
 };

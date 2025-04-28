@@ -13,12 +13,13 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import useAxios from "hooks/useAxios";
+import { Skeleton } from "@mui/material";
 
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-import AddShop from "./AddShop";
+import AddShop from "./Components/AddShop";
 
 import { API_BASE_URL } from "config";
 
@@ -67,6 +68,8 @@ const Shops = () => {
   const [isStoresReady, setIsStoresReady] = useState(false);
 
   const [openAddShopModal, setOpenAddShopModal] = useState(false);
+
+  const skeletonCount = stores?.length || 6;
 
   useEffect(() => {
     const fetchProductCounts = async () => {
@@ -170,125 +173,216 @@ const Shops = () => {
         </Box>
 
         <Grid container rowSpacing={3} columnSpacing={3}>
-          {filteredStores.map((store) => (
-            <Grid item xs={12} sm={6} md={4} key={store._id}>
-              <Grid container>
-                {/* Columna izquierda: ícono */}
-                <Grid item xs={3}>
-                  <Card
-                    sx={{
-                      backgroundColor: "grey.800",
-                      borderTopLeftRadius: 50,
-                      borderBottomLeftRadius: 50,
-                      borderTopRightRadius: 0,
-                      borderBottomRightRadius: 0,
-                      p: 4,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                  >
-                    <Box
+          {(isStoresReady
+            ? filteredStores
+            : Array(skeletonCount).fill(null)
+          ).map((store, index) => (
+            <Grid item xs={12} sm={6} md={4} key={store?._id || index}>
+              {isStoresReady ? (
+                <Grid container>
+                  <Grid item xs={3}>
+                    <Card
                       sx={{
-                        width: 100,
-                        height: 100,
+                        backgroundColor: "grey.800",
+                        borderTopLeftRadius: 50,
+                        borderBottomLeftRadius: 50,
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                        p: 4,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 100,
+                          height: 100,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <StorefrontIcon
+                          fontSize="large"
+                          sx={{ color: "#fff" }}
+                        />
+                      </Box>
+                    </Card>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <Card
+                      onClick={() => handleCardClick(store._id)}
+                      sx={{
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                        borderTopRightRadius: 50,
+                        borderBottomRightRadius: 50,
+                        p: 4,
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        gap: 2,
+                        "&:hover": { boxShadow: 6 },
+                      }}
+                    >
+                      <MDTypography variant="h6">{store.name}</MDTypography>
+                      <MDTypography variant="caption" color="text">
+                        {store.productCount} productos
+                      </MDTypography>
+                    </Card>
+                  </Grid>
+                </Grid>
+              ) : (
+                // Skeletons
+                <Grid container>
+                  {/* Skeleton ícono izquierdo */}
+                  <Grid item xs={3}>
+                    <Card
+                      sx={{
+                        backgroundColor: "grey.300",
+                        borderTopLeftRadius: 50,
+                        borderBottomLeftRadius: 50,
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                        p: 4,
+                        height: "100%",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
                       }}
                     >
-                      <StorefrontIcon fontSize="large" sx={{ color: "#fff" }} />
-                    </Box>
-                  </Card>
-                </Grid>
+                      <Skeleton
+                        variant="circular"
+                        width={100}
+                        height={100}
+                        animation="wave"
+                      />
+                    </Card>
+                  </Grid>
 
-                {/* Columna derecha: info */}
-                <Grid item xs={9}>
-                  <Card
-                    onClick={() => handleCardClick(store._id)}
-                    sx={{
-                      borderTopLeftRadius: 0,
-                      borderBottomLeftRadius: 0,
-                      borderTopRightRadius: 50,
-                      borderBottomRightRadius: 50,
-                      p: 4,
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      gap: 2,
-                      "&:hover": { boxShadow: 6 },
-                    }}
-                  >
-                    <MDTypography variant="h6">{store.name}</MDTypography>
-                    <MDTypography variant="caption" color="text">
-                      {store.productCount} productos
-                    </MDTypography>
-                  </Card>
+                  {/* Skeleton texto derecho */}
+                  <Grid item xs={9}>
+                    <Card
+                      sx={{
+                        backgroundColor: "grey.200",
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                        borderTopRightRadius: 50,
+                        borderBottomRightRadius: 50,
+                        p: 4,
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <Skeleton
+                        variant="text"
+                        width="70%"
+                        height={30}
+                        animation="wave"
+                      />
+                      <Skeleton
+                        variant="text"
+                        width="40%"
+                        height={20}
+                        animation="wave"
+                      />
+                    </Card>
+                  </Grid>
                 </Grid>
-              </Grid>
+              )}
             </Grid>
           ))}
-
-          {/* Agregar Tienda condicionado al buscador */}
+          {/* tarjeta Agregar Tienda */}
           {searchTerm === "" && (
             <Grid item xs={12} sm={6} md={4}>
-              <Card
-                onClick={() => setOpenAddShopModal(true)}
-                sx={{
-                  p: 4,
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  gap: 2,
-                  backgroundColor: "grey.200",
-                  border: "2px dashed grey",
-                  borderTopLeftRadius: 50,
-                  borderBottomLeftRadius: 50,
-                  borderTopRightRadius: 50,
-                  borderBottomRightRadius: 50,
-                  transition: "all 0.3s ease-in-out",
-                  "&:hover .hover-grow": {
-                    transform: "scale(1.1)",
-                  },
-                }}
-              >
-                <Box
-                  className="hover-grow"
+              {isStoresReady ? (
+                <Card
+                  onClick={() => setOpenAddShopModal(true)}
                   sx={{
-                    transition: "transform 0.3s ease-in-out",
+                    p: 4,
+                    height: "100%",
                     display: "flex",
+                    flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
+                    cursor: "pointer",
+                    gap: 2,
+                    backgroundColor: "grey.200",
+                    border: "2px dashed grey",
+                    borderTopLeftRadius: 50,
+                    borderBottomLeftRadius: 50,
+                    borderTopRightRadius: 50,
+                    borderBottomRightRadius: 50,
+                    transition: "all 0.3s ease-in-out",
+                    "&:hover .hover-grow": {
+                      transform: "scale(1.1)",
+                    },
                   }}
                 >
-                  <AddCircleOutlineIcon
-                    fontSize="large"
-                    sx={{ color: "grey.700" }}
-                  />
-                </Box>
-                <Box
-                  className="hover-grow"
-                  sx={{
-                    transition: "transform 0.3s ease-in-out",
-                  }}
-                >
-                  <MDTypography
-                    variant="h6"
-                    sx={{ textAlign: "center", color: "grey.700" }}
+                  <Box
+                    className="hover-grow"
+                    sx={{ transition: "transform 0.3s ease-in-out" }}
                   >
-                    Agregar Tienda
-                  </MDTypography>
-                </Box>
-              </Card>
+                    <AddCircleOutlineIcon
+                      fontSize="large"
+                      sx={{ color: "grey.700" }}
+                    />
+                  </Box>
+                  <Box
+                    className="hover-grow"
+                    sx={{ transition: "transform 0.3s ease-in-out" }}
+                  >
+                    <MDTypography
+                      variant="h6"
+                      sx={{ textAlign: "center", color: "grey.700" }}
+                    >
+                      Agregar Tienda
+                    </MDTypography>
+                  </Box>
+                </Card>
+              ) : (
+                // Skeleton 
+                <Card
+                  sx={{
+                    p: 4,
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderTopLeftRadius: 50,
+                    borderBottomLeftRadius: 50,
+                    borderTopRightRadius: 50,
+                    borderBottomRightRadius: 50,
+                    backgroundColor: "grey.100",
+                  }}
+                >
+                  <Skeleton
+                    variant="circular"
+                    width={60}
+                    height={60}
+                    animation="wave"
+                  />
+                  <Skeleton
+                    variant="text"
+                    width="80%"
+                    height={30}
+                    animation="wave"
+                    sx={{ mt: 2 }}
+                  />
+                </Card>
+              )}
             </Grid>
           )}
         </Grid>
+
         <AddShop
           open={openAddShopModal}
           onClose={() => setOpenAddShopModal(false)}
