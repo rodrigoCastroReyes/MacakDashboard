@@ -65,6 +65,12 @@ const Products = () => {
   const [deleteCountdown, setDeleteCountdown] = useState(5);
   const [deleteEnabled, setDeleteEnabled] = useState(false);
 
+  const [existingEmails, setExistingEmails] = useState([]);
+  const [existingUsernames, setExistingUsernames] = useState([]);
+
+  const [emailError, setEmailError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+
   const handleOpenAddDialog = () => setOpenAddDialog(true);
   const handleCloseAddDialog = () => setOpenAddDialog(false);
 
@@ -236,15 +242,18 @@ const Products = () => {
 
   const fetchVendors = async () => {
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/event_vendor/store?id=${storeId}`
-      );
+      const res = await fetch(`${API_BASE_URL}/event_vendor/store?id=${storeId}`);
       const data = await res.json();
       setVendors(data);
+  
+      // Set de emails y usernames para validación
+      setExistingEmails(data.map((v) => v.email));
+      setExistingUsernames(data.map((v) => v.username));
     } catch (err) {
       console.error("Error al obtener vendedores:", err);
     }
   };
+  
 
   useEffect(() => {
     handleRefresh();
@@ -540,18 +549,19 @@ const Products = () => {
               ) : (
                 <Grid container spacing={2}>
                   {vendors.map((vendor) => (
-                    <Grid item xs={12} md={4} key={vendor._id}>
+                    <Grid item xs={12} md={3} key={vendor._id}>
                       <Card
                         variant="outlined"
+                        borderRadius = "50"
                         sx={{
                           p: 2,
                           boxShadow: 1,
                           display: "flex",
                           flexDirection: "column",
-                          gap: 1,
+                          gap: 1,                        
                         }}
                       >
-                        {/* Ícono + información (fila) */}
+                        {/* Ícono + información */}
                         <Box display="flex" alignItems="center" gap={2}>
                           <Box
                             display="flex"
@@ -601,22 +611,35 @@ const Products = () => {
                 fullWidth
                 label="Email"
                 value={newVendor.email}
-                onChange={(e) =>
-                  setNewVendor((prev) => ({ ...prev, email: e.target.value }))
-                }
+                onChange={(e) => {
+                  const email = e.target.value;
+                  setNewVendor((prev) => ({ ...prev, email }));
+                  if (existingEmails.includes(email)) {
+                    setEmailError("Este correo ya está registrado");
+                  } else {
+                    setEmailError("");
+                  }
+                }}
                 margin="dense"
+                error={!!emailError}
+                helperText={emailError}
               />
               <TextField
                 fullWidth
                 label="Username"
                 value={newVendor.username}
-                onChange={(e) =>
-                  setNewVendor((prev) => ({
-                    ...prev,
-                    username: e.target.value,
-                  }))
-                }
+                onChange={(e) => {
+                  const username = e.target.value;
+                  setNewVendor((prev) => ({ ...prev, username }));
+                  if (existingUsernames.includes(username)) {
+                    setUsernameError("Este nombre de usuario ya está registrado");
+                  } else {
+                    setUsernameError("");
+                  }
+                }}
                 margin="dense"
+                error={!!usernameError}
+                helperText={usernameError}
               />
               <TextField
                 fullWidth
@@ -635,12 +658,41 @@ const Products = () => {
             <DialogActions>
               <Button onClick={handleCloseAddVendorDialog}>Cancelar</Button>
               <Button
-                onClick={() => {
-                  // Lógica para enviar al backend aún no implementada
-                  console.log("Guardar vendedor:", newVendor);
-                  handleCloseAddVendorDialog();
+                onClick={async () => {
+                  if (!!emailError || !!usernameError) return;
+
+                  const { email, username } = newVendor;
+
+                  try {
+                    const res1 = await fetch(`${API_BASE_URL}/user`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(newVendor),
+                    });
+
+                    const result1 = await res1.json();
+                    if (!res1.ok) throw new Error(result1.message || "Error creando usuario");
+
+                    const res2 = await fetch(`${API_BASE_URL}/event_vendor`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        user_id: result1._id,
+                        store_id: storeId,
+                      }),
+                    });
+
+                    if (!res2.ok) throw new Error("Error asignando vendedor a la tienda");
+
+                    fetchVendors();
+                    handleCloseAddVendorDialog();
+                  } catch (error) {
+                    console.error("Error guardando vendedor:", error);
+                    alert("Ocurrió un error al guardar el vendedor.");
+                  }
                 }}
                 color="primary"
+                disabled={!!emailError || !!usernameError}
               >
                 Guardar
               </Button>
