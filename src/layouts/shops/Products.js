@@ -30,6 +30,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DiscountIcon from "@mui/icons-material/Discount";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 
 import AddProductForm from "./Components/AddProduct";
 import ProductActions from "./Components/ProductActions";
@@ -102,18 +104,23 @@ const Products = () => {
 
   const handleUpdateProduct = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/product?id=${selectedProduct._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          description: selectedProduct.description,
-          price: parseFloat(selectedProduct.price),
-          img: selectedProduct.img,
-        }),
-      });
+      const res = await fetch(
+        `${API_BASE_URL}/product?id=${selectedProduct._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            description: selectedProduct.description,
+            price: parseFloat(selectedProduct.price),
+            img: selectedProduct.img,
+          }),
+        }
+      );
       if (!res.ok) throw new Error("Error al actualizar producto");
       const updatedList = productList.map((p) =>
-        p._id === selectedProduct._id ? { ...selectedProduct, price: parseFloat(selectedProduct.price) } : p
+        p._id === selectedProduct._id
+          ? { ...selectedProduct, price: parseFloat(selectedProduct.price) }
+          : p
       );
       setProductList(updatedList);
       handleCloseEditDialog();
@@ -124,11 +131,16 @@ const Products = () => {
 
   const handleDeleteProduct = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/product?id=${productToDelete._id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `${API_BASE_URL}/product?id=${productToDelete._id}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (!res.ok) throw new Error("Error al eliminar producto");
-      setProductList((prev) => prev.filter((p) => p._id !== productToDelete._id));
+      setProductList((prev) =>
+        prev.filter((p) => p._id !== productToDelete._id)
+      );
       setOpenConfirmDialog(false);
       setProductToDelete(null);
     } catch (err) {
@@ -170,7 +182,12 @@ const Products = () => {
     try {
       const res = await fetch(`${API_BASE_URL}/store/products?id=${storeId}`);
       const data = await res.json();
-      setProductList(data);
+      const enriched = data.map((p) => ({
+        ...p,
+        originalPrice: p.price,
+        discount: 0,
+      }));
+      setProductList(enriched);
     } catch (err) {
       console.error(err);
     }
@@ -197,19 +214,68 @@ const Products = () => {
     handleRefresh();
   }, [storeId]);
 
+  const [vendors, setVendors] = useState([]);
+  const [openAddVendorDialog, setOpenAddVendorDialog] = useState(false);
+  const [newVendor, setNewVendor] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "event_vendor",
+  });
+
+  const handleOpenAddVendorDialog = () => setOpenAddVendorDialog(true);
+  const handleCloseAddVendorDialog = () => {
+    setOpenAddVendorDialog(false);
+    setNewVendor({
+      username: "",
+      email: "",
+      password: "",
+      role: "event_vendor",
+    });
+  };
+
+  const fetchVendors = async () => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/event_vendor/store?id=${storeId}`
+      );
+      const data = await res.json();
+      setVendors(data);
+    } catch (err) {
+      console.error("Error al obtener vendedores:", err);
+    }
+  };
+
+  useEffect(() => {
+    handleRefresh();
+    fetchVendors();
+  }, [storeId]);
+
   const productTable = {
     columns: [
       { Header: "Imagen", accessor: "img", align: "center" },
       { Header: "Descripción", accessor: "description", align: "center" },
       { Header: "Precio", accessor: "price", align: "center" },
-      ...(showActions ? [{ Header: "Acciones", accessor: "actions", align: "center" }] : []),
+      ...(showActions
+        ? [{ Header: "Acciones", accessor: "actions", align: "center" }]
+        : []),
     ],
     rows: productList.map((product, index) => ({
       img: (
-        <Box component="img" src={product.img} alt={product.description} sx={{ height: 60, objectFit: "contain", mx: "auto", borderRadius: 1 }} />
+        <Box
+          component="img"
+          src={product.img}
+          alt={product.description}
+          sx={{ height: 60, objectFit: "contain", mx: "auto", borderRadius: 1 }}
+        />
       ),
       description: (
-        <MDTypography fontSize="14px" variant="caption" color="text" align="center">
+        <MDTypography
+          fontSize="14px"
+          variant="caption"
+          color="text"
+          align="center"
+        >
           {product.description}
         </MDTypography>
       ),
@@ -227,30 +293,16 @@ const Products = () => {
               />
               <IconButton
                 size="small"
-                onClick={async () => {
+                onClick={() => {
                   const updated = [...productList];
-                  const currentProduct = updated[index];
-                  const parsedPrice = parseFloat(currentProduct.price) || 0;
-                  const newPrice = parsedPrice - (parsedPrice * currentProduct.discount) / 100;
+                  const current = updated[index];
+                  const discount = current.discount || 0;
+                  const newPrice =
+                    current.originalPrice -
+                    (current.originalPrice * discount) / 100;
 
-                  try {
-                    const res = await fetch(`${API_BASE_URL}/product?id=${currentProduct._id}`, {
-                      method: "PUT",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        price: parseFloat(newPrice.toFixed(2)),
-                        discount: currentProduct.discount,
-                      }),
-                    });
-
-                    if (!res.ok) throw new Error("Error al actualizar el precio");
-
-                    currentProduct.price = parseFloat(newPrice.toFixed(2));
-                    setProductList(updated);
-                  } catch (err) {
-                    console.error(err);
-                  }
-
+                  current.price = parseFloat(newPrice.toFixed(2));
+                  setProductList(updated);
                   setEditingIndex(null);
                 }}
                 title="Aplicar descuento"
@@ -264,7 +316,9 @@ const Products = () => {
                 size="small"
                 onClick={() => {
                   const updated = [...productList];
-                  updated[index].discount = 0;
+                  const current = updated[index];
+                  current.discount = 0;
+                  current.price = current.originalPrice;
                   setProductList(updated);
                   setEditingIndex(null);
                 }}
@@ -274,10 +328,37 @@ const Products = () => {
               </IconButton>
             </>
           ) : (
-            <>
-              <MDTypography fontSize="14px" variant="caption" color="success" fontWeight="bold">
-                ${parseFloat(product.price).toFixed(2)}
-              </MDTypography>
+            <Box display="flex" alignItems="center" gap={1}>
+              {product.discount > 0 &&
+              product.originalPrice !== product.price ? (
+                <>
+                  <Typography
+                    variant="caption"
+                    color="error"
+                    fontSize="14px"
+                    sx={{ textDecoration: "line-through" }}
+                  >
+                    ${parseFloat(product.originalPrice).toFixed(2)}
+                  </Typography>
+                  <Typography
+                    fontSize="14px"
+                    variant="caption"
+                    fontWeight="bold"
+                    color="success"
+                  >
+                    ${parseFloat(product.price).toFixed(2)}
+                  </Typography>
+                </>
+              ) : (
+                <Typography
+                  fontSize="14px"
+                  variant="caption"
+                  fontWeight="bold"
+                  color="success"
+                >
+                  ${parseFloat(product.price).toFixed(2)}
+                </Typography>
+              )}
               <IconButton
                 size="small"
                 onClick={() => {
@@ -288,25 +369,26 @@ const Products = () => {
               >
                 <DiscountIcon fontSize="small" color="action" />
               </IconButton>
-            </>
+            </Box>
           )}
         </Box>
       ),
-      ...(showActions ? {
-        actions: (
-          <ProductActions
-            product={product}
-            onEdit={handleOpenEditDialog}
-            onDelete={(p) => {
-              setProductToDelete(p);
-              setOpenConfirmDialog(true);
-            }}
-          />
-        ),
-      } : {}),
+      ...(showActions
+        ? {
+            actions: (
+              <ProductActions
+                product={product}
+                onEdit={handleOpenEditDialog}
+                onDelete={(p) => {
+                  setProductToDelete(p);
+                  setOpenConfirmDialog(true);
+                }}
+              />
+            ),
+          }
+        : {}),
     })),
   };
-
 
   return (
     <DashboardLayout>
@@ -316,106 +398,385 @@ const Products = () => {
           <Grid item xs={12}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={3}>
-                <Card sx={{ p: 4, display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                  <StorefrontIcon fontSize="large" sx={{ color: "secondary" }} />
+                <Card
+                  sx={{
+                    p: 4,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <StorefrontIcon
+                    fontSize="large"
+                    sx={{ color: "secondary" }}
+                  />
                 </Card>
               </Grid>
               <Grid item xs={12} md={9}>
-                <Card sx={{ p: 3, height: "100%", display: "flex", flexDirection: { xs: "column", md: "row" }, alignItems: "center", justifyContent: "space-between", gap: 2 }}>
+                <Card
+                  sx={{
+                    p: 3,
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: { xs: "column", md: "row" },
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 2,
+                  }}
+                >
                   <Box>
                     {storeInfo ? (
                       <>
-                        <Typography variant="h4" fontWeight="bold" gutterBottom>{storeInfo.name}</Typography>
-                        <Typography variant="body2" color="textSecondary">Fecha de registro: {moment(storeInfo.__createdtime__).format("DD/MM/YYYY")}</Typography>
-                        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>Productos disponibles: {productList.length}</Typography>
-                        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>Vendedores Asignados: {productList.length}</Typography>
+                        <Typography variant="h4" fontWeight="bold" gutterBottom>
+                          {storeInfo.name}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          Fecha de registro:{" "}
+                          {moment(storeInfo.__createdtime__).format(
+                            "DD/MM/YYYY"
+                          )}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          sx={{ mt: 1 }}
+                        >
+                          Productos disponibles: {productList.length}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          sx={{ mt: 1 }}
+                        >
+                          Vendedores Asignados: {productList.length}
+                        </Typography>
                       </>
                     ) : (
-                      <Typography variant="body2" color="textSecondary">Cargando información de tienda...</Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Cargando información de tienda...
+                      </Typography>
                     )}
                   </Box>
-                  <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                    <IconButton title="Editar Tienda" onClick={() => { setEditedStore({ ...storeInfo }); setEditStoreOpen(true); }} sx={{ opacity: 0.4 }}><EditIcon /></IconButton>
-                    <IconButton title="Eliminar Tienda" onClick={() => setConfirmStoreDelete(true)} sx={{ color: "red", opacity: 0.4 }}><DeleteIcon /></IconButton>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 2,
+                    }}
+                  >
+                    <IconButton
+                      title="Editar Tienda"
+                      onClick={() => {
+                        setEditedStore({ ...storeInfo });
+                        setEditStoreOpen(true);
+                      }}
+                      sx={{ opacity: 0.4 }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      title="Eliminar Tienda"
+                      onClick={() => setConfirmStoreDelete(true)}
+                      sx={{ color: "red", opacity: 0.4 }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </Box>
                 </Card>
               </Grid>
             </Grid>
           </Grid>
 
-          <Dialog open={confirmStoreDelete} onClose={() => setConfirmStoreDelete(false)}>
+          <Dialog
+            open={confirmStoreDelete}
+            onClose={() => setConfirmStoreDelete(false)}
+          >
             <DialogTitle>¿Eliminar tienda?</DialogTitle>
             <DialogContent>
-              <Typography>Esta acción no se puede deshacer. ¿Estás seguro?</Typography>
+              <Typography>
+                Esta acción no se puede deshacer. ¿Estás seguro?
+              </Typography>
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setConfirmStoreDelete(false)}>Cancelar</Button>
-              <Button color="error" onClick={handleDeleteStore} disabled={!deleteEnabled}>
+              <Button onClick={() => setConfirmStoreDelete(false)}>
+                Cancelar
+              </Button>
+              <Button
+                color="error"
+                onClick={handleDeleteStore}
+                disabled={!deleteEnabled}
+              >
                 {deleteEnabled ? "Eliminar" : `Eliminar (${deleteCountdown})`}
               </Button>
             </DialogActions>
           </Dialog>
           <Grid item xs={12}>
             <Card sx={{ p: 4 }}>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-              <Typography variant="h5">Vendedores Asignados</Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+              >
+                <Typography variant="h5">Vendedores Asignados</Typography>
                 <Box>
-                  <IconButton title="Agregar Vendedor"><AddIcon fontSize="medium" /></IconButton>
-                  <IconButton title="Refrescar" onClick={handleRefresh}><RefreshIcon fontSize="medium" /></IconButton>
+                  <IconButton
+                    title="Agregar Vendedor"
+                    onClick={handleOpenAddVendorDialog}
+                  >
+                    <PersonAddAlt1Icon fontSize="medium" />
+                  </IconButton>
+                  <IconButton title="Refrescar" onClick={fetchVendors}>
+                    <RefreshIcon fontSize="medium" />
+                  </IconButton>
                 </Box>
               </Box>
+              {vendors.length === 0 ? (
+                <Typography variant="body2" color="textSecondary">
+                  No hay vendedores asignados.
+                </Typography>
+              ) : (
+                <Grid container spacing={2}>
+                  {vendors.map((vendor) => (
+                    <Grid item xs={12} md={4} key={vendor._id}>
+                      <Card
+                        variant="outlined"
+                        sx={{
+                          p: 2,
+                          boxShadow: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 1,
+                        }}
+                      >
+                        {/* Ícono + información (fila) */}
+                        <Box display="flex" alignItems="center" gap={2}>
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            width="30%"
+                          >
+                            <AccountBoxIcon fontSize="large" color="action" />
+                          </Box>
+                          <Box
+                            sx={{ display: "flex", flexDirection: "column" }}
+                          >
+                            <Typography variant="subtitle1" fontWeight="bold">
+                              {vendor.username}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              {vendor.email}
+                            </Typography>
+                          </Box>
+                        </Box>
+                        <Typography
+                          variant="caption"
+                          color="textSecondary"
+                          mt={1}
+                          pl="30%"
+                        >
+                          Registrado:{" "}
+                          {moment(vendor.__createdtime__).format("DD/MM/YYYY")}
+                        </Typography>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
             </Card>
           </Grid>
+
+          <Dialog
+            open={openAddVendorDialog}
+            onClose={handleCloseAddVendorDialog}
+            maxWidth="xs"
+            fullWidth
+          >
+            <DialogTitle>Agregar Vendedor</DialogTitle>
+            <DialogContent>
+              <TextField
+                fullWidth
+                label="Email"
+                value={newVendor.email}
+                onChange={(e) =>
+                  setNewVendor((prev) => ({ ...prev, email: e.target.value }))
+                }
+                margin="dense"
+              />
+              <TextField
+                fullWidth
+                label="Username"
+                value={newVendor.username}
+                onChange={(e) =>
+                  setNewVendor((prev) => ({
+                    ...prev,
+                    username: e.target.value,
+                  }))
+                }
+                margin="dense"
+              />
+              <TextField
+                fullWidth
+                label="Contraseña"
+                type="password"
+                value={newVendor.password}
+                onChange={(e) =>
+                  setNewVendor((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+                }
+                margin="dense"
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseAddVendorDialog}>Cancelar</Button>
+              <Button
+                onClick={() => {
+                  // Lógica para enviar al backend aún no implementada
+                  console.log("Guardar vendedor:", newVendor);
+                  handleCloseAddVendorDialog();
+                }}
+                color="primary"
+              >
+                Guardar
+              </Button>
+            </DialogActions>
+          </Dialog>
           <Grid item xs={12}>
             <Card sx={{ p: 4 }}>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+              >
                 <Typography variant="h5">Lista de Productos</Typography>
                 <Box>
-                  <IconButton title="Agregar producto" onClick={handleOpenAddDialog}><AddIcon fontSize="medium" /></IconButton>
-                  <IconButton title={showActions ? "Ocultar acciones" : "Mostrar acciones"} onClick={() => setShowActions((prev) => !prev)}>
-                    {showActions ? <VisibilityOffIcon fontSize="medium" /> : <VisibilityIcon fontSize="medium" />}
+                  <IconButton
+                    title="Agregar producto"
+                    onClick={handleOpenAddDialog}
+                  >
+                    <AddIcon fontSize="medium" />
                   </IconButton>
-                  <IconButton title="Refrescar" onClick={handleRefresh}><RefreshIcon fontSize="medium" /></IconButton>
+                  <IconButton
+                    title={
+                      showActions ? "Ocultar acciones" : "Mostrar acciones"
+                    }
+                    onClick={() => setShowActions((prev) => !prev)}
+                  >
+                    {showActions ? (
+                      <VisibilityOffIcon fontSize="medium" />
+                    ) : (
+                      <VisibilityIcon fontSize="medium" />
+                    )}
+                  </IconButton>
+                  <IconButton title="Refrescar" onClick={handleRefresh}>
+                    <RefreshIcon fontSize="medium" />
+                  </IconButton>
                 </Box>
               </Box>
               {loading ? (
-                <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}><CircularProgress size={24} color="secondary" /></Box>
+                <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
+                  <CircularProgress size={24} color="secondary" />
+                </Box>
               ) : (
-                <DataTable table={productTable} isSorted={false} entriesPerPage={false} showTotalEntries={false} noEndBorder />
+                <DataTable
+                  table={productTable}
+                  isSorted={false}
+                  entriesPerPage={false}
+                  showTotalEntries={false}
+                  noEndBorder
+                />
               )}
             </Card>
           </Grid>
         </Grid>
       </Box>
 
-      <Dialog open={openAddDialog} onClose={handleCloseAddDialog} maxWidth="sm" fullWidth>
-        <AddProductForm storeId={storeId} handleClose={handleCloseAddDialog} onRefresh={fetchProducts} existingProducts={productList} />
+      <Dialog
+        open={openAddDialog}
+        onClose={handleCloseAddDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <AddProductForm
+          storeId={storeId}
+          handleClose={handleCloseAddDialog}
+          onRefresh={fetchProducts}
+          existingProducts={productList}
+        />
       </Dialog>
 
-      <EditProductDialog open={editDialogOpen} product={selectedProduct} onClose={handleCloseEditDialog} onChange={handleEditFieldChange} onSave={handleUpdateProduct} />
+      <EditProductDialog
+        open={editDialogOpen}
+        product={selectedProduct}
+        onClose={handleCloseEditDialog}
+        onChange={handleEditFieldChange}
+        onSave={handleUpdateProduct}
+      />
 
-      <ConfirmDeleteDialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)} onConfirm={handleDeleteProduct} productName={productToDelete?.description} />
+      <ConfirmDeleteDialog
+        open={openConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)}
+        onConfirm={handleDeleteProduct}
+        productName={productToDelete?.description}
+      />
 
-      <Dialog open={editStoreOpen} onClose={() => setEditStoreOpen(false)} maxWidth="xs" fullWidth>
+      <Dialog
+        open={editStoreOpen}
+        onClose={() => setEditStoreOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
         <Box sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>Editar Tienda</Typography>
-          <TextField fullWidth label="Nombre de tienda" name="name" value={editedStore?.name || ""} onChange={(e) => setEditedStore((prev) => ({ ...prev, name: e.target.value }))} sx={{ mb: 1 }} />
+          <Typography variant="h6" gutterBottom>
+            Editar Tienda
+          </Typography>
+          <TextField
+            fullWidth
+            label="Nombre de tienda"
+            name="name"
+            value={editedStore?.name || ""}
+            onChange={(e) =>
+              setEditedStore((prev) => ({ ...prev, name: e.target.value }))
+            }
+            sx={{ mb: 1 }}
+          />
           <Box mt={4} display="flex" justifyContent="flex-end">
-            <Button onClick={() => setEditStoreOpen(false)} sx={{ mr: 2 }} color="secondary" disabled={loading}>Cancelar</Button>
-            <Button onClick={async () => {
-              try {
-                const res = await fetch(`${API_BASE_URL}/store?id=${storeId}`, {
-                  method: "PUT",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ name: editedStore.name }),
-                });
-                if (!res.ok) throw new Error("Error al actualizar tienda");
-                setStoreInfo((prev) => ({ ...prev, name: editedStore.name }));
-                setEditStoreOpen(false);
-              } catch (err) {
-                console.error("Error al actualizar tienda:", err);
-              }
-            }} color="primary">Guardar</Button>
+            <Button
+              onClick={() => setEditStoreOpen(false)}
+              sx={{ mr: 2 }}
+              color="secondary"
+              disabled={loading}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={async () => {
+                try {
+                  const res = await fetch(
+                    `${API_BASE_URL}/store?id=${storeId}`,
+                    {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ name: editedStore.name }),
+                    }
+                  );
+                  if (!res.ok) throw new Error("Error al actualizar tienda");
+                  setStoreInfo((prev) => ({ ...prev, name: editedStore.name }));
+                  setEditStoreOpen(false);
+                } catch (err) {
+                  console.error("Error al actualizar tienda:", err);
+                }
+              }}
+              color="primary"
+            >
+              Guardar
+            </Button>
           </Box>
         </Box>
       </Dialog>

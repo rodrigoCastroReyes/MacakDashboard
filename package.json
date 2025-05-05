@@ -41,7 +41,7 @@
     "yup": "1.1.1"
   },
   "scripts": {
-    "start": "GENERATE_SOURCEMAP=false react-scripts start",
+    "start": "cross-env GENERATE_SOURCEMAP=false react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "winBuild": "set \"GENERATE-SOURCEMAP=false\" && react-scripts build",
     "test": "react-scripts test",
