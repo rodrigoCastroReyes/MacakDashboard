@@ -45,6 +45,7 @@ import {
   setTransparentSidenav,
   setWhiteSidenav,
 } from "context";
+import { textAlign } from "@mui/system";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
@@ -160,13 +161,39 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
           </MDTypography>
         </MDBox>
-        <MDBox component={NavLink} to="/resumen" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="2rem" />}
-          <MDBox
-            width={!brandName && "100%"}
-            sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
+        <MDBox component={NavLink} to="/resumen" textAlign="center">
+          <MDTypography
+            variant="button"
+              fontWeight="bold"
+              color={textColor}
+              sx={{
+                fontSize: "1.2rem",
+                maxWidth: "100%",
+                whiteSpace: "normal",
+                overflowWrap: "break-word",
+                textAlign: "center",
+                lineHeight: 1,
+              }} 
           >
-            <MDTypography component="h6" variant="button" fontWeight="medium" fontFamily="montserrat" color={textColor} style={{ fontSize: "1rem" }}>
+            {localStorage.getItem("eventName") || "Evento"}
+          </MDTypography>
+
+          <MDBox display="flex" justifyContent="center" alignItems="center" mt={1} gap={1}>
+            <MDTypography
+              variant="caption"
+              fontWeight="regular"
+              color={textColor}
+            >
+              By
+            </MDTypography>
+            {brand && (
+              <MDBox component="img" src={brand} alt="Macak" width="24px" height="24px" />
+            )}
+            <MDTypography
+              variant="caption"
+              fontWeight="medium"
+              color={textColor}
+            >
               {brandName}
             </MDTypography>
           </MDBox>

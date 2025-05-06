@@ -73,7 +73,7 @@ const Shops = () => {
 
   useEffect(() => {
     const fetchProductCounts = async () => {
-      if (stores && stores.length > 0) {
+      if (stores) {
         const storesWithCounts = await Promise.all(
           stores.map(async (store) => {
             try {
