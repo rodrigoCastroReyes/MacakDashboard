@@ -31,11 +31,9 @@ function configs(labels, datasets) {
         datalabels: {
           display: true,
           formatter: function (value) {
-            if (value.toString().includes('.')) {
-              return "$" + new Intl.NumberFormat("en-US").format(value);
-            } else {
-              return new Intl.NumberFormat("en-US").format(value);
-            }
+            return "$" + new Intl.NumberFormat("es-EC", {
+              minimumFractionDigits: 0,
+            }).format(value);
           },
           color: "black",
           anchor: "end",

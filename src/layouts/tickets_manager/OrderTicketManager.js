@@ -17,12 +17,14 @@ import DataTable from "examples/Tables/DataTable";
 import "css/styles.css";
 import { Typography } from "@mui/material";
 
+import { API_BASE_URL } from '../../config';
+
 function OrderTicketManager() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const { data, loading, error, refetch } = useAxios(
-    `https://biodynamics.tech/macak_dev/purchase_ticket_item/purchase_ticket/?id=${id}`
+    `${API_BASE_URL}/purchase_ticket_item/purchase_ticket/?id=${id}`
   );
   //0a7e8544-ad2e-468a-a5f2-b7b440c24426
 

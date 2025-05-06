@@ -52,6 +52,7 @@ import DoNotDisturbOnSharpIcon from '@mui/icons-material/DoNotDisturbOnSharp';
 import NfcIcon from '@mui/icons-material/Nfc';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import PeopleIcon from '@mui/icons-material/People';
+import StoreIcon from '@mui/icons-material/Store';
 
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import Reports from "layouts/reportes";
@@ -62,6 +63,9 @@ import OrderTicketManager from "layouts/tickets_manager/OrderTicketManager";
 
 import Asistentes from "layouts/assistants";
 import AttenderDetails from "layouts/assistants/AttenderDetails";
+
+import Tiendas from "layouts/shops";
+import Products from "layouts/shops/Products";
 
 const routes = [
   {
@@ -148,6 +152,20 @@ const routes = [
     key: "attender-details",
     route: "/attender-details/:id",
     component: <AttenderDetails />,
+  },
+  {
+    type: "collapse",
+    name: "Tiendas",
+    key: "tiendas",
+    icon: <StoreIcon fontSize="small" color="white"></StoreIcon>,
+    route: "/tiendas",
+    component: <Tiendas />,
+  },
+  {
+    type: "route",
+    key: "shop-products",
+    route: "/shop-products/:id",
+    component: <Products />,
   }
 ];
 

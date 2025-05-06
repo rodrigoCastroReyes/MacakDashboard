@@ -103,8 +103,8 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
           <MDTypography colorVerticalBarChart="dark" fontWeight="bold" fontFamily="montserrat-semibold" component="div" align="left" style={{ fontSize: "1rem" }} >
             Historial de ordenes
           </MDTypography>
-          <Link className='custom-btn-icon custom-link' to={`${API_BASE_URL}/report/generate_report_of_ticket_manager?event_id=${id_event}`} target="_blank" download>
-            <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium"  />
+          <Link className='custom-btn-icon custom-link' to={`${API_BASE_URL}/report/generate_report_of_ticket_manager?event_id=${id_event}`} target="_blank" download title="Descargar Informe de Historial de ordenes">
+            <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium" />
           </Link>
         </RefreshButtonContainer>
         <DataTable

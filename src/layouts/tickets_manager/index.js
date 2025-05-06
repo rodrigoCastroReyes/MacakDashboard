@@ -15,7 +15,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 
 // Dashboard components
-import './style.css'
+import "./style.css";
 //import usePostAxios from "hooks/usePostAxios";
 //import useGetAuthAxios from "hooks/useGetAuthAxios";
 import axios from "axios";
@@ -24,7 +24,7 @@ import QuantitySoldByTicket from "./QuantitySoldByTicket";
 import PurchaseTicketsTransactions from "./PurchaseTicketTransactions";
 
 // URL
-import { API_BASE_URL } from '../../config';
+import { API_BASE_URL } from "../../config";
 
 const Boleteria = () => {
   const [jwtToken, setJwtToken] = useState(null);
@@ -32,7 +32,7 @@ const Boleteria = () => {
   const [ticketSummary, setTicketSummary] = useState({
     ticketsCapacity: 0,
     ticketsSold: 0,
-    ticketsAvailable: 0
+    ticketsAvailable: 0,
   });
   const [tickets, setTickets] = useState([]);
 
@@ -40,7 +40,7 @@ const Boleteria = () => {
 
   useEffect(() => {
     async function checkAuthentication() {
-      const token = await localStorage.getItem('authToken');
+      const token = await localStorage.getItem("authToken");
       setJwtToken(token);
     }
     checkAuthentication();
@@ -51,26 +51,33 @@ const Boleteria = () => {
       try {
         if (jwtToken && eventId) {
           const eventResponse = await axios.get(
-            `${API_BASE_URL}/ticket/event?id=${eventId}`, {
+            `${API_BASE_URL}/ticket/event?id=${eventId}`,
+            {
               headers: {
-                'Authorization': jwtToken
-              }
+                Authorization: jwtToken,
+              },
             }
           );
 
           setTickets(eventResponse.data);
 
-          const ticketsCapacity = eventResponse.data.reduce((acc, store) => acc + store.max_quantity, 0);
-          const ticketsSolds = eventResponse.data.reduce((acc, store) => acc + store.sold_quantity, 0);
+          const ticketsCapacity = eventResponse.data.reduce(
+            (acc, store) => acc + store.max_quantity,
+            0
+          );
+          const ticketsSolds = eventResponse.data.reduce(
+            (acc, store) => acc + store.sold_quantity,
+            0
+          );
 
           setTicketSummary({
             ticketsCapacity,
             ticketsSold: ticketsSolds,
-            ticketsAvailable: ticketsCapacity - ticketsSolds
+            ticketsAvailable: ticketsCapacity - ticketsSolds,
           });
         }
       } catch (error) {
-        console.error('Error en la solicitud de datos:', error);
+        console.error("Error en la solicitud de datos:", error);
       }
     };
 
@@ -137,20 +144,32 @@ const Boleteria = () => {
         </Grid>
       </MDBox>
       <MDBox>
-        <Grid item xs={12} md={6} lg={3}>
+        <MDBox mb={2}>
           <SalesPerTicket data={tickets} />
-        </Grid>
-        <Grid item xs={12} md={6} lg={3}>
+        </MDBox>
+        <MDBox mb={2}>
           <QuantitySoldByTicket data={tickets} />
-        </Grid>
-      </MDBox>
-      <MDBox>
-        <Grid item xs={12} md={6} lg={3}>
+        </MDBox>
+        <MDBox mb={2}>
           <PurchaseTicketsTransactions id_event={eventId} />
-        </Grid>
+        </MDBox>
       </MDBox>
     </DashboardLayout>
   );
-}
+};
 
 export default Boleteria;
+
+//      <MDBox>
+//        <Grid item xs={12} md={6} lg={3}>
+//          <SalesPerTicket data={tickets} />
+//        </Grid>
+//        <Grid item xs={12} md={6} lg={3}>
+//          <QuantitySoldByTicket data={tickets} />
+//        </Grid>
+//      </MDBox>
+//      <MDBox>
+//        <Grid item xs={12} md={6} lg={3}>
+//         <PurchaseTicketsTransactions id_event={eventId} />
+//        </Grid>
+//      </MDBox>

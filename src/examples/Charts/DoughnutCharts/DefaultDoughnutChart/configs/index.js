@@ -7,10 +7,7 @@
 * Copyright 2023 Creative Tim (https://www.creative-tim.com)
 
 Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+=========================================================
 */
 
 /* eslint-disable no-dupe-keys */
@@ -38,7 +35,21 @@ function configs(labels, datasets, cutout = 60) {
     backgroundColors.push(dark.main);
   }
 
+  const centerTextPluginOptions =
+    datasets.centerText && datasets.centerText.enabled === true
+      ? {
+          centerText: {
+            enabled: true,
+            sold: datasets.centerText.sold,
+            total: datasets.centerText.total,
+            color: datasets.centerText.color || "#666",
+            fontSize: datasets.centerText.fontSize || 16,
+          },
+        }
+      : {};
+
   return {
+    type: "doughnut",
     data: {
       labels,
       datasets: [
@@ -59,14 +70,17 @@ function configs(labels, datasets, cutout = 60) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: false,
-        },
+        legend: { display: false },
+        ...centerTextPluginOptions,
       },
-      interaction: {
-        intersect: false,
-        mode: "index",
-      },
+      animation: {
+        duration: 2000,
+        easing: "easeOutCirc",
+        animateRotate: true,
+        animateScale: true,
+      }
+        
+      
     },
   };
 }
