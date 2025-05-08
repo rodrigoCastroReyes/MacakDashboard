@@ -50,7 +50,13 @@ import { textAlign } from "@mui/system";
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
   // eslint-disable-next-line no-unused-vars
-  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
+  const {
+    miniSidenav,
+    transparentSidenav,
+    whiteSidenav,
+    darkMode,
+    sidenavColor,
+  } = controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
 
@@ -68,8 +74,14 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     // A function that sets the mini state of the sidenav.
     function handleMiniSidenav() {
       setMiniSidenav(dispatch, window.innerWidth < 1200);
-      setTransparentSidenav(dispatch, window.innerWidth < 1200 ? false : transparentSidenav);
-      setWhiteSidenav(dispatch, window.innerWidth < 1200 ? false : whiteSidenav);
+      setTransparentSidenav(
+        dispatch,
+        window.innerWidth < 1200 ? false : transparentSidenav
+      );
+      setWhiteSidenav(
+        dispatch,
+        window.innerWidth < 1200 ? false : whiteSidenav
+      );
     }
 
     /** 
@@ -85,61 +97,67 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }, [dispatch, location, transparentSidenav, whiteSidenav]);
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
-    let returnValue;
+  const renderRoutes = routes.map(
+    ({ type, name, icon, title, noCollapse, key, href, route }) => {
+      let returnValue;
 
-    if (type === "collapse") {
-      returnValue = href ? (
-        <Link
-          href={href}
-          key={key}
-          target="_blank"
-          rel="noreferrer"
-          sx={{ textDecoration: "none" }}
-        >
-          <SidenavCollapse
-            name={name}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
+      if (type === "collapse") {
+        returnValue = href ? (
+          <Link
+            href={href}
+            key={key}
+            target="_blank"
+            rel="noreferrer"
+            sx={{ textDecoration: "none" }}
+          >
+            <SidenavCollapse
+              name={name}
+              icon={icon}
+              active={key === collapseName}
+              noCollapse={noCollapse}
+            />
+          </Link>
+        ) : (
+          <NavLink key={key} to={route}>
+            <SidenavCollapse
+              name={name}
+              icon={icon}
+              active={key === collapseName}
+            />
+          </NavLink>
+        );
+      } else if (type === "title") {
+        returnValue = (
+          <MDTypography
+            key={key}
+            color={textColor}
+            display="block"
+            variant="caption"
+            fontWeight="bold"
+            textTransform="uppercase"
+            pl={3}
+            mt={2}
+            mb={1}
+            ml={1}
+          >
+            {title}
+          </MDTypography>
+        );
+      } else if (type === "divider") {
+        returnValue = (
+          <Divider
+            key={key}
+            light={
+              (!darkMode && !whiteSidenav && !transparentSidenav) ||
+              (darkMode && !transparentSidenav && whiteSidenav)
+            }
           />
-        </Link>
-      ) : (
-        <NavLink key={key} to={route}>
-          <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
-        </NavLink>
-      );
-    } else if (type === "title") {
-      returnValue = (
-        <MDTypography
-          key={key}
-          color={textColor}
-          display="block"
-          variant="caption"
-          fontWeight="bold"
-          textTransform="uppercase"
-          pl={3}
-          mt={2}
-          mb={1}
-          ml={1}
-        >
-          {title}
-        </MDTypography>
-      );
-    } else if (type === "divider") {
-      returnValue = (
-        <Divider
-          key={key}
-          light={
-            (!darkMode && !whiteSidenav && !transparentSidenav) ||
-            (darkMode && !transparentSidenav && whiteSidenav)
-          }
-        />
-      );
-    }
+        );
+      }
 
-    return returnValue;
-  });
+      return returnValue;
+    }
+  );
 
   return (
     <SidenavRoot
@@ -164,38 +182,47 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         <MDBox component={NavLink} to="/resumen" textAlign="center">
           <MDTypography
             variant="button"
-              fontWeight="bold"
-              color={textColor}
-              sx={{
-                fontSize: "1.2rem",
-                maxWidth: "100%",
-                whiteSpace: "normal",
-                overflowWrap: "break-word",
-                textAlign: "center",
-                lineHeight: 1,
-              }} 
+            fontWeight="bold"
+            color={textColor}
+            sx={{
+              fontSize: "1.3rem",
+              maxWidth: "100%",
+              whiteSpace: "normal",
+              overflowWrap: "break-word",
+              textAlign: "center",
+              lineHeight: 1,
+            }}
           >
             {localStorage.getItem("eventName") || "Evento"}
           </MDTypography>
 
-          <MDBox display="flex" justifyContent="center" alignItems="center" mt={1} gap={1}>
+          <MDBox
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            mt={1}
+            gap={1}
+          >
             <MDTypography
               variant="caption"
               fontWeight="regular"
               color={textColor}
+              sx={{ fontSize: "0.6rem" }}
             >
-              By
+              Powered by
             </MDTypography>
             {brand && (
-              <MDBox component="img" src={brand} alt="Macak" width="24px" height="24px" />
+              <MDBox
+                component="img"
+                src={brand}
+                alt="Logo"
+                sx={{
+                  width: 90,
+                  height: 36,
+                  objectFit: "contain",
+                }}
+              />
             )}
-            <MDTypography
-              variant="caption"
-              fontWeight="medium"
-              color={textColor}
-            >
-              {brandName}
-            </MDTypography>
           </MDBox>
         </MDBox>
       </MDBox>
@@ -218,7 +245,15 @@ Sidenav.defaultProps = {
 
 // Typechecking props for the Sidenav
 Sidenav.propTypes = {
-  color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
+  color: PropTypes.oneOf([
+    "primary",
+    "secondary",
+    "info",
+    "success",
+    "warning",
+    "error",
+    "dark",
+  ]),
   brand: PropTypes.string,
   brandName: PropTypes.string.isRequired,
   routes: PropTypes.arrayOf(PropTypes.object).isRequired,
