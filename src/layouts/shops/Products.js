@@ -854,10 +854,9 @@ const Products = () => {
         maxWidth="xs"
         fullWidth
       >
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Editar Tienda
-          </Typography>
+        <Box component="form" p={2}>
+          <DialogTitle>Editar Tienda</DialogTitle>
+          <DialogContent>
           <TextField
             fullWidth
             label="Nombre de tienda"
@@ -867,6 +866,7 @@ const Products = () => {
               setEditedStore((prev) => ({ ...prev, name: e.target.value }))
             }
             sx={{ mb: 1 }}
+            margin="normal"
           />
           <Box mt={4} display="flex" justifyContent="flex-end">
             <Button
@@ -900,6 +900,7 @@ const Products = () => {
               Guardar
             </Button>
           </Box>
+          </DialogContent>
         </Box>
       </Dialog>
     </DashboardLayout>
