@@ -31,7 +31,9 @@ import DiscountIcon from "@mui/icons-material/Discount";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import vendorIcon from "assets/images/vendorIcon.png";
 
 import AddProductForm from "./Components/AddProduct";
 import ProductActions from "./Components/ProductActions";
@@ -229,6 +231,9 @@ const Products = () => {
     role: "event_vendor",
   });
 
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmError, setConfirmError] = useState("");
+
   const handleOpenAddVendorDialog = () => setOpenAddVendorDialog(true);
   const handleCloseAddVendorDialog = () => {
     setOpenAddVendorDialog(false);
@@ -242,10 +247,12 @@ const Products = () => {
 
   const fetchVendors = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/event_vendor/store?id=${storeId}`);
+      const res = await fetch(
+        `${API_BASE_URL}/event_vendor/store?id=${storeId}`
+      );
       const data = await res.json();
       setVendors(data);
-  
+
       // Set de emails y usernames para validación
       setExistingEmails(data.map((v) => v.email));
       setExistingUsernames(data.map((v) => v.username));
@@ -253,7 +260,6 @@ const Products = () => {
       console.error("Error al obtener vendedores:", err);
     }
   };
-  
 
   useEffect(() => {
     handleRefresh();
@@ -458,7 +464,7 @@ const Products = () => {
                           color="textSecondary"
                           sx={{ mt: 1 }}
                         >
-                          Vendedores Asignados: {productList.length}
+                          Vendedores Asignados: {vendors.length}
                         </Typography>
                       </>
                     ) : (
@@ -537,7 +543,10 @@ const Products = () => {
                   >
                     <PersonAddAlt1Icon fontSize="medium" />
                   </IconButton>
-                  <IconButton title="Refrescar" onClick={fetchVendors}>
+                  <IconButton title="Quitar Vendedor" onClick={() => {}}>
+                    <PersonRemoveAlt1Icon fontSize="medium" />
+                  </IconButton>
+                  <IconButton title="Refrescar" onClick={handleRefresh}>
                     <RefreshIcon fontSize="medium" />
                   </IconButton>
                 </Box>
@@ -549,16 +558,19 @@ const Products = () => {
               ) : (
                 <Grid container spacing={2}>
                   {vendors.map((vendor) => (
-                    <Grid item xs={12} md={3} key={vendor._id}>
+                    <Grid item xs={12} md={4} key={vendor._id}>
                       <Card
                         variant="outlined"
-                        borderRadius = "50"
+                        borderRadius="0"
                         sx={{
                           p: 2,
-                          boxShadow: 1,
+                          boxShadow: 0,
                           display: "flex",
                           flexDirection: "column",
-                          gap: 1,                        
+                          gap: 1,
+                          borderColor: "secondary.main",
+                          borderWidth: 0.5,
+                          backgroundColor: "transparent",
                         }}
                       >
                         {/* Ícono + información */}
@@ -569,15 +581,41 @@ const Products = () => {
                             justifyContent="center"
                             width="30%"
                           >
-                            <AccountBoxIcon fontSize="large" color="action" />
+                            <Box
+                              component="img"
+                              src={vendorIcon}
+                              alt={vendor.username}
+                              sx={{
+                                width: 60,
+                                height: 60,
+                                objectFit: "cover",
+                              }}
+                            />
                           </Box>
                           <Box
                             sx={{ display: "flex", flexDirection: "column" }}
                           >
-                            <Typography variant="subtitle1" fontWeight="bold">
+                            <Typography
+                              variant="subtitle1"
+                              fontWeight="bold"
+                              sx={{
+                                wordBreak: "break-word",
+                                whiteSpace: "normal",
+                                overflowWrap: "anywhere",
+                              }}
+                            >
                               {vendor.username}
                             </Typography>
-                            <Typography variant="body2" color="textSecondary">
+
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              sx={{
+                                wordBreak: "break-all",
+                                whiteSpace: "normal",
+                                overflowWrap: "anywhere",
+                              }}
+                            >
                               {vendor.email}
                             </Typography>
                           </Box>
@@ -586,7 +624,7 @@ const Products = () => {
                           variant="caption"
                           color="textSecondary"
                           mt={1}
-                          pl="30%"
+                          sx={{ textAlign: "center", width: "100%" }}
                         >
                           Registrado:{" "}
                           {moment(vendor.__createdtime__).format("DD/MM/YYYY")}
@@ -632,7 +670,9 @@ const Products = () => {
                   const username = e.target.value;
                   setNewVendor((prev) => ({ ...prev, username }));
                   if (existingUsernames.includes(username)) {
-                    setUsernameError("Este nombre de usuario ya está registrado");
+                    setUsernameError(
+                      "Este nombre de usuario ya está registrado"
+                    );
                   } else {
                     setUsernameError("");
                   }
@@ -644,7 +684,7 @@ const Products = () => {
               <TextField
                 fullWidth
                 label="Contraseña"
-                type="password"
+                type="text"
                 value={newVendor.password}
                 onChange={(e) =>
                   setNewVendor((prev) => ({
@@ -653,6 +693,24 @@ const Products = () => {
                   }))
                 }
                 margin="dense"
+              />
+              <TextField
+                fullWidth
+                label="Confirmar contraseña"
+                type="text"
+                value={confirmPassword}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setConfirmPassword(value);
+                  if (value !== newVendor.password) {
+                    setConfirmError("Las contraseñas no coinciden");
+                  } else {
+                    setConfirmError("");
+                  }
+                }}
+                margin="dense"
+                error={!!confirmError}
+                helperText={confirmError}
               />
             </DialogContent>
             <DialogActions>
@@ -671,7 +729,10 @@ const Products = () => {
                     });
 
                     const result1 = await res1.json();
-                    if (!res1.ok) throw new Error(result1.message || "Error creando usuario");
+                    if (!res1.ok)
+                      throw new Error(
+                        result1.message || "Error creando usuario"
+                      );
 
                     const res2 = await fetch(`${API_BASE_URL}/event_vendor`, {
                       method: "POST",
@@ -682,7 +743,8 @@ const Products = () => {
                       }),
                     });
 
-                    if (!res2.ok) throw new Error("Error asignando vendedor a la tienda");
+                    if (!res2.ok)
+                      throw new Error("Error asignando vendedor a la tienda");
 
                     fetchVendors();
                     handleCloseAddVendorDialog();
@@ -692,7 +754,15 @@ const Products = () => {
                   }
                 }}
                 color="primary"
-                disabled={!!emailError || !!usernameError}
+                disabled={
+                  !!emailError ||
+                  !!usernameError ||
+                  !!confirmError ||
+                  !newVendor.email.trim() ||
+                  !newVendor.username.trim() ||
+                  !newVendor.password.trim() ||
+                  !confirmPassword.trim()
+                }
               >
                 Guardar
               </Button>
@@ -784,10 +854,9 @@ const Products = () => {
         maxWidth="xs"
         fullWidth
       >
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Editar Tienda
-          </Typography>
+        <Box component="form" p={2}>
+          <DialogTitle>Editar Tienda</DialogTitle>
+          <DialogContent>
           <TextField
             fullWidth
             label="Nombre de tienda"
@@ -797,6 +866,7 @@ const Products = () => {
               setEditedStore((prev) => ({ ...prev, name: e.target.value }))
             }
             sx={{ mb: 1 }}
+            margin="normal"
           />
           <Box mt={4} display="flex" justifyContent="flex-end">
             <Button
@@ -830,6 +900,7 @@ const Products = () => {
               Guardar
             </Button>
           </Box>
+          </DialogContent>
         </Box>
       </Dialog>
     </DashboardLayout>

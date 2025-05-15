@@ -43,17 +43,22 @@ const Shops = () => {
       const storesWithCounts = await Promise.all(
         newStores.map(async (store) => {
           try {
-            const response = await fetch(
-              `${API_BASE_URL}/store/products?id=${store._id}`
-            );
-            const products = await response.json();
-            return { ...store, productCount: products.length };
+            const [productRes, vendorRes] = await Promise.all([
+              fetch(`${API_BASE_URL}/store/products?id=${store._id}`),
+              fetch(`${API_BASE_URL}/event_vendor/store?id=${store._id}`),
+            ]);
+
+            const products = await productRes.json();
+            const vendors = await vendorRes.json();
+
+            return {
+              ...store,
+              productCount: products.length,
+              vendorCount: vendors.length,
+            };
           } catch (error) {
-            console.error(
-              `Error fetching products for store ${store._id}:`,
-              error
-            );
-            return { ...store, productCount: 0 };
+            console.error(`Error fetching data for store ${store._id}:`, error);
+            return { ...store, productCount: 0, vendorCount: 0 };
           }
         })
       );
@@ -73,21 +78,29 @@ const Shops = () => {
 
   useEffect(() => {
     const fetchProductCounts = async () => {
-      if (stores && stores.length > 0) {
+      if (stores) {
         const storesWithCounts = await Promise.all(
           stores.map(async (store) => {
             try {
-              const response = await fetch(
-                `${API_BASE_URL}/store/products?id=${store._id}`
-              );
-              const products = await response.json();
-              return { ...store, productCount: products.length };
+              const [productRes, vendorRes] = await Promise.all([
+                fetch(`${API_BASE_URL}/store/products?id=${store._id}`),
+                fetch(`${API_BASE_URL}/event_vendor/store?id=${store._id}`),
+              ]);
+
+              const products = await productRes.json();
+              const vendors = await vendorRes.json();
+
+              return {
+                ...store,
+                productCount: products.length,
+                vendorCount: vendors.length,
+              };
             } catch (error) {
               console.error(
-                `Error fetching products for store ${store._id}:`,
+                `Error fetching data for store ${store._id}:`,
                 error
               );
-              return { ...store, productCount: 0 };
+              return { ...store, productCount: 0, vendorCount: 0 };
             }
           })
         );
@@ -230,9 +243,16 @@ const Shops = () => {
                       }}
                     >
                       <MDTypography variant="h6">{store.name}</MDTypography>
-                      <MDTypography variant="caption" color="text">
-                        {store.productCount} productos
-                      </MDTypography>
+                      <Box display="flex" flexDirection="column" gap={0.5}>
+                        <MDTypography variant="caption" color="text">
+                          {store.productCount}{" "}
+                          {store.productCount === 1 ? "producto" : "productos"}
+                        </MDTypography>
+                        <MDTypography variant="caption" color="text">
+                          {store.vendorCount}{" "}
+                          {store.vendorCount === 1 ? "vendedor" : "vendedores"}
+                        </MDTypography>
+                      </Box>
                     </Card>
                   </Grid>
                 </Grid>
@@ -348,7 +368,7 @@ const Shops = () => {
                   </Box>
                 </Card>
               ) : (
-                // Skeleton 
+                // Skeleton
                 <Card
                   sx={{
                     p: 4,
