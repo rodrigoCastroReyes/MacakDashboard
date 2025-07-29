@@ -12,14 +12,14 @@ import MDBadge from "components/MDBadge";
 import MDInput from "components/MDInput";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import DownloadIcon from '@mui/icons-material/Download';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import DownloadIcon from "@mui/icons-material/Download";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 // Filtro
-import Filtro from "components/MDFilter/index"
+import Filtro from "components/MDFilter/index";
 
 // URL
-import { API_BASE_URL } from '../../config';
+import { API_BASE_URL } from "../../config";
 
 moment.locale("es");
 
@@ -61,14 +61,16 @@ function TransactionHistory({ numRows }) {
 
   const filterByCode = (tokens, searchTerm) => {
     return tokens.filter((token) => {
-      return token?.token_id?.code?.toLowerCase().includes(searchTerm.toLowerCase());
+      return token?.token_id?.code
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
     });
   };
 
   const [filtro, setFiltro] = useState({
     activacion: false,
     carga: false,
-    compra: false
+    compra: false,
   });
 
   const parseTypeOfTransaction = (transaction) => {
@@ -102,9 +104,8 @@ function TransactionHistory({ numRows }) {
   if (error || !data?.event_id || !data?.transactions)
     return <div>Error al obtener los datos</div>;
 
-  let transactions = numRows === -1
-    ? filteredTokens
-    : filteredTokens.slice(0, numRows);
+  let transactions =
+    numRows === -1 ? filteredTokens : filteredTokens.slice(0, numRows);
 
   const filteredTransactions = transactions.filter((transaction) => {
     const tipo = transaction.type;
@@ -129,8 +130,15 @@ function TransactionHistory({ numRows }) {
 
   const rows = filteredTransactions.map((transaction) => ({
     date: (
-      <MDTypography fontSize="12px" variant="button" color="text" fontWeight="medium">
-        {moment(transaction.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
+      <MDTypography
+        fontSize="12px"
+        variant="button"
+        color="text"
+        fontWeight="medium"
+      >
+        {moment(transaction.__createdtime__).format(
+          "DD [de] MMMM YYYY HH:mm:ss A"
+        )}
       </MDTypography>
     ),
     type: (
@@ -140,7 +148,9 @@ function TransactionHistory({ numRows }) {
           fontSize="12px"
           badgeContent={parseTypeOfTransaction(transaction)}
           color={
-            transaction.type === "order"
+            transaction.type === "order" && transaction.status !== "success"
+              ? "error"
+              : transaction.type === "order"
               ? "warning"
               : transaction.type === "recharge"
               ? "success"
@@ -151,7 +161,12 @@ function TransactionHistory({ numRows }) {
       </MDBox>
     ),
     detail: (
-      <MDTypography fontSize="12px" variant="caption" color="text" fontWeight="medium">
+      <MDTypography
+        fontSize="12px"
+        variant="caption"
+        color="text"
+        fontWeight="medium"
+      >
         {parsePaymentMethod(transaction.payment_method)}
       </MDTypography>
     ),
@@ -167,7 +182,12 @@ function TransactionHistory({ numRows }) {
       </MDTypography>
     ),
     token: (
-      <MDTypography fontSize="12px" variant="caption" color="text" fontWeight="medium">
+      <MDTypography
+        fontSize="12px"
+        variant="caption"
+        color="text"
+        fontWeight="medium"
+      >
         <Link className="custom-link" to={`/token/${transaction.token_id._id}`}>
           {transaction.token_id.code}
         </Link>
@@ -186,7 +206,10 @@ function TransactionHistory({ numRows }) {
         }
         fontWeight="bold"
       >
-        ${Math.abs(transaction.token_last_balance - transaction.token_new_balance)}
+        $
+        {Math.abs(
+          transaction.token_last_balance - transaction.token_new_balance
+        )}
       </MDTypography>
     ),
   }));
@@ -197,8 +220,22 @@ function TransactionHistory({ numRows }) {
         Transacciones
       </Typography>
 
-      <div style={{ margin: "1rem", display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+      <div
+        style={{
+          margin: "1rem",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
           <SearchInput
             type="search"
             label="Buscar"
@@ -209,7 +246,11 @@ function TransactionHistory({ numRows }) {
 
           <RefreshButtonContainer>
             <div>
-              <RefreshIcon className="custom-btn-icon" onClick={handleRefresh} fontSize="medium" />
+              <RefreshIcon
+                className="custom-btn-icon"
+                onClick={handleRefresh}
+                fontSize="medium"
+              />
             </div>
             <Link
               className="custom-btn-icon custom-link"
@@ -217,7 +258,10 @@ function TransactionHistory({ numRows }) {
               target="_blank"
               download
             >
-              <DownloadIcon style={{ margin: "0px 10px", cursor: "pointer" }} fontSize="medium" />
+              <DownloadIcon
+                style={{ margin: "0px 10px", cursor: "pointer" }}
+                fontSize="medium"
+              />
             </Link>
           </RefreshButtonContainer>
         </div>
