@@ -12,8 +12,8 @@ import { useAuth } from 'context/authProvider';
 import { useMaterialUIController, setMiniSidenav } from "context";
 import Sidenav from "examples/Sidenav";
 import Configurator from "examples/Configurator";
-import brandWhite from "assets/images/macak_icon.png";
-import brandDark from "assets/images/macak_icon_dark.png";
+import brandWhite from "assets/images/macak.png";
+import brandDark from "assets/images/macak.png";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();

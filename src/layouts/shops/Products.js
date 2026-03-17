@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -14,12 +14,10 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "examples/Tables/DataTable";
 import MDTypography from "components/MDTypography";
-
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AddIcon from "@mui/icons-material/Add";
@@ -31,13 +29,12 @@ import DiscountIcon from "@mui/icons-material/Discount";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-
+import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
+import vendorIcon from "assets/images/vendorIcon.png";
 import AddProductForm from "./Components/AddProduct";
 import ProductActions from "./Components/ProductActions";
 import EditProductDialog from "./Components/EditProductDialog";
 import ConfirmDeleteDialog from "./Components/ConfirmDeleteDialog";
-
 import { API_BASE_URL } from "config";
 import moment from "moment";
 
@@ -58,57 +55,66 @@ const Products = () => {
   const [editStoreOpen, setEditStoreOpen] = useState(false);
   const [editedStore, setEditedStore] = useState(null);
   const [confirmStoreDelete, setConfirmStoreDelete] = useState(false);
-
   const [editingIndex, setEditingIndex] = useState(null);
   const [originalDiscount, setOriginalDiscount] = useState(0);
-
   const [deleteCountdown, setDeleteCountdown] = useState(5);
   const [deleteEnabled, setDeleteEnabled] = useState(false);
-
   const [existingEmails, setExistingEmails] = useState([]);
   const [existingUsernames, setExistingUsernames] = useState([]);
-
   const [emailError, setEmailError] = useState("");
   const [usernameError, setUsernameError] = useState("");
+  const [vendors, setVendors] = useState([]);
+  const [openAddVendorDialog, setOpenAddVendorDialog] = useState(false);
+  const [newVendor, setNewVendor] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "event_vendor",
+  });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmError, setConfirmError] = useState("");
 
-  const handleOpenAddDialog = () => setOpenAddDialog(true);
-  const handleCloseAddDialog = () => setOpenAddDialog(false);
+  const handleOpenAddDialog = useCallback(() => setOpenAddDialog(true), []);
+  const handleCloseAddDialog = useCallback(() => setOpenAddDialog(false), []);
 
-  const cancelEdit = () => {
+  const cancelEdit = useCallback(() => {
     const updated = [...productList];
     if (editingIndex !== null) {
       updated[editingIndex].discount = originalDiscount;
       setProductList(updated);
     }
     setEditingIndex(null);
-  };
+  }, [editingIndex, originalDiscount, productList]);
 
-  const handleDiscountChange = (index, value) => {
-    let val = parseInt(value);
-    if (isNaN(val)) val = 0;
-    if (val < 0) val = 0;
-    if (val > 100) val = 100;
-    const updated = [...productList];
-    updated[index].discount = val;
-    setProductList(updated);
-  };
+  const handleDiscountChange = useCallback(
+    (index, value) => {
+      let val = parseInt(value);
+      if (isNaN(val)) val = 0;
+      if (val < 0) val = 0;
+      if (val > 100) val = 100;
+      const updated = [...productList];
+      updated[index].discount = val;
+      setProductList(updated);
+    },
+    [productList]
+  );
 
-  const handleOpenEditDialog = (product) => {
+  const handleOpenEditDialog = useCallback((product) => {
     setSelectedProduct({ ...product });
     setEditDialogOpen(true);
-  };
+  }, []);
 
-  const handleCloseEditDialog = () => {
+  const handleCloseEditDialog = useCallback(() => {
     setEditDialogOpen(false);
     setSelectedProduct(null);
-  };
+  }, []);
 
-  const handleEditFieldChange = (e) => {
+  const handleEditFieldChange = useCallback((e) => {
     const { name, value } = e.target;
     setSelectedProduct((prev) => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  const handleUpdateProduct = async () => {
+  const handleUpdateProduct = useCallback(async () => {
     try {
       const res = await fetch(
         `${API_BASE_URL}/product?id=${selectedProduct._id}`,
@@ -133,9 +139,9 @@ const Products = () => {
     } catch (err) {
       console.error("Error actualizando producto:", err);
     }
-  };
+  }, [selectedProduct, productList, handleCloseEditDialog]);
 
-  const handleDeleteProduct = async () => {
+  const handleDeleteProduct = useCallback(async () => {
     try {
       const res = await fetch(
         `${API_BASE_URL}/product?id=${productToDelete._id}`,
@@ -152,9 +158,9 @@ const Products = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [productToDelete]);
 
-  const handleDeleteStore = async () => {
+  const handleDeleteStore = useCallback(async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/store?id=${storeId}`, {
         method: "DELETE",
@@ -164,7 +170,53 @@ const Products = () => {
     } catch (err) {
       console.error("Error al eliminar tienda:", err);
     }
-  };
+  }, [storeId, navigate]);
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/store/products?id=${storeId}`);
+      const data = await res.json();
+      const enriched = data.map((p) => ({
+        ...p,
+        originalPrice: p.price,
+        discount: 0,
+      }));
+      setProductList(enriched);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [storeId]);
+
+  const fetchStoreDetails = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/store/by_event?id=${eventId}`);
+      const data = await res.json();
+      const tienda = data.find((store) => store._id === storeId);
+      if (tienda) setStoreInfo(tienda);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [eventId, storeId]);
+
+  const fetchVendors = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/event_vendor/store?id=${storeId}`
+      );
+      const data = await res.json();
+      setVendors(data);
+      setExistingEmails(data.map((v) => v.email));
+      setExistingUsernames(data.map((v) => v.username));
+    } catch (err) {
+      console.error("Error al obtener vendedores:", err);
+    }
+  }, [storeId]);
+
+  const handleRefresh = useCallback(async () => {
+    setLoading(true);
+    await Promise.all([fetchProducts(), fetchStoreDetails(), fetchVendors()]);
+    setLoading(false);
+  }, [fetchProducts, fetchStoreDetails, fetchVendors]);
 
   useEffect(() => {
     if (confirmStoreDelete) {
@@ -184,53 +236,16 @@ const Products = () => {
     }
   }, [confirmStoreDelete]);
 
-  const fetchProducts = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/store/products?id=${storeId}`);
-      const data = await res.json();
-      const enriched = data.map((p) => ({
-        ...p,
-        originalPrice: p.price,
-        discount: 0,
-      }));
-      setProductList(enriched);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const fetchStoreDetails = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/store/by_event?id=${eventId}`);
-      const data = await res.json();
-      const tienda = data.find((store) => store._id === storeId);
-      if (tienda) setStoreInfo(tienda);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleRefresh = async () => {
-    setLoading(true);
-    await Promise.all([fetchProducts(), fetchStoreDetails()]);
-    setLoading(false);
-  };
-
   useEffect(() => {
     handleRefresh();
-  }, [storeId]);
+  }, [handleRefresh]);
 
-  const [vendors, setVendors] = useState([]);
-  const [openAddVendorDialog, setOpenAddVendorDialog] = useState(false);
-  const [newVendor, setNewVendor] = useState({
-    username: "",
-    email: "",
-    password: "",
-    role: "event_vendor",
-  });
+  const handleOpenAddVendorDialog = useCallback(
+    () => setOpenAddVendorDialog(true),
+    []
+  );
 
-  const handleOpenAddVendorDialog = () => setOpenAddVendorDialog(true);
-  const handleCloseAddVendorDialog = () => {
+  const handleCloseAddVendorDialog = useCallback(() => {
     setOpenAddVendorDialog(false);
     setNewVendor({
       username: "",
@@ -238,117 +253,118 @@ const Products = () => {
       password: "",
       role: "event_vendor",
     });
-  };
+  }, []);
 
-  const fetchVendors = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/event_vendor/store?id=${storeId}`);
-      const data = await res.json();
-      setVendors(data);
-  
-      // Set de emails y usernames para validación
-      setExistingEmails(data.map((v) => v.email));
-      setExistingUsernames(data.map((v) => v.username));
-    } catch (err) {
-      console.error("Error al obtener vendedores:", err);
-    }
-  };
-  
+  const productTable = useMemo(
+    () => ({
+      columns: [
+        { Header: "Imagen", accessor: "img", align: "center" },
+        { Header: "Descripción", accessor: "description", align: "center" },
+        { Header: "Precio", accessor: "price", align: "center" },
+        ...(showActions
+          ? [{ Header: "Acciones", accessor: "actions", align: "center" }]
+          : []),
+      ],
+      rows: productList.map((product, index) => ({
+        img: (
+          <Box
+            component="img"
+            src={product.img}
+            alt={product.description}
+            sx={{
+              height: 60,
+              objectFit: "contain",
+              mx: "auto",
+              borderRadius: 1,
+            }}
+          />
+        ),
+        description: (
+          <MDTypography
+            fontSize="14px"
+            variant="caption"
+            color="text"
+            align="center"
+          >
+            {product.description}
+          </MDTypography>
+        ),
+        price: (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            gap={1}
+          >
+            {editingIndex === index ? (
+              <>
+                <TextField
+                  type="number"
+                  value={product.discount || 0}
+                  onChange={(e) => handleDiscountChange(index, e.target.value)}
+                  size="small"
+                  sx={{ width: 70 }}
+                  inputProps={{ min: 0, max: 100 }}
+                />
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    const updated = [...productList];
+                    const current = updated[index];
+                    const discount = current.discount || 0;
+                    const newPrice =
+                      current.originalPrice -
+                      (current.originalPrice * discount) / 100;
 
-  useEffect(() => {
-    handleRefresh();
-    fetchVendors();
-  }, [storeId]);
-
-  const productTable = {
-    columns: [
-      { Header: "Imagen", accessor: "img", align: "center" },
-      { Header: "Descripción", accessor: "description", align: "center" },
-      { Header: "Precio", accessor: "price", align: "center" },
-      ...(showActions
-        ? [{ Header: "Acciones", accessor: "actions", align: "center" }]
-        : []),
-    ],
-    rows: productList.map((product, index) => ({
-      img: (
-        <Box
-          component="img"
-          src={product.img}
-          alt={product.description}
-          sx={{ height: 60, objectFit: "contain", mx: "auto", borderRadius: 1 }}
-        />
-      ),
-      description: (
-        <MDTypography
-          fontSize="14px"
-          variant="caption"
-          color="text"
-          align="center"
-        >
-          {product.description}
-        </MDTypography>
-      ),
-      price: (
-        <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
-          {editingIndex === index ? (
-            <>
-              <TextField
-                type="number"
-                value={product.discount || 0}
-                onChange={(e) => handleDiscountChange(index, e.target.value)}
-                size="small"
-                sx={{ width: 70 }}
-                inputProps={{ min: 0, max: 100 }}
-              />
-              <IconButton
-                size="small"
-                onClick={() => {
-                  const updated = [...productList];
-                  const current = updated[index];
-                  const discount = current.discount || 0;
-                  const newPrice =
-                    current.originalPrice -
-                    (current.originalPrice * discount) / 100;
-
-                  current.price = parseFloat(newPrice.toFixed(2));
-                  setProductList(updated);
-                  setEditingIndex(null);
-                }}
-                title="Aplicar descuento"
-              >
-                <CheckIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small" onClick={cancelEdit} title="Cancelar">
-                <CloseIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                size="small"
-                onClick={() => {
-                  const updated = [...productList];
-                  const current = updated[index];
-                  current.discount = 0;
-                  current.price = current.originalPrice;
-                  setProductList(updated);
-                  setEditingIndex(null);
-                }}
-                title="Eliminar descuento"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </>
-          ) : (
-            <Box display="flex" alignItems="center" gap={1}>
-              {product.discount > 0 &&
-              product.originalPrice !== product.price ? (
-                <>
-                  <Typography
-                    variant="caption"
-                    color="error"
-                    fontSize="14px"
-                    sx={{ textDecoration: "line-through" }}
-                  >
-                    ${parseFloat(product.originalPrice).toFixed(2)}
-                  </Typography>
+                    current.price = parseFloat(newPrice.toFixed(2));
+                    setProductList(updated);
+                    setEditingIndex(null);
+                  }}
+                  title="Aplicar descuento"
+                >
+                  <CheckIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" onClick={cancelEdit} title="Cancelar">
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    const updated = [...productList];
+                    const current = updated[index];
+                    current.discount = 0;
+                    current.price = current.originalPrice;
+                    setProductList(updated);
+                    setEditingIndex(null);
+                  }}
+                  title="Eliminar descuento"
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </>
+            ) : (
+              <Box display="flex" alignItems="center" gap={1}>
+                {product.discount > 0 &&
+                product.originalPrice !== product.price ? (
+                  <>
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      fontSize="14px"
+                      sx={{ textDecoration: "line-through" }}
+                    >
+                      ${parseFloat(product.originalPrice).toFixed(2)}
+                    </Typography>
+                    <Typography
+                      fontSize="14px"
+                      variant="caption"
+                      fontWeight="bold"
+                      color="success"
+                    >
+                      ${parseFloat(product.price).toFixed(2)}
+                    </Typography>
+                  </>
+                ) : (
                   <Typography
                     fontSize="14px"
                     variant="caption"
@@ -357,13 +373,14 @@ const Products = () => {
                   >
                     ${parseFloat(product.price).toFixed(2)}
                   </Typography>
-                </>
-              ) : (
-                <Typography
-                  fontSize="14px"
-                  variant="caption"
-                  fontWeight="bold"
-                  color="success"
+                )}
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setOriginalDiscount(product.discount || 0);
+                    setEditingIndex(index);
+                  }}
+                  title="Editar descuento"
                 >
                   ${parseFloat(product.price).toFixed(2)}
                 </Typography>
@@ -448,7 +465,7 @@ const Products = () => {
                           color="textSecondary"
                           sx={{ mt: 1 }}
                         >
-                          Vendedores Asignados: {productList.length}
+                          Vendedores Asignados: {vendors.length}
                         </Typography>
                       </>
                     ) : (
@@ -487,7 +504,6 @@ const Products = () => {
               </Grid>
             </Grid>
           </Grid>
-
           <Dialog
             open={confirmStoreDelete}
             onClose={() => setConfirmStoreDelete(false)}
@@ -527,7 +543,10 @@ const Products = () => {
                   >
                     <PersonAddAlt1Icon fontSize="medium" />
                   </IconButton>
-                  <IconButton title="Refrescar" onClick={fetchVendors}>
+                  <IconButton title="Quitar Vendedor" onClick={() => {}}>
+                    <PersonRemoveAlt1Icon fontSize="medium" />
+                  </IconButton>
+                  <IconButton title="Refrescar" onClick={handleRefresh}>
                     <RefreshIcon fontSize="medium" />
                   </IconButton>
                 </Box>
@@ -539,19 +558,21 @@ const Products = () => {
               ) : (
                 <Grid container spacing={2}>
                   {vendors.map((vendor) => (
-                    <Grid item xs={12} md={3} key={vendor._id}>
+                    <Grid item xs={12} md={4} key={vendor._id}>
                       <Card
                         variant="outlined"
-                        borderRadius = "50"
+                        borderRadius="0"
                         sx={{
                           p: 2,
-                          boxShadow: 1,
+                          boxShadow: 0,
                           display: "flex",
                           flexDirection: "column",
-                          gap: 1,                        
+                          gap: 1,
+                          borderColor: "secondary.main",
+                          borderWidth: 0.5,
+                          backgroundColor: "transparent",
                         }}
                       >
-                        {/* Ícono + información */}
                         <Box display="flex" alignItems="center" gap={2}>
                           <Box
                             display="flex"
@@ -559,15 +580,40 @@ const Products = () => {
                             justifyContent="center"
                             width="30%"
                           >
-                            <AccountBoxIcon fontSize="large" color="action" />
+                            <Box
+                              component="img"
+                              src={vendorIcon}
+                              alt={vendor.username}
+                              sx={{
+                                width: 60,
+                                height: 60,
+                                objectFit: "cover",
+                              }}
+                            />
                           </Box>
                           <Box
                             sx={{ display: "flex", flexDirection: "column" }}
                           >
-                            <Typography variant="subtitle1" fontWeight="bold">
+                            <Typography
+                              variant="subtitle1"
+                              fontWeight="bold"
+                              sx={{
+                                wordBreak: "break-word",
+                                whiteSpace: "normal",
+                                overflowWrap: "anywhere",
+                              }}
+                            >
                               {vendor.username}
                             </Typography>
-                            <Typography variant="body2" color="textSecondary">
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              sx={{
+                                wordBreak: "break-all",
+                                whiteSpace: "normal",
+                                overflowWrap: "anywhere",
+                              }}
+                            >
                               {vendor.email}
                             </Typography>
                           </Box>
@@ -576,7 +622,7 @@ const Products = () => {
                           variant="caption"
                           color="textSecondary"
                           mt={1}
-                          pl="30%"
+                          sx={{ textAlign: "center", width: "100%" }}
                         >
                           Registrado:{" "}
                           {moment(vendor.__createdtime__).format("DD/MM/YYYY")}
@@ -588,7 +634,6 @@ const Products = () => {
               )}
             </Card>
           </Grid>
-
           <Dialog
             open={openAddVendorDialog}
             onClose={handleCloseAddVendorDialog}
@@ -622,7 +667,9 @@ const Products = () => {
                   const username = e.target.value;
                   setNewVendor((prev) => ({ ...prev, username }));
                   if (existingUsernames.includes(username)) {
-                    setUsernameError("Este nombre de usuario ya está registrado");
+                    setUsernameError(
+                      "Este nombre de usuario ya está registrado"
+                    );
                   } else {
                     setUsernameError("");
                   }
@@ -634,7 +681,7 @@ const Products = () => {
               <TextField
                 fullWidth
                 label="Contraseña"
-                type="password"
+                type="text"
                 value={newVendor.password}
                 onChange={(e) =>
                   setNewVendor((prev) => ({
@@ -644,25 +691,41 @@ const Products = () => {
                 }
                 margin="dense"
               />
+              <TextField
+                fullWidth
+                label="Confirmar contraseña"
+                type="text"
+                value={confirmPassword}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setConfirmPassword(value);
+                  if (value !== newVendor.password) {
+                    setConfirmError("Las contraseñas no coinciden");
+                  } else {
+                    setConfirmError("");
+                  }
+                }}
+                margin="dense"
+                error={!!confirmError}
+                helperText={confirmError}
+              />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseAddVendorDialog}>Cancelar</Button>
               <Button
                 onClick={async () => {
                   if (!!emailError || !!usernameError) return;
-
-                  const { email, username } = newVendor;
-
                   try {
                     const res1 = await fetch(`${API_BASE_URL}/user`, {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify(newVendor),
                     });
-
                     const result1 = await res1.json();
-                    if (!res1.ok) throw new Error(result1.message || "Error creando usuario");
-
+                    if (!res1.ok)
+                      throw new Error(
+                        result1.message || "Error creando usuario"
+                      );
                     const res2 = await fetch(`${API_BASE_URL}/event_vendor`, {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
@@ -671,9 +734,8 @@ const Products = () => {
                         store_id: storeId,
                       }),
                     });
-
-                    if (!res2.ok) throw new Error("Error asignando vendedor a la tienda");
-
+                    if (!res2.ok)
+                      throw new Error("Error asignando vendedor a la tienda");
                     fetchVendors();
                     handleCloseAddVendorDialog();
                   } catch (error) {
@@ -682,7 +744,15 @@ const Products = () => {
                   }
                 }}
                 color="primary"
-                disabled={!!emailError || !!usernameError}
+                disabled={
+                  !!emailError ||
+                  !!usernameError ||
+                  !!confirmError ||
+                  !newVendor.email.trim() ||
+                  !newVendor.username.trim() ||
+                  !newVendor.password.trim() ||
+                  !confirmPassword.trim()
+                }
               >
                 Guardar
               </Button>
@@ -738,7 +808,6 @@ const Products = () => {
           </Grid>
         </Grid>
       </Box>
-
       <Dialog
         open={openAddDialog}
         onClose={handleCloseAddDialog}
@@ -752,7 +821,6 @@ const Products = () => {
           existingProducts={productList}
         />
       </Dialog>
-
       <EditProductDialog
         open={editDialogOpen}
         product={selectedProduct}
@@ -760,14 +828,12 @@ const Products = () => {
         onChange={handleEditFieldChange}
         onSave={handleUpdateProduct}
       />
-
       <ConfirmDeleteDialog
         open={openConfirmDialog}
         onClose={() => setOpenConfirmDialog(false)}
         onConfirm={handleDeleteProduct}
         productName={productToDelete?.description}
       />
-
       <Dialog
         open={editStoreOpen}
         onClose={() => setEditStoreOpen(false)}

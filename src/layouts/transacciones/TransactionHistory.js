@@ -184,8 +184,15 @@ function TransactionHistory({ numRows }) {
 
   const rows = filteredAndSearchedTransactions.map((transaction) => ({
     date: (
-      <MDTypography fontSize="12px" variant="button" color="text" fontWeight="medium">
-        {moment(transaction.__createdtime__).format("DD [de] MMMM YYYY HH:mm:ss A")}
+      <MDTypography
+        fontSize="12px"
+        variant="button"
+        color="text"
+        fontWeight="medium"
+      >
+        {moment(transaction.__createdtime__).format(
+          "DD [de] MMMM YYYY HH:mm:ss A"
+        )}
       </MDTypography>
     ),
     type: (
@@ -195,7 +202,9 @@ function TransactionHistory({ numRows }) {
           fontSize="12px"
           badgeContent={parseTypeOfTransaction(transaction)}
           color={
-            transaction.type === "order"
+            transaction.type === "order" && transaction.status !== "success"
+              ? "error"
+              : transaction.type === "order"
               ? "warning"
               : transaction.type === "recharge"
               ? "success"
@@ -206,7 +215,12 @@ function TransactionHistory({ numRows }) {
       </MDBox>
     ),
     detail: (
-      <MDTypography fontSize="12px" variant="caption" color="text" fontWeight="medium">
+      <MDTypography
+        fontSize="12px"
+        variant="caption"
+        color="text"
+        fontWeight="medium"
+      >
         {parsePaymentMethod(transaction.payment_method)}
       </MDTypography>
     ),
