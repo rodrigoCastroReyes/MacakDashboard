@@ -24,7 +24,7 @@ function OrderTicketManager() {
   const navigate = useNavigate();
   const [refreshing, setRefreshing] = useState(false);
   const { data, loading, error, refetch } = useAxios(
-    `${API_BASE_URL}/purchase_ticket_item/purchase_ticket/?id=${id}`
+    `${API_BASE_URL}/purchase_ticket_item/purchase_ticket_info/?id=${id}`
   );
   //0a7e8544-ad2e-468a-a5f2-b7b440c24426
 
@@ -37,8 +37,10 @@ function OrderTicketManager() {
   if (loading  ) return <div>Cargando...</div>;
   if (error ) return <div>Error al obtener los datos</div>;
   
-  const order_ticket_items = data.filter(item => item.quantity > 0);
-  const total_amount = order_ticket_items.reduce((acc, x) => acc + x.total, 0);
+  //const order_ticket_items = data.filter(item => item.quantity > 0);
+  const order_ticket_items = data;
+  const total_amount = order_ticket_items?.reduce((acc, x) => acc + x.ticket_price, 0)
+  const total_tickets = order_ticket_items?.length;
 
   const RefreshButtonContainer = styled("div")(({ theme }) => ({
     display: "flex",
@@ -54,8 +56,7 @@ function OrderTicketManager() {
   const columns = [
     { Header: "Localidad", accessor: "ticket_name", align: "left" },
     { Header: "Tipo de boleto", accessor: "type", align: "center" },
-    { Header: "Cantidad de boletos", accessor: "quantity", align: "center" },
-    { Header: "Costo total", accessor: "total", align: "center" },
+    { Header: "Precio", accessor: "quantity", align: "center" },
   ];
   
   const rows = order_ticket_items.map((ticket_item) => ({
@@ -70,7 +71,7 @@ function OrderTicketManager() {
           className="customBadge"
           fontFamily="poppins"
           fontSize="12px"
-          badgeContent={ticket_item.ticket_is_numered ? "Numerado" : "No numerado"}
+          badgeContent={ticket_item.is_read ? "Leido" : "No leido"}
           color="primary"
           variant="gradient"
         />
@@ -78,12 +79,7 @@ function OrderTicketManager() {
     ),
     quantity: (
       <MDTypography fontFamily='poppins' variant="button" color="text" fontWeight="medium">
-        {ticket_item.quantity}
-      </MDTypography>
-    ),
-    total: (
-      <MDTypography fontFamily='poppins' variant="button" color="text" fontWeight="medium">
-        {ticket_item.total}
+        {ticket_item.ticket_price}
       </MDTypography>
     )
   }));
@@ -121,8 +117,18 @@ function OrderTicketManager() {
                     style={{ position: "realtive", marginRight: "1rem" }}
                   >
                   Monto total ${total_amount}
-                </MDTypography>
+                 </MDTypography>
                 </MDBox>
+                <MDBox pr={2} pl={2} style={{ display: "flex", justifyContent: "flex-start" }}>
+                  <MDTypography
+                    fontFamily='poppins'
+                    fontWeight="regular"
+                    variant="body1"
+                    style={{ position: "realtive", marginRight: "1rem" }}
+                  >
+                  Tickets {total_tickets}
+                 </MDTypography>
+                 </MDBox>
                 <DataTable
                   pb={2}
                   table={{ columns, rows }}

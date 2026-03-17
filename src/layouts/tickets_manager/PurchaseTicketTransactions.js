@@ -1,26 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import moment from "moment";
 import MDTypography from "components/MDTypography";
-import { Card, CardContent } from '@mui/material';
+import { Card, CardContent, IconButton } from '@mui/material';
 import DataTable from "examples/Tables/DataTable";
 import useAxios from "hooks/useAxios";
 import { Link } from 'react-router-dom';
-import { styled } from "@mui/system";
+import { display, styled } from "@mui/system";
 import DownloadIcon from '@mui/icons-material/Download';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import axios from 'axios';
 
 // Variable Global
 import { API_BASE_URL } from '../../config';
 
-
 const RefreshButtonContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  marginRight: theme.spacing(3), // Agrega margen inferior para separar del campo de búsqueda
-  marginTop: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
-  marginBottom: theme.spacing(2), // Agrega margen inferior para separar del campo de búsqueda
+  marginRight: theme.spacing(3),
+  marginTop: theme.spacing(2),
+  marginBottom: theme.spacing(2),
   [theme.breakpoints.up("sm")]: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -32,34 +32,40 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
   const [attenders, setAttenders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Mueve la lógica de la llamada a una función separada
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [transRes, attendersRes] = await Promise.all([
+        axios.get(`${API_BASE_URL}/purchase_ticket/event?id=${id_event}`),
+        axios.get(`${API_BASE_URL}/purchase_ticket/attender_event?id=${id_event}`)
+      ]);
+      setTransactions(transRes.data);
+      setAttenders(attendersRes.data);
+      setLoading(false);
+      setError(false);
+    } catch (err) {
+      setError(true);
+      setLoading(false);
+    }
+  }, [id_event]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [transRes, attendersRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/purchase_ticket/event?id=${id_event}`),
-          axios.get(`${API_BASE_URL}/purchase_ticket/attender_event?id=${id_event}`)
-        ]);
-
-        setTransactions(transRes.data);
-        setAttenders(attendersRes.data);
-        console.log("Asistentes:", attendersRes.data);
-        console.log("Transacciones:", transRes.data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error al obtener datos:", err);
-        setError(true);
-        setLoading(false);
-      }
-    };
-
     fetchData();
-  }, [id_event]);
+  }, [fetchData, refreshKey]);
+
+  const handleRefresh = () => {
+    setRefreshKey(oldKey => oldKey + 1);
+  };
 
   const columns = [
     { Header: "Fecha", accessor: "date", align: "center" },
     { Header: "Asistente", accessor: "assistant", align: "center" },
     { Header: "Monto", accessor: "amount", align: "center" },
+    { Header: "Tickets", accessor: "n_tickets", align: "center" },
+    { Header: "Observaciones", accessor: "observations", align: "center" },
     { Header: "Precarga", accessor: "precharge", align: "center" },
   ];
 
@@ -68,8 +74,14 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
 
   const getFullName = (id) => {
     const attender = attenders.find((a) => a._id === id);
-    return attender ? attender.full_name : id; // fallback al ID del usuraio si no se encuentra
+    return attender ? attender.full_name : id;
   };
+
+  transactions.sort((a, b) => {
+    const dateA = new Date(a.purchase_ticket.__createdtime__);
+    const dateB = new Date(b.purchase_ticket.__createdtime__);
+    return dateB - dateA;
+  });
 
   const rows = transactions.map((transaction) => ({
     date: (
@@ -84,10 +96,20 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     ),
     amount: (
       <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
-        <Link className="custom-link" to={`${API_BASE_URL}/orden_boleteria/${transaction._id}`}>
+        <Link className="custom-link" to={`/orden_boleteria/${transaction.purchase_ticket._id}`}>
           {"$"}
           {transaction.purchase_ticket.total_amount}{" "}
-        </Link>       
+        </Link>
+      </MDTypography>
+    ),
+    n_tickets: (
+      <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
+         {transaction.purchase_ticket_items?.length}{" "}
+      </MDTypography>
+    ),
+    observations: (
+      <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
+         {transaction.purchase_ticket?.observation}{" "}
       </MDTypography>
     ),
     precharge: (
@@ -96,6 +118,7 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
       </MDTypography>
     ),
   }));
+
   return (
     <Card>
       <CardContent>
@@ -103,9 +126,15 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
           <MDTypography colorVerticalBarChart="dark" fontWeight="bold" fontFamily="montserrat-semibold" component="div" align="left" style={{ fontSize: "1rem" }} >
             Historial de ordenes
           </MDTypography>
-          <Link className='custom-btn-icon custom-link' to={`${API_BASE_URL}/report/generate_report_of_ticket_manager?event_id=${id_event}`} target="_blank" download title="Descargar Informe de Historial de ordenes">
-            <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium" />
-          </Link>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <IconButton className='custom-btn-icon' onClick={handleRefresh} aria-label="refresh">
+              <RefreshIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium" />
+            </IconButton>
+            <Link style={{ display: "flex" }} className='custom-btn-icon custom-link' to={`${API_BASE_URL}/report/generate_report_of_ticket_manager?event_id=${id_event}`} 
+            target="_blank" download title="Descargar Informe de Historial de ordenes">
+              <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium" />
+            </Link>
+          </div>
         </RefreshButtonContainer>
         <DataTable
           table={{ columns, rows }}

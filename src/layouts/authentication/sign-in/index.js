@@ -40,33 +40,42 @@ import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import "css/styles.css";
 
 function Basic() {
-  const { login } = useAuth(); // Utilizar la función useAuth para acceder a la función login del AuthProvider
+  const { login, isAuthenticated } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  //const [loggedIn, setLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  //const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-  /*
-  useEffect(async() => {
-    let jwtoken = await localStorage.getItem('authToken');
-    if (jwtoken) {
+
+  useEffect(() => {
+    // Si el usuario ya está autenticado (isAuthenticated del contexto), redirigir
+    if (isAuthenticated) {
       navigate('/resumen');
     }
-  }, [navigate]);*/
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
-     e.preventDefault();
+    e.preventDefault();
+    setError(''); // Limpiar el error anterior antes de intentar el login
+
     try {
       const response = await login(username, password);
-      if (response === "manager_admin") {
+      console.log("Respuesta del login:", response);
+      if (response && response === "manager_admin") {
         navigate("/resumen");
-      } else {
+      } else if (response && response !== "manager_admin") {
         setError("Solo los organizadores del evento pueden iniciar sesión.");
+      } else {
+        // Este caso puede manejar un login fallido si la API no devuelve un error
+        setError("Credenciales incorrectas. Inténtalo de nuevo.");
       }
     } catch (error) {
-      setError("Credenciales incorrectas. Inténtalo de nuevo.");
+      // Este catch captura errores de la red o de la API
+      if (error.response && error.response.status === 401) {
+        setError("Contraseña incorrecta. Por favor, revisa tus credenciales.");
+      } else {
+        setError("Error al intentar iniciar sesión. Por favor, inténtalo de nuevo.");
+      }
     }
   };
 
@@ -80,42 +89,56 @@ function Basic() {
     setShowPassword(!showPassword);
   };
 
-  //const handleSetRememberMe = () => setRememberMe(!rememberMe);
-
   return (
-    <BasicLayout image={bgImage}>
+    <BasicLayout >
       <Card>
         <MDTypography variant="h4" component="div" align="center" fontWeight="medium" fontFamily="montserrat" mt={1}>
         </MDTypography>
         <MDBox pt={4} pb={3} px={3}>
           <form onSubmit={handleSubmit}>
-          <MDBox mb={2}>
-            <MDInput type="text" label="Usuario" value={username} onChange={(e) => setUsername(e.target.value)} required={true} fullWidth />
-          </MDBox>
-          <MDBox mb={2}>
-            <MDInput type={showPassword ? "text" : "password"} label="Contraseña" value={password}
-            onChange={(e) => setPassword(e.target.value)} InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton
-              aria-label="toggle password visibility"
-              onClick={handleClickShowPassword}
-              edge="end"
-            >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </InputAdornment>
-        ),
-      }} required={true} fullWidth />
-          </MDBox>
+            <MDBox mb={2}>
+              <MDInput
+                type="text"
+                label="Usuario"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required={true}
+                fullWidth
+              />
+            </MDBox>
+            <MDBox mb={2}>
+              <MDInput
+                type={showPassword ? "text" : "password"}
+                label="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                required={true}
+                fullWidth
+              />
+            </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" onClick={handleSubmit} fullWidth>
+              <MDButton variant="gradient" color="info" type="submit" fullWidth>
                 Iniciar sesión
               </MDButton>
             </MDBox>
-            {error && <MDAlert color="error" dismissible>
-                  {alertContent(error)}
-                </MDAlert>}
+            {error && (
+              <MDAlert color="error" dismissible>
+                {alertContent(error)}
+              </MDAlert>
+            )}
           </form>
         </MDBox>
       </Card>

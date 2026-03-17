@@ -167,31 +167,7 @@ function PointOfSaleTransactionHistory() {
       </MDBox>
       <MDBox pt={1} pb={2}>
         <Grid container spacing={6}>
-          <Grid item xs={8}>
-            <Card>
-              <MDBox pt={2} pb={2}>
-                <div style={{ marginBottom: "2rem", display: "flex", "justify-content": "space-between", "alignItems": "center" }}>
-                  <MDTypography pr={2} pl={2} component="div"
-                    className="event-title" color="text">
-                    Historial de transacciones
-                  </MDTypography>
-                  <RefreshButtonContainer>
-                    <div style={{ paddingTop: "10px", display: "flex", justifyContent: "center", alignItems: "center" }} >
-                      <RefreshIcon className="custom-btn-icon"  onClick={handleRefresh} fontSize="medium" />
-                    </div>
-                  </RefreshButtonContainer>
-                </div>
-                <DataTable
-                  table={{ columns, rows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
-              </MDBox>
-            </Card>
-          </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12}>
             <Card>
               <QuantitySoldByProduct id_store={id}/>
             </Card>

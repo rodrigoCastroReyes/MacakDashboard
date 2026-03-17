@@ -17,7 +17,7 @@ function QuantitySoldByProduct({id_store}) {
       datasets: [
         {
           label: "Cantidad vendida",
-          color: "primary",
+          color: "success",
           data: data?.report.map((product) => product.quantity),
           backgroundColor: [
             'rgba(255, 159, 64, 1)',
@@ -36,7 +36,7 @@ function QuantitySoldByProduct({id_store}) {
   if (error || !data?.report || !data?.total)
     return  <div pt="2" pb="2" display="flex" justifyContent="center">Sin datos disponibles</div>;
   return (
-    <PieChart title="Unidades vendidas por producto" description={data.total} chart={chart} height="300px" />
+    <VerticalBarChart title="Unidades vendidas por producto" description={data.total} chart={chart} height="300px" />
   );
 }
 

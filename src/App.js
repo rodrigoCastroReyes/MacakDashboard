@@ -58,20 +58,14 @@ export default function App() {
   const isAuthenticated = !!authToken;
 
   function getRoutes(allRoutes, authToken) {
-    return allRoutes.map((route) => {
-      if (route.collapse) {
-        return getRoutes(route.collapse, authToken);
-      }
-      if (route.route) {
-        if (route.route !== "/authentication/sign-in") {
-          if (!authToken && route.route === "/resumen") {
-            return null;
-          }
-          return <Route exact path={route.route} element={authToken ? route.component : <Navigate to="/authentication/sign-in" />} key={route.key} />;
-        }
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
-      }
-      return null;
+    return allRoutes.flatMap((route) => {
+      if (route.collapse) return getRoutes(route.collapse, authToken);
+      if (!route.route) return [];
+      const key = route.key || route.route;
+      const el = route.route !== "/authentication/sign-in"
+        ? (authToken ? route.component : <Navigate to="/authentication/sign-in" />)
+        : route.component;
+      return <Route path={route.route} element={el} key={key} />;
     });
   }
 

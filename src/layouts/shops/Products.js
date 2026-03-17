@@ -49,7 +49,7 @@ const Products = () => {
   const [productList, setProductList] = useState([]);
   const [storeInfo, setStoreInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showActions, setShowActions] = useState(false);
+  const [showActions, setShowActions] = useState(true);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -368,16 +368,6 @@ const Products = () => {
                   ${parseFloat(product.price).toFixed(2)}
                 </Typography>
               )}
-              <IconButton
-                size="small"
-                onClick={() => {
-                  setOriginalDiscount(product.discount || 0);
-                  setEditingIndex(index);
-                }}
-                title="Editar descuento"
-              >
-                <DiscountIcon fontSize="small" color="action" />
-              </IconButton>
             </Box>
           )}
         </Box>
@@ -815,7 +805,9 @@ const Products = () => {
                     {
                       method: "PUT",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ name: editedStore.name }),
+                      body: JSON.stringify({ 
+                        name: editedStore.name 
+                      }),
                     }
                   );
                   if (!res.ok) throw new Error("Error al actualizar tienda");

@@ -31,9 +31,11 @@ function configs(labels, datasets) {
         datalabels: {
           display: true,
           formatter: function (value) {
-            return "$" + new Intl.NumberFormat("es-EC", {
+            return value;
+            /*
+            return new Intl.NumberFormat("es-EC", {
               minimumFractionDigits: 0,
-            }).format(value);
+            }).format(value);*/
           },
           color: "black",
           anchor: "end",

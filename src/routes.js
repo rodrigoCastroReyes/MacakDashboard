@@ -50,6 +50,7 @@ import AttachMoneySharpIcon from '@mui/icons-material/AttachMoneySharp';
 import CurrencyExchangeSharpIcon from '@mui/icons-material/CurrencyExchangeSharp';
 import DoNotDisturbOnSharpIcon from '@mui/icons-material/DoNotDisturbOnSharp';
 import NfcIcon from '@mui/icons-material/Nfc';
+import UserIcon from '@mui/icons-material/Person';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import PeopleIcon from '@mui/icons-material/People';
 import StoreIcon from '@mui/icons-material/Store';
@@ -66,6 +67,8 @@ import AttenderDetails from "layouts/assistants/AttenderDetails";
 
 import Tiendas from "layouts/shops";
 import Products from "layouts/shops/Products";
+import TokenAdminSummary from "layouts/tokens_admin/TokenAdminSummary";
+import TokenAdminTransactions from "layouts/tokens_admin/TokenAdminTransactions";
 
 const routes = [
   {
@@ -83,6 +86,20 @@ const routes = [
     icon: <NfcIcon fontSize="small" color="white"></NfcIcon>,
     route: "/tokens",
     component: <Tokens />,
+  },
+  {
+    type: "collapse",
+    name: "Administradores",
+    key: "users",
+    icon: <UserIcon fontSize="small" color="white"></UserIcon>,
+    route: "/tokens_admin",
+    component: <TokenAdminSummary />,
+  },
+  {
+    type: "route",
+    key: "token",
+    route: "/tokens_admin_details/:id_user",
+    component: < TokenAdminTransactions />,
   },
   {
     type: "route",

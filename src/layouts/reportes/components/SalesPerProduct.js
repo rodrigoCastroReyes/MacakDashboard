@@ -12,7 +12,7 @@ function SalesPerProduct({id_store}) {
 
   const getProductValue = (value) => {
     if(value % 1 === 0){
-      return Number.parseFloat(value).toFixed(2);
+      return  Number.parseFloat(value).toFixed(2);
     }else{
       return value.toFixed(2);
     }
@@ -25,7 +25,7 @@ function SalesPerProduct({id_store}) {
         {
           label: "Total vendido",
           color: "primary",
-          data: data?.report.map((product) => getProductValue(product.value)),
+          data: data?.report.map((product) =>  getProductValue(product.value)),
         },
       ],
     };
@@ -38,7 +38,7 @@ function SalesPerProduct({id_store}) {
 
   return (
     <VerticalBarChart title="Total de ventas" description={
-    `$${data.total}`} chart={chart} height="250px" />
+    `$${data.total}`} chart={chart} height="250px" show_dollars />
   );
 }
 

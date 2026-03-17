@@ -55,7 +55,7 @@ ChartJS.register(
   Legend
 );
 
-function VerticalBarChart({ icon, title, description, height, chart }) {
+function VerticalBarChart({ icon, title, description, height, chart, show_dollars = false }) {
   const chartDatasets = chart.datasets
     ? chart.datasets.map((dataset) => ({
         ...dataset,
@@ -71,6 +71,14 @@ function VerticalBarChart({ icon, title, description, height, chart }) {
     : [];
 
   const { data, options } = configs(chart.labels || [], chartDatasets);
+
+  if (show_dollars) {
+    options.plugins.datalabels.formatter = function (value) {
+      return "$" + new Intl.NumberFormat("es-EC", {
+        minimumFractionDigits: 0,
+      }).format(value);
+    };
+  }
 
   const renderChart = (
     <MDBox py={1} pr={2} pl={icon.component ? 1 : 2}>

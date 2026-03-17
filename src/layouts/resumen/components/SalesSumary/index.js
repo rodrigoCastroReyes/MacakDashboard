@@ -22,17 +22,23 @@ import './style.css'
 const SalesSummary = () => {
   const event_id = localStorage.getItem("eventId");
   const [startIndex, setStartIndex] = useState(0);
+  /*
   const { data, loading, error } = useAxios(
     `${API_BASE_URL}/dashboard/summary_per_store?event_id=${event_id}`
+  );*/
+  
+  const { data, loading, error } = useAxios(
+    `${API_BASE_URL}/store/by_event?id=${event_id}`
   );
   
   if (loading) return <div>Cargando...</div>;
-  if (!data?.stores_summary)
-    return <div>¡ Sin ventas !</div>;
+  //if (!data?.stores_summary)
+  //  return <div>¡ Sin ventas !</div>;
+
   if (error)
     return <div>Error al obtener los datos</div>;
   
-  const stores_summary = data.stores_summary;
+  const stores_summary = data;///.stores_summary;
   const itemsPerPage = 6;
 
   // Limitamos la cantidad de puntos de venta a mostrar a 6
@@ -75,7 +81,7 @@ const SalesSummary = () => {
         </Typography>
         <MDBox py={3}>
           <Grid container spacing={3}>
-            {stores_summary.map(({ name, store_id, total}) => (
+            {stores_summary.map(({ name, _id, total}) => (
               <React.Fragment key={name}>
                 <Grid item xs={12} md={6} lg={3}>
                   <MDBox mb={1.5}>
@@ -83,8 +89,10 @@ const SalesSummary = () => {
                       color="dark"
                       icon="store"
                       title={ name }
-                      count={ "$"+ total }
-                      url={`/transaccion/${store_id}`}
+                      
+                      //count={ "$" + total.toFixed(2) }
+
+                      url={`/transaccion/${_id}`}
                       to_url={true}
                       percentage={{
                       color: "success",
