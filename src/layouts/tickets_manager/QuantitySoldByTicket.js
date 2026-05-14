@@ -18,6 +18,7 @@ function QuantitySoldByTicket({ data }) {
     );
 
   const topThreeTickets = data.slice(0, 3);
+  const totalSold = topThreeTickets.reduce((acc, ticket) => acc + ticket.sold_quantity, 0);
 
   return (
     <Card
@@ -28,9 +29,10 @@ function QuantitySoldByTicket({ data }) {
         colorVerticalBarChart="dark" fontWeight="bold" 
         fontFamily="montserrat-semibold" component="div" 
         align="left" style={{ fontSize: "1.1rem" }} >
-
           Tickets vendidos por localidad
-          
+        </MDTypography>
+        <MDTypography color="dark" fontWeight="medium" fontFamily="montserrat" component="div" align="left" style={{ fontSize: "2rem" }}>
+          {totalSold}
         </MDTypography>
       </MDBox>
       <Grid container spacing={2} justifyContent="center" alignItems="stretch">

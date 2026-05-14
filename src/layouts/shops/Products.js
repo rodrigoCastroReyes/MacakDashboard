@@ -382,29 +382,29 @@ const Products = () => {
                   }}
                   title="Editar descuento"
                 >
-                  ${parseFloat(product.price).toFixed(2)}
-                </Typography>
-              )}
-            </Box>
-          )}
-        </Box>
-      ),
-      ...(showActions
-        ? {
-            actions: (
-              <ProductActions
-                product={product}
-                onEdit={handleOpenEditDialog}
-                onDelete={(p) => {
-                  setProductToDelete(p);
-                  setOpenConfirmDialog(true);
-                }}
-              />
-            ),
-          }
-        : {}),
-    })),
-  };
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            )}
+          </Box>
+        ),
+        ...(showActions
+          ? {
+              actions: (
+                <ProductActions
+                  product={product}
+                  onEdit={handleOpenEditDialog}
+                  onDelete={(p) => {
+                    setProductToDelete(p);
+                    setOpenConfirmDialog(true);
+                  }}
+                />
+              ),
+            }
+          : {}),
+      })),
+    }),
+  );
 
   return (
     <DashboardLayout>

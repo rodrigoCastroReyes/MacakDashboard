@@ -55,6 +55,7 @@ function Basic() {
   }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
+    console.log("Intentando iniciar sesión con:", { username, password });
     e.preventDefault();
     setError(''); // Limpiar el error anterior antes de intentar el login
 

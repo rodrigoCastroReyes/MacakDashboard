@@ -14,6 +14,55 @@ import axios from 'axios';
 // Variable Global
 import { API_BASE_URL } from '../../config';
 
+// ─── Cache helpers ────────────────────────────────────────────────────────────
+const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutos
+
+const buildCacheKey = (id_event) => `purchase_tickets_cache_${id_event}`;
+
+/**
+ * Lee la caché del localStorage para un evento.
+ * Retorna { transactions, attenders } si existe y no ha expirado, o null si no.
+ */
+const readCache = (id_event) => {
+  try {
+    const raw = localStorage.getItem(buildCacheKey(id_event));
+    if (!raw) return null;
+
+    const { data, timestamp } = JSON.parse(raw);
+    const isExpired = Date.now() - timestamp > CACHE_TTL_MS;
+    if (isExpired) {
+      localStorage.removeItem(buildCacheKey(id_event));
+      return null;
+    }
+    return data; // { transactions, attenders }
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Escribe { transactions, attenders } en el localStorage con timestamp actual.
+ */
+const writeCache = (id_event, transactions, attenders) => {
+  try {
+    const payload = {
+      data: { transactions, attenders },
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(buildCacheKey(id_event), JSON.stringify(payload));
+  } catch {
+    // Si el localStorage está lleno u ocurre otro error, se ignora silenciosamente.
+  }
+};
+
+/**
+ * Elimina la caché de un evento (útil al forzar refresh).
+ */
+const clearCache = (id_event) => {
+  localStorage.removeItem(buildCacheKey(id_event));
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
 const RefreshButtonContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -33,19 +82,41 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  // Indica si los datos provienen de la caché (para mostrar feedback visual opcional)
+  const [fromCache, setFromCache] = useState(false);
 
-  // Mueve la lógica de la llamada a una función separada
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
+
+      // 1. Intentar leer desde caché (solo cuando no es un refresh forzado)
+      const cached = readCache(id_event);
+      if (cached) {
+        setTransactions(cached.transactions);
+        setAttenders(cached.attenders);
+        setFromCache(true);
+        setError(false);
+        setLoading(false);
+        return;
+      }
+
+      // 2. Si no hay caché válida, llamar al API
       const [transRes, attendersRes] = await Promise.all([
         axios.get(`${API_BASE_URL}/purchase_ticket/event?id=${id_event}`),
         axios.get(`${API_BASE_URL}/purchase_ticket/attender_event?id=${id_event}`)
       ]);
-      setTransactions(transRes.data);
-      setAttenders(attendersRes.data);
-      setLoading(false);
+
+      const newTransactions = transRes.data;
+      const newAttenders = attendersRes.data;
+
+      // 3. Guardar respuesta en caché
+      writeCache(id_event, newTransactions, newAttenders);
+
+      setTransactions(newTransactions);
+      setAttenders(newAttenders);
+      setFromCache(false);
       setError(false);
+      setLoading(false);
     } catch (err) {
       setError(true);
       setLoading(false);
@@ -56,7 +127,10 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     fetchData();
   }, [fetchData, refreshKey]);
 
+  // Al hacer refresh manual se limpia la caché para forzar una nueva llamada al API
   const handleRefresh = () => {
+    clearCache(id_event);
+    setFromCache(false);
     setRefreshKey(oldKey => oldKey + 1);
   };
 
@@ -123,15 +197,36 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     <Card>
       <CardContent>
         <RefreshButtonContainer>
-          <MDTypography colorVerticalBarChart="dark" fontWeight="bold" fontFamily="montserrat-semibold" component="div" align="left" style={{ fontSize: "1rem" }} >
-            Historial de ordenes
-          </MDTypography>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <MDTypography
+              colorVerticalBarChart="dark"
+              fontWeight="bold"
+              fontFamily="montserrat-semibold"
+              component="div"
+              align="left"
+              style={{ fontSize: "1rem" }}
+            >
+              Historial de ordenes
+            </MDTypography>
+            {/* Indicador sutil de que los datos vienen de caché */}
+            {fromCache && (
+              <MDTypography variant="caption" style={{ color: "#9e9e9e", fontSize: "0.7rem" }}>
+                (caché)
+              </MDTypography>
+            )}
+          </div>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <IconButton className='custom-btn-icon' onClick={handleRefresh} aria-label="refresh">
+            <IconButton className='custom-btn-icon' onClick={handleRefresh} aria-label="refresh" title="Actualizar datos">
               <RefreshIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium" />
             </IconButton>
-            <Link style={{ display: "flex" }} className='custom-btn-icon custom-link' to={`${API_BASE_URL}/report/generate_report_of_ticket_manager?event_id=${id_event}`} 
-            target="_blank" download title="Descargar Informe de Historial de ordenes">
+            <Link
+              style={{ display: "flex" }}
+              className='custom-btn-icon custom-link'
+              to={`${API_BASE_URL}/report/generate_report_of_ticket_manager?event_id=${id_event}`}
+              target="_blank"
+              download
+              title="Descargar Informe de Historial de ordenes"
+            >
               <DownloadIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium" />
             </Link>
           </div>
