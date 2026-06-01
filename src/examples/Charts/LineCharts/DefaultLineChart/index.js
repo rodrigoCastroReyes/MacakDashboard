@@ -66,10 +66,14 @@ function DefaultLineChart({ icon, title, description, height, chart }) {
         borderWidth: 4,
         backgroundColor: "transparent",
         fill: true,
-        pointBackgroundColor: colors[dataset.color]
+        pointBackgroundColor: dataset.pointBackgroundColor
+          ? dataset.pointBackgroundColor
+          : colors[dataset.color]
           ? colors[dataset.color || "dark"].main
           : colors.dark.main,
-        borderColor: colors[dataset.color]
+        borderColor: dataset.borderColor
+          ? dataset.borderColor
+          : colors[dataset.color]
           ? colors[dataset.color || "dark"].main
           : colors.dark.main,
         maxBarThickness: 6,

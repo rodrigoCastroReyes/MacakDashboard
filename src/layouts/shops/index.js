@@ -14,7 +14,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import useAxios from "hooks/useAxios";
 import { Skeleton } from "@mui/material";
-
+import MDButton from "components/MDButton";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -113,7 +113,7 @@ const Shops = () => {
   }, [stores]);
 
   const filteredStores = storesWithProductCount.filter((store) =>
-    store.name.toLowerCase().includes(searchTerm.toLowerCase())
+    store.name && store.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const resetSearch = () => setSearchTerm("");
@@ -123,6 +123,28 @@ const Shops = () => {
   };
 
   if (storesLoading) {
+    // Si loading y no hay tiendas, mostrar mensaje y botón
+    if (stores && stores.length === 0) {
+      return (
+        <DashboardLayout>
+          <DashboardNavbar main_title="Tiendas" />
+          <MDBox pt={6} pb={3} display="flex" flexDirection="column" alignItems="center">
+            <MDTypography variant="h6" sx={{ mb: 2 }}>
+              No hay tiendas registradas
+            </MDTypography>
+            <MDButton variant="gradient" color="info" onClick={() => setOpenAddShopModal(true)}>
+              Crear una tienda
+            </MDButton>
+            <AddShop
+              open={openAddShopModal}
+              onClose={() => setOpenAddShopModal(false)}
+              onRefresh={refreshStores}
+              existingStores={storesWithProductCount}
+            />
+          </MDBox>
+        </DashboardLayout>
+      );
+    }
     return (
       <DashboardLayout>
         <DashboardNavbar main_title="Tiendas" />
@@ -410,7 +432,23 @@ const Shops = () => {
           existingStores={storesWithProductCount}
         />
 
-        {isStoresReady && filteredStores.length === 0 && (
+        {isStoresReady && filteredStores.length === 0 && storesWithProductCount.length === 0 && (
+          <MDBox sx={{ mt: 3, textAlign: "center" }}>
+            <MDTypography variant="body2" sx={{ mb: 2 }}>
+              No hay tiendas registradas
+            </MDTypography>
+            <MDButton variant="gradient" color="info" onClick={() => setOpenAddShopModal(true)}>
+              Crear una tienda
+            </MDButton>
+            <AddShop
+              open={openAddShopModal}
+              onClose={() => setOpenAddShopModal(false)}
+              onRefresh={refreshStores}
+              existingStores={storesWithProductCount}
+            />
+          </MDBox>
+        )}
+        {isStoresReady && filteredStores.length === 0 && storesWithProductCount.length > 0 && (
           <MDTypography variant="body2" sx={{ mt: 3, textAlign: "center" }}>
             No se encontraron tiendas con ese nombre.
           </MDTypography>

@@ -266,105 +266,94 @@ const Products = () => {
           : []),
       ],
       rows: productList.map((product, index) => ({
-        img: (
-          <Box
-            component="img"
-            src={product.img}
-            alt={product.description}
-            sx={{
-              height: 60,
-              objectFit: "contain",
-              mx: "auto",
-              borderRadius: 1,
-            }}
-          />
-        ),
-        description: (
-          <MDTypography
-            fontSize="14px"
-            variant="caption"
-            color="text"
-            align="center"
-          >
-            {product.description}
-          </MDTypography>
-        ),
-        price: (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            gap={1}
-          >
-            {editingIndex === index ? (
-              <>
-                <TextField
-                  type="number"
-                  value={product.discount || 0}
-                  onChange={(e) => handleDiscountChange(index, e.target.value)}
-                  size="small"
-                  sx={{ width: 70 }}
-                  inputProps={{ min: 0, max: 100 }}
-                />
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    const updated = [...productList];
-                    const current = updated[index];
-                    const discount = current.discount || 0;
-                    const newPrice =
-                      current.originalPrice -
-                      (current.originalPrice * discount) / 100;
+      img: (
+        <Box
+          component="img"
+          src={product.img}
+          alt={product.description}
+          sx={{
+            height: 60,
+            objectFit: "contain",
+            mx: "auto",
+            borderRadius: 1,
+          }}
+        />
+      ),
+      description: (
+        <MDTypography
+          fontSize="14px"
+          variant="caption"
+          color="text"
+          align="center"
+        >
+          {product.description}
+        </MDTypography>
+      ),
+      price: (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          gap={1}
+        >
+          {editingIndex === index ? (
+            <>
+              <TextField
+                type="number"
+                value={product.discount || 0}
+                onChange={(e) => handleDiscountChange(index, e.target.value)}
+                size="small"
+                sx={{ width: 70 }}
+                inputProps={{ min: 0, max: 100 }}
+              />
+              <IconButton
+                size="small"
+                onClick={() => {
+                  const updated = [...productList];
+                  const current = updated[index];
+                  const discount = current.discount || 0;
+                  const newPrice =
+                    current.originalPrice -
+                    (current.originalPrice * discount) / 100;
 
-                    current.price = parseFloat(newPrice.toFixed(2));
-                    setProductList(updated);
-                    setEditingIndex(null);
-                  }}
-                  title="Aplicar descuento"
-                >
-                  <CheckIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" onClick={cancelEdit} title="Cancelar">
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    const updated = [...productList];
-                    const current = updated[index];
-                    current.discount = 0;
-                    current.price = current.originalPrice;
-                    setProductList(updated);
-                    setEditingIndex(null);
-                  }}
-                  title="Eliminar descuento"
-                >
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </>
-            ) : (
-              <Box display="flex" alignItems="center" gap={1}>
-                {product.discount > 0 &&
-                product.originalPrice !== product.price ? (
-                  <>
-                    <Typography
-                      variant="caption"
-                      color="error"
-                      fontSize="14px"
-                      sx={{ textDecoration: "line-through" }}
-                    >
-                      ${parseFloat(product.originalPrice).toFixed(2)}
-                    </Typography>
-                    <Typography
-                      fontSize="14px"
-                      variant="caption"
-                      fontWeight="bold"
-                      color="success"
-                    >
-                      ${parseFloat(product.price).toFixed(2)}
-                    </Typography>
-                  </>
-                ) : (
+                  current.price = parseFloat(newPrice.toFixed(2));
+                  setProductList(updated);
+                  setEditingIndex(null);
+                }}
+                title="Aplicar descuento"
+              >
+                <CheckIcon fontSize="small" />
+              </IconButton>
+              <IconButton size="small" onClick={cancelEdit} title="Cancelar">
+                <CloseIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  const updated = [...productList];
+                  const current = updated[index];
+                  current.discount = 0;
+                  current.price = current.originalPrice;
+                  setProductList(updated);
+                  setEditingIndex(null);
+                }}
+                title="Eliminar descuento"
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </>
+          ) : (
+            <Box display="flex" alignItems="center" gap={1}>
+              {product.discount > 0 && product.originalPrice !== product.price ? (
+                <>
+                  <Typography
+                    variant="caption"
+                    color="error"
+                    fontSize="14px"
+                    sx={{ textDecoration: "line-through" }}
+                  >
+                    ${parseFloat(product.originalPrice).toFixed(2)}
+                  </Typography>
                   <Typography
                     fontSize="14px"
                     variant="caption"
@@ -373,18 +362,27 @@ const Products = () => {
                   >
                     ${parseFloat(product.price).toFixed(2)}
                   </Typography>
-                )}
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setOriginalDiscount(product.discount || 0);
-                    setEditingIndex(index);
-                  }}
-                  title="Editar descuento"
+                </>
+              ) : (
+                <Typography
+                  fontSize="14px"
+                  variant="caption"
+                  fontWeight="bold"
+                  color="success"
                 >
                   ${parseFloat(product.price).toFixed(2)}
                 </Typography>
               )}
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setOriginalDiscount(product.discount || 0);
+                  setEditingIndex(index);
+                }}
+                title="Editar descuento"
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
             </Box>
           )}
         </Box>
@@ -404,8 +402,8 @@ const Products = () => {
           }
         : {}),
     })),
-  };
-
+  })
+);
   return (
     <DashboardLayout>
       <DashboardNavbar main_title="Panel de Tienda" />

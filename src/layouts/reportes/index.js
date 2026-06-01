@@ -3,9 +3,10 @@ import { Grid, Card } from "@mui/material";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-//import Footer from "examples/Footer";
 import SalesPerProduct from "./components/SalesPerProduct";
 import QuantitySoldByProduct from "./components/QuantitySoldByProduct";
+import SalesPerHour from "./components/SalesPerHour";
+import SalesPerHourAndProduct from "./components/SalesPerHourAndProduct";
 
 function Reports() {
   return (
@@ -13,21 +14,33 @@ function Reports() {
       <DashboardNavbar main_title="" />
       <MDBox py={3}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={12}>
+
+          <Grid item xs={12} sm={6}>
             <Card>
               <SalesPerProduct />
             </Card>
           </Grid>
-          <Grid item xs={12} sm={12}>
-            <MDBox py={3} >
-              <Grid container spacing={2}>
-                <SalesPerProduct />
-              </Grid>
-            </MDBox>
+
+          <Grid item xs={12} sm={6}>
+            <Card>
+              <QuantitySoldByProduct />
+            </Card>
           </Grid>
+
+          <Grid item xs={12}>
+            <Card>
+              <SalesPerHour />
+            </Card>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Card>
+              <SalesPerHourAndProduct />
+            </Card>
+          </Grid>
+
         </Grid>
       </MDBox>
-      {/*<Footer />*/}
     </DashboardLayout>
   );
 }

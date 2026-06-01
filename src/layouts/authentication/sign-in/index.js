@@ -44,6 +44,7 @@ function Basic() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showError, setShowError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -56,28 +57,45 @@ function Basic() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Limpiar el error anterior antes de intentar el login
-
+    setError('');
+    setShowError(false);
     try {
       const response = await login(username, password);
       console.log("Respuesta del login:", response);
       if (response && response === "manager_admin") {
-        navigate("/resumen");
+        // Esperar a que el token esté en localStorage antes de navegar
+        setUsername('');
+        setPassword('');
+        setTimeout(() => {
+          navigate("/resumen");
+        }, 100); // pequeño delay para asegurar persistencia
       } else if (response && response !== "manager_admin") {
         setError("Solo los organizadores del evento pueden iniciar sesión.");
+        setShowError(true);
       } else {
-        // Este caso puede manejar un login fallido si la API no devuelve un error
         setError("Credenciales incorrectas. Inténtalo de nuevo.");
+        setShowError(true);
       }
     } catch (error) {
-      // Este catch captura errores de la red o de la API
       if (error.response && error.response.status === 401) {
         setError("Contraseña incorrecta. Por favor, revisa tus credenciales.");
+        setShowError(true);
       } else {
         setError("Error al intentar iniciar sesión. Por favor, inténtalo de nuevo.");
+        setShowError(true);
       }
     }
   };
+  // Ocultar el error automáticamente después de unos segundos
+  useEffect(() => {
+    if (showError) {
+      const timer = setTimeout(() => {
+        setShowError(false);
+        setError('');
+      }, 4000); // 4 segundos
+      return () => clearTimeout(timer);
+    }
+  }, [showError]);
 
   const alertContent = (errorText) => (
     <MDTypography variant="body2" fontFamily="poppins" fontSize="12px" color="white">
@@ -90,7 +108,7 @@ function Basic() {
   };
 
   return (
-    <BasicLayout >
+    <BasicLayout image={bgImage}>
       <Card>
         <MDTypography variant="h4" component="div" align="center" fontWeight="medium" fontFamily="montserrat" mt={1}>
         </MDTypography>
@@ -134,8 +152,8 @@ function Basic() {
                 Iniciar sesión
               </MDButton>
             </MDBox>
-            {error && (
-              <MDAlert color="error" dismissible>
+            {showError && error && (
+              <MDAlert color="error">
                 {alertContent(error)}
               </MDAlert>
             )}
