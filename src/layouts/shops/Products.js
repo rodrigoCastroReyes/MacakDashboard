@@ -28,6 +28,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DiscountIcon from "@mui/icons-material/Discount";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 import vendorIcon from "assets/images/vendorIcon.png";
@@ -73,6 +74,12 @@ const Products = () => {
   });
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmError, setConfirmError] = useState("");
+
+  // ── Inventario ────────────────────────────────────────────────
+  const [inventory, setInventory] = useState({}); // { product_id: quantity }
+  const [editingStockIndex, setEditingStockIndex] = useState(null);
+  const [stockValue, setStockValue] = useState("");
+  const [savingStock, setSavingStock] = useState(false);
 
   const handleOpenAddDialog = useCallback(() => setOpenAddDialog(true), []);
   const handleCloseAddDialog = useCallback(() => setOpenAddDialog(false), []);
@@ -187,6 +194,30 @@ const Products = () => {
     }
   }, [storeId]);
 
+  // Fetch del inventario — maneja 404 como inventario vacío
+  const fetchInventory = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/store_inventory?store_id=${storeId}`
+      );
+      if (res.status === 404) {
+        // La tienda aún no tiene inventario creado
+        setInventory({});
+        return;
+      }
+      if (!res.ok) throw new Error("Error al obtener inventario");
+      const data = await res.json();
+      const map = {};
+      (data.items || []).forEach((item) => {
+        map[item.product_id] = item.quantity;
+      });
+      setInventory(map);
+    } catch (err) {
+      console.error("Error al obtener inventario:", err);
+      setInventory({});
+    }
+  }, [storeId]);
+
   const fetchStoreDetails = useCallback(async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/store/by_event?id=${eventId}`);
@@ -214,9 +245,62 @@ const Products = () => {
 
   const handleRefresh = useCallback(async () => {
     setLoading(true);
-    await Promise.all([fetchProducts(), fetchStoreDetails(), fetchVendors()]);
+    await Promise.all([
+      fetchProducts(),
+      fetchStoreDetails(),
+      fetchVendors(),
+      fetchInventory(),
+    ]);
     setLoading(false);
-  }, [fetchProducts, fetchStoreDetails, fetchVendors]);
+  }, [fetchProducts, fetchStoreDetails, fetchVendors, fetchInventory]);
+
+  // Guardar stock de un producto (crea inventario si no existe)
+  const handleSaveStock = useCallback(
+    async (product) => {
+      let qty = parseInt(stockValue);
+      if (isNaN(qty) || qty < 0) qty = 0;
+
+      setSavingStock(true);
+      try {
+        // Intentar actualizar (PUT). Si no existe inventario → crear (POST) y reintentar.
+        let res = await fetch(
+          `${API_BASE_URL}/store_inventory?store_id=${storeId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              items: [{ product_id: product._id, quantity: qty }],
+            }),
+          }
+        );
+
+        if (res.status === 404) {
+          // El inventario no existe aún → crearlo con este producto
+          res = await fetch(`${API_BASE_URL}/store_inventory`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              store_id: storeId,
+              items: [{ product_id: product._id, quantity: qty }],
+            }),
+          });
+        }
+
+        if (!res.ok) throw new Error("Error al guardar stock");
+
+        // Actualizar estado local
+        setInventory((prev) => ({ ...prev, [product._id]: qty }));
+        setEditingStockIndex(null);
+        setStockValue("");
+      } catch (err) {
+        console.error("Error al guardar stock:", err);
+        alert("Ocurrió un error al guardar el stock.");
+      } finally {
+        setSavingStock(false);
+      }
+    },
+    [stockValue, storeId]
+  );
 
   useEffect(() => {
     if (confirmStoreDelete) {
@@ -261,99 +345,111 @@ const Products = () => {
         { Header: "Imagen", accessor: "img", align: "center" },
         { Header: "Descripción", accessor: "description", align: "center" },
         { Header: "Precio", accessor: "price", align: "center" },
+        { Header: "Stock", accessor: "stock", align: "center" },
         ...(showActions
           ? [{ Header: "Acciones", accessor: "actions", align: "center" }]
           : []),
       ],
       rows: productList.map((product, index) => ({
-      img: (
-        <Box
-          component="img"
-          src={product.img}
-          alt={product.description}
-          sx={{
-            height: 60,
-            objectFit: "contain",
-            mx: "auto",
-            borderRadius: 1,
-          }}
-        />
-      ),
-      description: (
-        <MDTypography
-          fontSize="14px"
-          variant="caption"
-          color="text"
-          align="center"
-        >
-          {product.description}
-        </MDTypography>
-      ),
-      price: (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          gap={1}
-        >
-          {editingIndex === index ? (
-            <>
-              <TextField
-                type="number"
-                value={product.discount || 0}
-                onChange={(e) => handleDiscountChange(index, e.target.value)}
-                size="small"
-                sx={{ width: 70 }}
-                inputProps={{ min: 0, max: 100 }}
-              />
-              <IconButton
-                size="small"
-                onClick={() => {
-                  const updated = [...productList];
-                  const current = updated[index];
-                  const discount = current.discount || 0;
-                  const newPrice =
-                    current.originalPrice -
-                    (current.originalPrice * discount) / 100;
+        img: (
+          <Box
+            component="img"
+            src={product.img}
+            alt={product.description}
+            sx={{
+              height: 60,
+              objectFit: "contain",
+              mx: "auto",
+              borderRadius: 1,
+            }}
+          />
+        ),
+        description: (
+          <MDTypography
+            fontSize="14px"
+            variant="caption"
+            color="text"
+            align="center"
+          >
+            {product.description}
+          </MDTypography>
+        ),
+        price: (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            gap={1}
+          >
+            {editingIndex === index ? (
+              <>
+                <TextField
+                  type="number"
+                  value={product.discount || 0}
+                  onChange={(e) => handleDiscountChange(index, e.target.value)}
+                  size="small"
+                  sx={{ width: 70 }}
+                  inputProps={{ min: 0, max: 100 }}
+                />
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    const updated = [...productList];
+                    const current = updated[index];
+                    const discount = current.discount || 0;
+                    const newPrice =
+                      current.originalPrice -
+                      (current.originalPrice * discount) / 100;
 
-                  current.price = parseFloat(newPrice.toFixed(2));
-                  setProductList(updated);
-                  setEditingIndex(null);
-                }}
-                title="Aplicar descuento"
-              >
-                <CheckIcon fontSize="small" />
-              </IconButton>
-              <IconButton size="small" onClick={cancelEdit} title="Cancelar">
-                <CloseIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                size="small"
-                onClick={() => {
-                  const updated = [...productList];
-                  const current = updated[index];
-                  current.discount = 0;
-                  current.price = current.originalPrice;
-                  setProductList(updated);
-                  setEditingIndex(null);
-                }}
-                title="Eliminar descuento"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </>
-          ) : (
-            <Box display="flex" alignItems="center" gap={1}>
-              {product.discount > 0 && product.originalPrice !== product.price ? (
-                <>
-                  <Typography
-                    variant="caption"
-                    color="error"
-                    fontSize="14px"
-                    sx={{ textDecoration: "line-through" }}
-                  >
-                    ${parseFloat(product.originalPrice).toFixed(2)}
-                  </Typography>
+                    current.price = parseFloat(newPrice.toFixed(2));
+                    setProductList(updated);
+                    setEditingIndex(null);
+                  }}
+                  title="Aplicar descuento"
+                >
+                  <CheckIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" onClick={cancelEdit} title="Cancelar">
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    const updated = [...productList];
+                    const current = updated[index];
+                    current.discount = 0;
+                    current.price = current.originalPrice;
+                    setProductList(updated);
+                    setEditingIndex(null);
+                  }}
+                  title="Eliminar descuento"
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </>
+            ) : (
+              <Box display="flex" alignItems="center" gap={1}>
+                {product.discount > 0 &&
+                product.originalPrice !== product.price ? (
+                  <>
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      fontSize="14px"
+                      sx={{ textDecoration: "line-through" }}
+                    >
+                      ${parseFloat(product.originalPrice).toFixed(2)}
+                    </Typography>
+                    <Typography
+                      fontSize="14px"
+                      variant="caption"
+                      fontWeight="bold"
+                      color="success"
+                    >
+                      ${parseFloat(product.price).toFixed(2)}
+                    </Typography>
+                  </>
+                ) : (
                   <Typography
                     fontSize="14px"
                     variant="caption"
@@ -362,48 +458,130 @@ const Products = () => {
                   >
                     ${parseFloat(product.price).toFixed(2)}
                   </Typography>
-                </>
-              ) : (
-                <Typography
-                  fontSize="14px"
-                  variant="caption"
-                  fontWeight="bold"
-                  color="success"
+                )}
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setOriginalDiscount(product.discount || 0);
+                    setEditingIndex(index);
+                  }}
+                  title="Editar descuento"
                 >
-                  ${parseFloat(product.price).toFixed(2)}
-                </Typography>
-              )}
-              <IconButton
-                size="small"
-                onClick={() => {
-                  setOriginalDiscount(product.discount || 0);
-                  setEditingIndex(index);
-                }}
-                title="Editar descuento"
-              >
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          )}
-        </Box>
-      ),
-      ...(showActions
-        ? {
-            actions: (
-              <ProductActions
-                product={product}
-                onEdit={handleOpenEditDialog}
-                onDelete={(p) => {
-                  setProductToDelete(p);
-                  setOpenConfirmDialog(true);
-                }}
-              />
-            ),
-          }
-        : {}),
-    })),
-  })
-);
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            )}
+          </Box>
+        ),
+        stock: (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            gap={1}
+          >
+            {editingStockIndex === index ? (
+              <>
+                <TextField
+                  type="number"
+                  value={stockValue}
+                  onChange={(e) => setStockValue(e.target.value)}
+                  size="small"
+                  sx={{ width: 80 }}
+                  inputProps={{ min: 0 }}
+                  autoFocus
+                  disabled={savingStock}
+                />
+                <IconButton
+                  size="small"
+                  onClick={() => handleSaveStock(product)}
+                  title="Guardar stock"
+                  disabled={savingStock}
+                >
+                  <CheckIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setEditingStockIndex(null);
+                    setStockValue("");
+                  }}
+                  title="Cancelar"
+                  disabled={savingStock}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </>
+            ) : (
+              <Box display="flex" alignItems="center" gap={1}>
+                {inventory[product._id] !== undefined ? (
+                  <Typography
+                    fontSize="14px"
+                    variant="caption"
+                    fontWeight="bold"
+                    color={inventory[product._id] > 0 ? "text" : "error"}
+                  >
+                    {inventory[product._id]}
+                  </Typography>
+                ) : (
+                  <Typography
+                    fontSize="14px"
+                    variant="caption"
+                    color="textSecondary"
+                    sx={{ fontStyle: "italic" }}
+                  >
+                    Sin stock
+                  </Typography>
+                )}
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setStockValue(
+                      inventory[product._id] !== undefined
+                        ? String(inventory[product._id])
+                        : "0"
+                    );
+                    setEditingStockIndex(index);
+                  }}
+                  title="Editar stock"
+                >
+                  <Inventory2Icon fontSize="small" />
+                </IconButton>
+              </Box>
+            )}
+          </Box>
+        ),
+        ...(showActions
+          ? {
+              actions: (
+                <ProductActions
+                  product={product}
+                  onEdit={handleOpenEditDialog}
+                  onDelete={(p) => {
+                    setProductToDelete(p);
+                    setOpenConfirmDialog(true);
+                  }}
+                />
+              ),
+            }
+          : {}),
+      })),
+    }),
+    [
+      productList,
+      showActions,
+      editingIndex,
+      cancelEdit,
+      handleDiscountChange,
+      handleOpenEditDialog,
+      inventory,
+      editingStockIndex,
+      stockValue,
+      savingStock,
+      handleSaveStock,
+    ]
+  );
+
   return (
     <DashboardLayout>
       <DashboardNavbar main_title="Panel de Tienda" />
@@ -869,8 +1047,8 @@ const Products = () => {
                     {
                       method: "PUT",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ 
-                        name: editedStore.name 
+                      body: JSON.stringify({
+                        name: editedStore.name,
                       }),
                     }
                   );
