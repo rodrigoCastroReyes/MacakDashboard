@@ -38,9 +38,19 @@ function PointOfSaleTransactionHistory() {
   const { data: stores } = useAxios(
     `${API_BASE_URL}/store/by_event?id=${eventId}`
   );
-  
+
 
   const handlePrint = async () => {
+    // Asegurar que las fuentes web (Poppins) estén cargadas antes de rasterizar.
+    // Si no, html2canvas usa métricas de una fuente fallback y colapsa los espacios.
+    if (document.fonts && document.fonts.ready) {
+      try {
+        await document.fonts.ready;
+      } catch (e) {
+        // continúa aunque falle
+      }
+    }
+
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
@@ -94,6 +104,27 @@ function PointOfSaleTransactionHistory() {
       }
     };
 
+    // Opciones compartidas de html2canvas.
+    // onclone neutraliza letter-spacing/word-spacing SOLO en la copia que
+    // html2canvas rasteriza — evita que los espacios entre palabras se
+    // colapsen ("Top 5 por ingresos" → "Top5poringresos"). No afecta la UI real.
+    const h2cOptions = {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+      onclone: (clonedDoc) => {
+        const style = clonedDoc.createElement("style");
+        style.innerHTML = `
+          * {
+            letter-spacing: normal !important;
+            word-spacing: normal !important;
+          }
+        `;
+        clonedDoc.head.appendChild(style);
+      },
+    };
+
     let currentY = addHeader(true, data?.store?.name || '');
     let isFirstPage = true;
 
@@ -101,12 +132,7 @@ function PointOfSaleTransactionHistory() {
       const el = document.getElementById(sections[i]);
       if (!el) continue;
 
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#ffffff",
-      });
+      const canvas = await html2canvas(el, h2cOptions);
 
       const imgData = canvas.toDataURL("image/png");
       const imgHeight = (canvas.height * contentW) / canvas.width;
@@ -126,7 +152,7 @@ function PointOfSaleTransactionHistory() {
       while (remainingH > 0) {
         const availH = pdfHeight - currentY - FOOTER_H;
         pdf.addImage(imgData, "PNG", MARGIN, currentY - sectionShown, contentW, imgHeight);
-        
+
         if (remainingH <= availH) {
           currentY += remainingH;
           remainingH = 0;
