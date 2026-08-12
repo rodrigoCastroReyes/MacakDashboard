@@ -8,10 +8,17 @@ import {
   InputAdornment,
   IconButton,
   Typography,
+  Chip,
+  FormControl,
+  FormLabel,
+  FormHelperText,
 } from "@mui/material";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 
 import { API_BASE_URL } from "config";
+import productCatalog from "../../../assets/productCatalog.json";
+
+const { CATEGORIES, FLAG_GROUPS } = productCatalog;
 
 const AddProductForm = ({
   handleClose,
@@ -23,10 +30,13 @@ const AddProductForm = ({
     description: "",
     price: "",
     img: "",
+    category: "",
+    flags: [],
   });
   const [filePreview, setFilePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [descriptionError, setDescriptionError] = useState("");
+  const [categoryTouched, setCategoryTouched] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -55,6 +65,24 @@ const AddProductForm = ({
     }
   };
 
+  const handleCategorySelect = (value) => {
+    setCategoryTouched(true);
+    setFormData((prev) => ({
+      ...prev,
+      category: prev.category === value ? "" : value,
+    }));
+  };
+
+  const handleFlagToggle = (flag) => {
+    setFormData((prev) => {
+      const current = prev.flags;
+      const updated = current.includes(flag)
+        ? current.filter((f) => f !== flag)
+        : [...current, flag];
+      return { ...prev, flags: updated };
+    });
+  };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -73,8 +101,17 @@ const AddProductForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.category) {
+      setCategoryTouched(true);
+      return;
+    }
+
     const payload = {
-      ...formData,
+      description: formData.description,
+      price: formData.price,
+      img: formData.img,
+      category: formData.category,
+      ...(formData.flags.length > 0 && { flags: formData.flags }),
       store_id: storeId,
     };
 
@@ -104,8 +141,11 @@ const AddProductForm = ({
   const isSaveDisabled =
     !formData.description.trim() ||
     !formData.price ||
+    !formData.category ||
     !!descriptionError ||
     loading;
+
+  const categoryError = categoryTouched && !formData.category;
 
   return (
     <Box component="form" onSubmit={handleSubmit} p={2}>
@@ -177,6 +217,92 @@ const AddProductForm = ({
             />
           </Box>
         )}
+
+        {/* ── Categoría (obligatoria) ── */}
+        <FormControl
+          fullWidth
+          margin="normal"
+          error={categoryError}
+        >
+          <FormLabel
+            sx={{
+              mb: 1,
+              fontWeight: 600,
+              fontSize: "0.875rem",
+              color: categoryError ? "error.main" : "text.secondary",
+            }}
+          >
+            Categoría *
+          </FormLabel>
+          <Box display="flex" flexWrap="wrap" gap={1}>
+            {CATEGORIES.map((cat) => (
+              <Chip
+                key={cat.value}
+                label={cat.label}
+                clickable
+                onClick={() => handleCategorySelect(cat.value)}
+                color={formData.category === cat.value ? "primary" : "default"}
+                variant={formData.category === cat.value ? "filled" : "outlined"}
+                sx={{
+                  fontWeight: formData.category === cat.value ? 600 : 400,
+                  transition: "all 0.2s ease",
+                }}
+              />
+            ))}
+          </Box>
+          <FormHelperText>
+            {categoryError
+              ? "Debes seleccionar una categoría"
+              : " "}
+          </FormHelperText>
+        </FormControl>
+
+        {/* ── Flags (opcionales) ── */}
+        {FLAG_GROUPS.map((group) => (
+          <FormControl
+            key={group.groupLabel}
+            fullWidth
+            margin="dense"
+          >
+            <FormLabel
+              sx={{
+                mb: 0.5,
+                fontWeight: 600,
+                fontSize: "0.8rem",
+                color: "text.secondary",
+              }}
+            >
+              {group.groupLabel}
+              <Typography
+                component="span"
+                variant="caption"
+                sx={{ ml: 1, fontWeight: 400, color: "text.disabled" }}
+              >
+                (opcional)
+              </Typography>
+            </FormLabel>
+            <Box display="flex" flexWrap="wrap" gap={1}>
+              {group.flags.map((f) => {
+                const selected = formData.flags.includes(f.flag);
+                return (
+                  <Chip
+                    key={f.flag}
+                    label={f.label}
+                    clickable
+                    size="small"
+                    onClick={() => handleFlagToggle(f.flag)}
+                    color={selected ? "info" : "default"}
+                    variant={selected ? "filled" : "outlined"}
+                    sx={{
+                      fontWeight: selected ? 600 : 400,
+                      transition: "all 0.2s ease",
+                    }}
+                  />
+                );
+              })}
+            </Box>
+          </FormControl>
+        ))}
 
         <Box mt={4} display="flex" justifyContent="flex-end">
           <Button
