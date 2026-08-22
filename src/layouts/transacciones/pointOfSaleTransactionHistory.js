@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import 'moment/locale/es';
@@ -12,7 +12,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import useAxios from "hooks/useAxios";
 import MDBadge from "components/MDBadge";
-import html2canvas from "html2canvas";
+import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import "./styles.css";
 import SalesPerProduct from "layouts/reportes/components/SalesPerProduct";
@@ -29,7 +29,6 @@ function PointOfSaleTransactionHistory() {
   const { id } = useParams();
   const navigate = useNavigate();
   const eventId = localStorage.getItem("eventId");
-  const printRef = useRef();
 
   const { data, loading, error } = useAxios(
     `${API_BASE_URL}/dashboard/store?store_id=${id}`
@@ -41,8 +40,8 @@ function PointOfSaleTransactionHistory() {
 
 
   const handlePrint = async () => {
-    // Asegurar que las fuentes web (Poppins) estén cargadas antes de rasterizar.
-    // Si no, html2canvas usa métricas de una fuente fallback y colapsa los espacios.
+    // Esperar a que las fuentes web (Poppins) estén listas antes de rasterizar,
+    // para que se embeban con las métricas correctas.
     if (document.fonts && document.fonts.ready) {
       try {
         await document.fonts.ready;
@@ -104,44 +103,55 @@ function PointOfSaleTransactionHistory() {
       }
     };
 
-    // Opciones compartidas de html2canvas.
-    // onclone neutraliza letter-spacing/word-spacing SOLO en la copia que
-    // html2canvas rasteriza — evita que los espacios entre palabras se
-    // colapsen ("Top 5 por ingresos" → "Top5poringresos"). No afecta la UI real.
-    const h2cOptions = {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
+    // Opciones de html-to-image. Renderiza con foreignObject nativo del
+    // navegador, así que los espacios entre palabras se respetan y ya NO
+    // hace falta el hack de letter-spacing/word-spacing de html2canvas.
+    // pixelRatio: 2 equivale al antiguo scale: 2.
+    const imgOptions = {
+      pixelRatio: 2,
       backgroundColor: "#ffffff",
-      onclone: (clonedDoc) => {
-        const style = clonedDoc.createElement("style");
-        style.innerHTML = `
-          * {
-            letter-spacing: normal !important;
-            word-spacing: normal !important;
-          }
-        `;
-        clonedDoc.head.appendChild(style);
-      },
+      cacheBust: true,
     };
 
+    // Captura un nodo a PNG y devuelve el dataURL + sus dimensiones reales en px,
+    // que necesitamos para calcular la altura al pasar a mm en el PDF.
+    const capture = async (el) => {
+      const dataUrl = await toPng(el, imgOptions);
+      const img = new Image();
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = dataUrl;
+      });
+      return { dataUrl, width: img.naturalWidth, height: img.naturalHeight };
+    };
+
+    // Warm-up: la primera captura de html-to-image a veces sale en blanco
+    // porque todavía está embebiendo fuentes/estilos/imágenes. Descartamos
+    // un render inicial para que las capturas reales salgan completas.
+    const firstEl = document.getElementById(sections[0]);
+    if (firstEl) {
+      try {
+        await toPng(firstEl, imgOptions);
+      } catch (e) {
+        // ignorar: es solo para precargar recursos
+      }
+    }
+
     let currentY = addHeader(true, data?.store?.name || '');
-    let isFirstPage = true;
 
     for (let i = 0; i < sections.length; i++) {
       const el = document.getElementById(sections[i]);
       if (!el) continue;
 
-      const canvas = await html2canvas(el, h2cOptions);
+      const { dataUrl, width, height } = await capture(el);
 
-      const imgData = canvas.toDataURL("image/png");
-      const imgHeight = (canvas.height * contentW) / canvas.width;
+      const imgHeight = (height * contentW) / width;
       const availableH = pdfHeight - currentY - FOOTER_H;
 
       if (imgHeight > availableH && currentY > HEADER_H1) {
         // No cabe en la página actual — nueva página
         pdf.addPage();
-        isFirstPage = false;
         currentY = addHeader(false, data?.store?.name || '');
       }
 
@@ -151,7 +161,7 @@ function PointOfSaleTransactionHistory() {
 
       while (remainingH > 0) {
         const availH = pdfHeight - currentY - FOOTER_H;
-        pdf.addImage(imgData, "PNG", MARGIN, currentY - sectionShown, contentW, imgHeight);
+        pdf.addImage(dataUrl, "PNG", MARGIN, currentY - sectionShown, contentW, imgHeight);
 
         if (remainingH <= availH) {
           currentY += remainingH;
@@ -160,7 +170,6 @@ function PointOfSaleTransactionHistory() {
           sectionShown += availH;
           remainingH -= availH;
           pdf.addPage();
-          isFirstPage = false;
           currentY = addHeader(false, data?.store?.name || '');
         }
       }
@@ -271,7 +280,7 @@ function PointOfSaleTransactionHistory() {
         onPrint={handlePrint}
       />
 
-      {/* Selector de tienda — fuera del ref */}
+      {/* Selector de tienda — fuera del contenido capturado */}
       <MDBox mb={2}>
         <Autocomplete
           options={stores || []}
@@ -301,56 +310,56 @@ function PointOfSaleTransactionHistory() {
       </MDBox>
 
       {/* Contenido del PDF */}
-      <div ref={printRef}>
+      <div>
 
-      <div id="section-hero">
-        <Card sx={{ mb: 2 }}>
-          <StoreHero id_store={id} store_name={data.store.name} />
-        </Card>
-      </div>
+        <div id="section-hero">
+          <Card sx={{ mb: 2 }}>
+            <StoreHero id_store={id} store_name={data.store.name} />
+          </Card>
+        </div>
 
-      <div id="section-products">
-        <MDBox pt={1} pb={2}>
-          <Grid container spacing={2} alignItems="stretch">
-            <Grid item xs={12} sm={6}>
-              <Card sx={{ height: '100%' }}>
-                <SalesPerProduct id_store={id} />
-              </Card>
+        <div id="section-products">
+          <MDBox pt={1} pb={2}>
+            <Grid container spacing={2} alignItems="stretch">
+              <Grid item xs={12} sm={6}>
+                <Card sx={{ height: '100%' }}>
+                  <SalesPerProduct id_store={id} />
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Card sx={{ height: '100%' }}>
+                  <QuantitySoldByProduct id_store={id} />
+                </Card>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Card sx={{ height: '100%' }}>
-                <QuantitySoldByProduct id_store={id} />
-              </Card>
-            </Grid>
-          </Grid>
-        </MDBox>
-      </div>
+          </MDBox>
+        </div>
 
-      <div id="section-sales-hour">
-        <MDBox pt={1} pb={2}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Card>
-                <SalesPerHour id_store={id} />
-              </Card>
+        <div id="section-sales-hour">
+          <MDBox pt={1} pb={2}>
+            <Grid container>
+              <Grid item xs={12}>
+                <Card>
+                  <SalesPerHour id_store={id} />
+                </Card>
+              </Grid>
             </Grid>
-          </Grid>
-        </MDBox>
-      </div>
+          </MDBox>
+        </div>
 
-      <div id="section-sales-hour-product">
-        <MDBox pt={1} pb={2}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Card>
-                <SalesPerHourAndProduct id_store={id} />
-              </Card>
+        <div id="section-sales-hour-product">
+          <MDBox pt={1} pb={2}>
+            <Grid container>
+              <Grid item xs={12}>
+                <Card>
+                  <SalesPerHourAndProduct id_store={id} />
+                </Card>
+              </Grid>
             </Grid>
-          </Grid>
-        </MDBox>
-      </div>
+          </MDBox>
+        </div>
 
-    </div>
+      </div>
     </DashboardLayout>
   );
 }

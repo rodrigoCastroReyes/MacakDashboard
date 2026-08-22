@@ -21,17 +21,17 @@ const SalesSummary = () => {
   const navigate = useNavigate();
 
   const { data, loading, error } = useAxios(
-    `${API_BASE_URL}/store/by_event?id=${event_id}`
+    `${API_BASE_URL}/dashboard/summary_per_store?event_id=${event_id}`
   );
 
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error al obtener los datos</div>;
 
-  const stores_summary = data;
+  const stores_summary = data.stores_summary || [];
   const itemsPerPage = 12; // 3 filas × 4 tiendas
 
   const filteredStores = selectedStore
-    ? stores_summary.filter((s) => s._id === selectedStore._id)
+    ? stores_summary.filter((s) => s.store_id === selectedStore.store_id)
     : stores_summary;
 
   const salesToDisplay = filteredStores.slice(startIndex, startIndex + itemsPerPage);
@@ -52,9 +52,12 @@ const SalesSummary = () => {
     setSelectedStore(newStore);
     setStartIndex(0);
     if (newStore) {
-      navigate(`/transaccion/${newStore._id}`);
+      navigate(`/transaccion/${newStore.store_id}`);
     }
   };
+
+  console.log("Stores Summary:", stores_summary);
+  console.log("Selected Store:", salesToDisplay);
 
   return (
     <Card>
@@ -86,25 +89,25 @@ const SalesSummary = () => {
                 }}
               />
             )}
-            isOptionEqualToValue={(option, value) => option._id === value._id}
+            isOptionEqualToValue={(option, value) => option.store_id === value.store_id}
             noOptionsText="No se encontraron tiendas"
           />
         </MDBox>
 
         <MDBox py={3}>
           <Grid container spacing={3}>
-            {salesToDisplay.map(({ name, _id, total }) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={_id}>
+            {salesToDisplay.map(({ name, store_id, total }) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={store_id}>
                 <MDBox mb={1.5}>
                   <ComplexStatisticsCard
                     color="dark"
                     icon="store"
                     title={name}
-                    url={`/transaccion/${_id}`}
+                    url={`/transaccion/${store_id}`}
                     to_url={true}
+                    count={total.toLocaleString("es-ES", { style: "currency", currency: "USD" })}
                     percentage={{
                       color: "success",
-                      amount: "",
                       label: "Suma de ventas",
                     }}
                   />
