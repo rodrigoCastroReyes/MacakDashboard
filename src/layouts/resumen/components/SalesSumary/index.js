@@ -1,67 +1,43 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import {Link} from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import useAxios from "hooks/useAxios";
-
-// URL
 import { API_BASE_URL } from '../../../../config';
-
 import {
-  Typography,
-  IconButton,
-  Grid,
-  CardContent,
-  Card,
+  Typography, IconButton, Grid, CardContent,
+  Card, Autocomplete, TextField, InputAdornment,
 } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 import MDBox from "components/MDBox";
-import './style.css'
+import './style.css';
 
 const SalesSummary = () => {
   const event_id = localStorage.getItem("eventId");
   const [startIndex, setStartIndex] = useState(0);
-  /*
+  const [selectedStore, setSelectedStore] = useState(null);
+  const navigate = useNavigate();
+
   const { data, loading, error } = useAxios(
     `${API_BASE_URL}/dashboard/summary_per_store?event_id=${event_id}`
-  );*/
-  
-  const { data, loading, error } = useAxios(
-    `${API_BASE_URL}/store/by_event?id=${event_id}`
   );
-  
+
   if (loading) return <div>Cargando...</div>;
-  //if (!data?.stores_summary)
-  //  return <div>¡ Sin ventas !</div>;
+  if (error) return <div>Error al obtener los datos</div>;
 
-  if (error)
-    return <div>Error al obtener los datos</div>;
-  
-  const stores_summary = data;///.stores_summary;
-  const itemsPerPage = 6;
+  const stores_summary = data.stores_summary || [];
+  const itemsPerPage = 12; // 3 filas × 4 tiendas
 
-  // Limitamos la cantidad de puntos de venta a mostrar a 6
-  const salesToDisplay = stores_summary.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const filteredStores = selectedStore
+    ? stores_summary.filter((s) => s.store_id === selectedStore.store_id)
+    : stores_summary;
 
-  // eslint-disable-next-line no-lone-blocks
-  //Función para dividir el array en grupos de 3 elementos
-  const chunkArray = (arr, size) => {
-    return arr.reduce(
-      (acc, _, i) => (i % size ? acc : [...acc, arr.slice(i, i + size)]),
-      []
-    );
-  };
-
-  // Dividimos los puntos de venta en grupos de 3
-  // eslint-disable-next-line no-unused-vars
-  const chunkedSales = chunkArray(salesToDisplay, 3);
+  const salesToDisplay = filteredStores.slice(startIndex, startIndex + itemsPerPage);
 
   const handleNextPage = () => {
-    if (startIndex + itemsPerPage < stores_summary.length) {
+    if (startIndex + itemsPerPage < filteredStores.length) {
       setStartIndex(startIndex + itemsPerPage);
     }
   };
@@ -72,47 +48,82 @@ const SalesSummary = () => {
     }
   };
 
+  const handleStoreSelect = (_, newStore) => {
+    setSelectedStore(newStore);
+    setStartIndex(0);
+    if (newStore) {
+      navigate(`/transaccion/${newStore.store_id}`);
+    }
+  };
+
+  console.log("Stores Summary:", stores_summary);
+  console.log("Selected Store:", salesToDisplay);
+
   return (
     <Card>
       <CardContent className="event-summary-container">
-        <Typography fontWeight="regular" 
-          className="event-sales-title" gutterBottom>
-         Resumen por puntos de venta
+        <Typography fontWeight="regular" className="event-sales-title" gutterBottom>
+          Resumen por puntos de venta
         </Typography>
+
+        <MDBox mb={3}>
+          <Autocomplete
+            options={stores_summary || []}
+            getOptionLabel={(store) => store.name || ""}
+            value={selectedStore}
+            onChange={handleStoreSelect}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Buscar tienda"
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <>
+                      <InputAdornment position="start">
+                        <StorefrontIcon fontSize="small" />
+                      </InputAdornment>
+                      {params.InputProps.startAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
+            isOptionEqualToValue={(option, value) => option.store_id === value.store_id}
+            noOptionsText="No se encontraron tiendas"
+          />
+        </MDBox>
+
         <MDBox py={3}>
           <Grid container spacing={3}>
-            {stores_summary.map(({ name, _id, total}) => (
-              <React.Fragment key={name}>
-                <Grid item xs={12} md={6} lg={3}>
-                  <MDBox mb={1.5}>
-                    <ComplexStatisticsCard
-                      color="dark"
-                      icon="store"
-                      title={ name }
-                      
-                      //count={ "$" + total.toFixed(2) }
-
-                      url={`/transaccion/${_id}`}
-                      to_url={true}
-                      percentage={{
+            {salesToDisplay.map(({ name, store_id, total }) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={store_id}>
+                <MDBox mb={1.5}>
+                  <ComplexStatisticsCard
+                    color="dark"
+                    icon="store"
+                    title={name}
+                    url={`/transaccion/${store_id}`}
+                    to_url={true}
+                    count={total.toLocaleString("es-ES", { style: "currency", currency: "USD" })}
+                    percentage={{
                       color: "success",
-                      amount: "",
                       label: "Suma de ventas",
-                      }}
-                    />
-                  </MDBox>
-                </Grid>
-              </React.Fragment>
+                    }}
+                  />
+                </MDBox>
+              </Grid>
             ))}
           </Grid>
         </MDBox>
+
         <div style={{ display: "flex", justifyContent: "center" }}>
           {startIndex > 0 && (
             <IconButton onClick={handlePreviousPage}>
               <ArrowBackIcon />
             </IconButton>
           )}
-          {stores_summary.length > itemsPerPage && (
+          {filteredStores.length > itemsPerPage && (
             <IconButton onClick={handleNextPage}>
               <ArrowForwardIcon />
             </IconButton>

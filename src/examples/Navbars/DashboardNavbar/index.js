@@ -34,7 +34,7 @@ import { useAuth } from "context/authProvider";
 
 import "css/styles.css";
 
-function DashboardNavbar({ absolute, light, isMini, main_title }) {
+function DashboardNavbar({ absolute, light, isMini, main_title, onPrint }) {
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, darkMode } = controller;
@@ -89,9 +89,7 @@ function DashboardNavbar({ absolute, light, isMini, main_title }) {
       <AppBar
         position={absolute ? "absolute" : navbarType}
         color="inherit"
-        sx={(theme) =>
-          navbar(theme, { transparentNavbar, absolute, light, darkMode })
-        }
+        sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
       >
         <Toolbar sx={(theme) => navbarContainer(theme)}>
           <MDBox
@@ -109,7 +107,16 @@ function DashboardNavbar({ absolute, light, isMini, main_title }) {
 
           {!isMini && (
             <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-              <MDBox color={light ? "white" : "inherit"}>
+              <MDBox color={light ? "white" : "inherit"} display="flex" alignItems="center" gap={1}>
+
+                {/* Botón imprimir — solo aparece si se pasa onPrint */}
+                {onPrint && (
+                  <button className="logout-button" onClick={onPrint}>
+                    <Icon sx={{ alignSelf: "center", color: "white" }}>download</Icon>
+                    &nbsp; Descargar PDF
+                  </button>
+                )}
+
                 <button
                   className="logout-button"
                   onClick={() => setOpenDialog(true)}
@@ -143,7 +150,7 @@ function DashboardNavbar({ absolute, light, isMini, main_title }) {
           <Button onClick={() => setOpenDialog(false)} color="primary">
             Cancelar
           </Button>
-          <Button onClick={handleLogoutConfirm} color="warning" autoFocus >
+          <Button onClick={handleLogoutConfirm} color="warning" autoFocus>
             Cerrar Sesión
           </Button>
         </DialogActions>
@@ -156,12 +163,14 @@ DashboardNavbar.defaultProps = {
   absolute: false,
   light: false,
   isMini: false,
+  onPrint: null,
 };
 
 DashboardNavbar.propTypes = {
   absolute: PropTypes.bool,
   light: PropTypes.bool,
   isMini: PropTypes.bool,
+  onPrint: PropTypes.func,
 };
 
 export default DashboardNavbar;

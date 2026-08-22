@@ -1,42 +1,50 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import useAxios from "hooks/useAxios";
-import VerticalBarChart from "examples/Charts/BarCharts/VerticalBarChart";
-import PieChart from "examples/Charts/PieChart";
-
-// URL
+import HorizontalBarChart from "examples/Charts/BarCharts/HorizontalBarChart";
+import { schemeTableau10 } from 'd3-scale-chromatic';
 import { API_BASE_URL } from '../../../config';
 
-function QuantitySoldByProduct({id_store}) {
+function QuantitySoldByProduct({ id_store }) {
   const { data, loading, error } = useAxios(
     `${API_BASE_URL}/dashboard/sold_products?store_id=${id_store}`
   );
 
   const chart = useMemo(() => {
+    if (!data?.report) return { labels: [], datasets: [] };
     return {
-      labels: data?.report.map((product) => product.description),
-      datasets: [
-        {
-          label: "Cantidad vendida",
-          color: "success",
-          data: data?.report.map((product) => product.quantity),
-          backgroundColor: [
-            'rgba(255, 159, 64, 1)',
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-          ]
+      labels: data.report.map((p) => p.description),
+      datasets: [{
+        label: "Unidades",
+        data: data.report.map((p) => p.quantity),
+        backgroundColor: data.report.map((_, i) =>
+          schemeTableau10[i % schemeTableau10.length]
+        ),
+        borderRadius: 4,
+        datalabels: {
+          color: "#ffffff",
+          anchor: "center",
+          align: "center",
+          font: { size: 11, weight: "500" },
+          formatter: (v, ctx) => {
+            const max = Math.max(...ctx.dataset.data);
+            return v / max < 0.15 ? "" : v;
+          },
         },
-      ],
+      }],
     };
   }, [data]);
 
   if (loading) return <div>Cargando...</div>;
   if (error || !data?.report || !data?.total)
-    return  <div pt="2" pb="2" display="flex" justifyContent="center">Sin datos disponibles</div>;
+    return <div>Sin datos disponibles</div>;
+
   return (
-    <VerticalBarChart title="Unidades vendidas por producto" description={data.total} chart={chart} height="300px" />
+    <HorizontalBarChart
+      title="Unidades por producto"
+      description={`${data.total} u`}
+      chart={chart}
+      height="420px"
+    />
   );
 }
 
