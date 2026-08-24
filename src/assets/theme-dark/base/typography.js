@@ -28,11 +28,14 @@ import pxToRem from "assets/theme-dark/functions/pxToRem";
 const { white } = colors;
 
 const baseProperties = {
-  fontFamily: '"poppins", "Helvetica", "Arial", sans-serif',
-  fontWeightLighter: 100,
-  fontWeightLight: 300,
+  // Solo se cargan los pesos 400/500/600/700 (ver src/css/styles.css); no declarar
+  // pesos sin archivo, o el navegador los sintetiza y se ve un falso bold.
+  fontFamily: '"Poppins", "Helvetica", "Arial", sans-serif',
+  fontWeightLighter: 400,
+  fontWeightLight: 400,
   fontWeightRegular: 400,
-  fontWeightMedium: 600,
+  fontWeightMedium: 500,
+  fontWeightSemiBold: 600,
   fontWeightBold: 700,
   fontSizeXXS: pxToRem(10.4),
   fontSizeXS: pxToRem(12),
@@ -63,6 +66,7 @@ const typography = {
   fontWeightLight: baseProperties.fontWeightLight,
   fontWeightRegular: baseProperties.fontWeightRegular,
   fontWeightMedium: baseProperties.fontWeightMedium,
+  fontWeightSemiBold: baseProperties.fontWeightSemiBold,
   fontWeightBold: baseProperties.fontWeightBold,
 
   h1: {

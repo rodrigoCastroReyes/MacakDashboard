@@ -28,7 +28,9 @@ const linearProgress = {
     root: {
       height: pxToRem(6),
       borderRadius: borderRadius.md,
-      overflow: "visible",
+      // El template lo dejaba en "visible", así que la barra determinada —que MUI
+      // desplaza con translateX— se salía por la izquierda del contenedor.
+      overflow: "hidden",
       position: "relative",
     },
 
@@ -44,8 +46,9 @@ const linearProgress = {
       height: pxToRem(6),
       borderRadius: borderRadius.sm,
       position: "absolute",
-      transform: `translate(0, 0) !important`,
-      transition: "width 0.6s ease !important",
+      // El template forzaba `transform: translate(0,0) !important` porque su
+      // MDProgress animaba el ancho. Eso anulaba el translateX con el que MUI
+      // pinta el progreso determinado, dejando todas las barras al 100%.
     },
   },
 };

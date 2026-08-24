@@ -16,14 +16,12 @@ Coded by www.creative-tim.com
 // Material Dashboard 2 React Base Styles
 import colors from "assets/theme-dark/base/colors";
 import borders from "assets/theme-dark/base/borders";
-import boxShadows from "assets/theme-dark/base/boxShadows";
 
 // Material Dashboard 2 React Helper Function
 import rgba from "assets/theme-dark/functions/rgba";
 
-const { black, background } = colors;
+const { white, background } = colors;
 const { borderWidth, borderRadius } = borders;
-const { md } = boxShadows;
 
 const card = {
   styleOverrides: {
@@ -36,9 +34,10 @@ const card = {
       backgroundImage: "none",
       backgroundColor: background.card,
       backgroundClip: "border-box",
-      border: `${borderWidth[0]} solid ${rgba(black.main, 0.125)}`,
+      // Mismo estándar que el tema claro (ver assets/theme/components/card).
+      border: `${borderWidth[1]} solid ${rgba(white.main, 0.12)}`,
       borderRadius: borderRadius.xl,
-      boxShadow: md,
+      boxShadow: "none",
       overflow: "visible",
     },
   },

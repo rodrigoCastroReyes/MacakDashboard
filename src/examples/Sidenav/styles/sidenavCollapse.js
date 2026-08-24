@@ -22,6 +22,7 @@ function collapseItem(theme, ownerState) {
   const { pxToRem, rgba, linearGradient } = functions;
 
   return {
+    position: "relative",
     background: active
       ? linearGradient(gradients[sidenavColor].main, gradients[sidenavColor].state)
       : transparent.main,
@@ -32,13 +33,30 @@ function collapseItem(theme, ownerState) {
     display: "flex",
     alignItems: "center",
     width: "100%",
-    padding: `${pxToRem(8)} ${pxToRem(10)}`,
-    margin: `${pxToRem(1.5)} ${pxToRem(16)}`,
-    borderRadius: borderRadius.md,
+    padding: `${pxToRem(9)} ${pxToRem(12)}`,
+    margin: `${pxToRem(2)} ${pxToRem(14)}`,
+    borderRadius: borderRadius.lg,
     cursor: "pointer",
     userSelect: "none",
     whiteSpace: "nowrap",
+    overflow: "hidden",
     boxShadow: active && !whiteSidenav && !darkMode && !transparentSidenav ? md : "none",
+
+    // Filo izquierdo con el degradado del ícono del logo: marca el item activo
+    // sin depender solo del color de fondo.
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      left: 0,
+      top: "50%",
+      transform: "translateY(-50%)",
+      width: pxToRem(3),
+      height: active ? "60%" : 0,
+      borderRadius: pxToRem(3),
+      background: linearGradient(gradients.brand.main, gradients.brand.state),
+      transition: "height 200ms ease",
+    },
+
     [breakpoints.up("xl")]: {
       transition: transitions.create(["box-shadow", "background-color"], {
         easing: transitions.easing.easeInOut,
@@ -54,7 +72,7 @@ function collapseItem(theme, ownerState) {
           backgroundValue =
             transparentSidenav && !darkMode
               ? grey[300]
-              : rgba(whiteSidenav ? grey[400] : white.main, 0.2);
+              : rgba(whiteSidenav ? grey[400] : white.main, 0.12);
         }
 
         return backgroundValue;
@@ -92,15 +110,17 @@ function collapseIconBox(theme, ownerState) {
   };
 }
 
-const collapseIcon = ({ palette: { white, gradients } }, { active }) => ({
-  color: active ? white.main : gradients.dark.state,
+const collapseIcon = ({ palette: { white }, functions: { rgba } }, { active }) => ({
+  // Antes el estado inactivo usaba gradients.dark.state, que coincide con el fondo
+  // del sidenav y dejaba los iconos invisibles.
+  color: active ? white.main : rgba(white.main, 0.7),
 });
 
 function collapseText(theme, ownerState) {
   const { typography, transitions, breakpoints, functions } = theme;
   const { miniSidenav, transparentSidenav, active } = ownerState;
 
-  const { size, fontWeightRegular, fontWeightLight } = typography;
+  const { size, fontWeightRegular, fontWeightSemiBold } = typography;
   const { pxToRem } = functions;
 
   return {
@@ -117,9 +137,12 @@ function collapseText(theme, ownerState) {
     },
 
     "& span": {
-      fontWeight: active ? fontWeightRegular : fontWeightLight,
+      // Los pesos light y regular eran ambos 400, así que activo e inactivo se veían
+      // idénticos. El activo pasa a semibold para dar jerarquía real.
+      fontWeight: active ? fontWeightSemiBold : fontWeightRegular,
       fontSize: size.sm,
-      lineHeight: 0,
+      lineHeight: 1.5,
+      letterSpacing: "0.01em",
     },
   };
 }

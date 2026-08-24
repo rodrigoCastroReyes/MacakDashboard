@@ -78,8 +78,6 @@ export default styled(Button)(({ theme, ownerState }) => {
       background: backgroundValue,
       color: colorValue,
       boxShadow: boxShadowValue,
-      fontFamily: 'montserrat',
-      fontSize: '14px',
 
       "&:hover": {
         backgroundColor: backgroundValue,
@@ -124,8 +122,6 @@ export default styled(Button)(({ theme, ownerState }) => {
       background: backgroundValue,
       color: colorValue,
       borderColor: borderColorValue,
-      fontFamily: 'poppins',
-      fontSize: '30px',
 
       "&:hover": {
         background: transparent.main,
@@ -191,8 +187,6 @@ export default styled(Button)(({ theme, ownerState }) => {
       background: backgroundValue,
       color: colorValue,
       boxShadow: boxShadowValue,
-      fontFamily: 'montserrat',
-      fontSize: '14px',
 
       "&:hover": {
         boxShadow: hoveredBoxShadowValue,
@@ -219,8 +213,6 @@ export default styled(Button)(({ theme, ownerState }) => {
 
     return {
       color: colorValue,
-      fontFamily: 'montserrat',
-      fontSize: '14px',
 
       "&:hover": {
         color: focusedColorValue,
@@ -263,8 +255,6 @@ export default styled(Button)(({ theme, ownerState }) => {
       height: sizeValue,
       minHeight: sizeValue,
       padding: paddingValue,
-      fontFamily: 'montserrat',
-
       "& .material-icons": {
         //marginTop: 0,
       },

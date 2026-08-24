@@ -1,0 +1,11 @@
+.event-sales-title {
+  color: var(--macak-navy);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.event-summary-container {
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
