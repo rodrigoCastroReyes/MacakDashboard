@@ -95,14 +95,14 @@ const routes = [
   // endpoint no devuelve, así que siempre cae en el mensaje de error.
   // Para reactivarla hay que descomentar también su import y el de
   // AttachMoneySharpIcon.
-  {
-    type: "collapse",
-    name: "Transacciones",
-    key: "transactions",
-    icon: <AttachMoneySharpIcon fontSize="small" color="white" />,
-    route: "/transacciones",
-    component: <Transactions />,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Transacciones",
+  //   key: "transactions",
+  //   icon: <AttachMoneySharpIcon fontSize="small" color="white" />,
+  //   route: "/transacciones",
+  //   component: <Transactions />,
+  // },
   {
     type: "collapse",
     name: "Anulaciones",
