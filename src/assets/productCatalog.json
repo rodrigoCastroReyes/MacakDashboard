@@ -1,26 +1,67 @@
 {
   "CATEGORIES": [
-    { "value": "drink", "label": "Bebidas" },
-    { "value": "food", "label": "Plato a la carta" },
-    { "value": "snack", "label": "Snacks" },
-    { "value": "dessert", "label": "Postres" },
-    { "value": "side", "label": "Acompañantes" }
+    {
+      "value": "drink",
+      "label": "Bebidas"
+    },
+    {
+      "value": "food",
+      "label": "Plato a la carta"
+    },
+    {
+      "value": "snack",
+      "label": "Snacks"
+    },
+    {
+      "value": "dessert",
+      "label": "Postres"
+    },
+    {
+      "value": "side",
+      "label": "Acompañantes"
+    },
+    {
+      "value": "fun",
+      "label": "Diversión"
+    },
+    {
+      "value": "other",
+      "label": "Otro"
+    }
   ],
   "FLAG_GROUPS": [
     {
       "groupLabel": "Destacados",
       "flags": [
-        { "flag": "best-selling", "label": "Más vendidos" },
-        { "flag": "promo", "label": "Ofertas" },
-        { "flag": "healthy", "label": "Saludable" }
+        {
+          "flag": "best-selling",
+          "label": "Más vendidos"
+        },
+        {
+          "flag": "promo",
+          "label": "Ofertas"
+        },
+        {
+          "flag": "healthy",
+          "label": "Saludable"
+        }
       ]
     },
     {
       "groupLabel": "Alérgenos",
       "flags": [
-        { "flag": "has_lactose", "label": "Contiene lactosa" },
-        { "flag": "has_gluten", "label": "Contiene gluten" },
-        { "flag": "has_peanut", "label": "Contiene maní" }
+        {
+          "flag": "has_lactose",
+          "label": "Contiene lactosa"
+        },
+        {
+          "flag": "has_gluten",
+          "label": "Contiene gluten"
+        },
+        {
+          "flag": "has_peanut",
+          "label": "Contiene maní"
+        }
       ]
     }
   ]
