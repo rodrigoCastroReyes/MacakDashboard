@@ -4,6 +4,8 @@ import moment from "moment";
 import "moment/dist/locale/es";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import { Autocomplete, TextField, InputAdornment } from "@mui/material";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import MDTypography from "components/MDTypography";
@@ -26,6 +28,7 @@ import SalesPerHour from "layouts/reports/components/SalesPerHour";
 import UnitsPerHourAndProduct from "layouts/reports/components/UnitsPerHourAndProduct";
 import SalesByHourAndProductHeatmap from "layouts/reports/components/SalesByHourAndProductHeatmap";
 import StoreHero from "layouts/reports/components/StoreHero";
+import OrdersList from "layouts/reports/components/OrdersList";
 import { API_BASE_URL } from '../../config';
 
 
@@ -36,6 +39,7 @@ function PointOfSaleTransactionHistory() {
   const eventId = localStorage.getItem("eventId");
 
   const [refreshToken, setRefreshToken] = useState(0);
+  const [activeTab, setActiveTab] = useState(0); // 0: Resumen de ventas · 1: Órdenes
 
   const { data, loading, error, refetch } = useAxios(
     `${API_BASE_URL}/dashboard/store?store_id=${id}`
@@ -227,9 +231,10 @@ function PointOfSaleTransactionHistory() {
 
   return (
     <DashboardLayout>
+      {/* Imprimir a PDF solo tiene sentido en el resumen: captura sus secciones por id. */}
       <DashboardNavbar
         main_title={data?.store?.name ? `Historial de ventas · ${data.store.name}` : "Historial de ventas"}
-        onPrint={handlePrint}
+        onPrint={activeTab === 0 ? handlePrint : undefined}
       />
 
       <MDBox py={3}>
@@ -294,6 +299,19 @@ function PointOfSaleTransactionHistory() {
           </MDBox>
         </MDBox>
 
+        <Tabs
+          value={activeTab}
+          onChange={(_, v) => setActiveTab(v)}
+          sx={{ maxWidth: 360, mb: 3 }}
+        >
+          <Tab label="Resumen de ventas" />
+          <Tab label="Órdenes" />
+        </Tabs>
+
+        {/* El resumen se mantiene montado y solo se oculta con CSS: así sus hijos
+            no se vuelven a pedir al cambiar de pestaña y el PDF sigue capturando
+            sus secciones por id. Las Órdenes se montan bajo demanda. */}
+        <MDBox sx={{ display: activeTab === 0 ? "block" : "none" }}>
         {/* Contenido del PDF */}
         <div>
           <div id="section-hero">
@@ -339,6 +357,11 @@ function PointOfSaleTransactionHistory() {
             </Card>
           </div>
         </div>
+        </MDBox>
+
+        {activeTab === 1 && (
+          <OrdersList id_store={id} refreshToken={refreshToken} />
+        )}
       </MDBox>
     </DashboardLayout>
   );
