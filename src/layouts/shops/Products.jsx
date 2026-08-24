@@ -117,6 +117,8 @@ const Products = () => {
             description: selectedProduct.description,
             price: parseFloat(selectedProduct.price),
             img: selectedProduct.img,
+            category: selectedProduct.category,
+            flags: selectedProduct.flags || [],
           }),
         }
       );
