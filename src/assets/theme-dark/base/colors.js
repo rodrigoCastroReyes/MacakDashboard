@@ -19,11 +19,23 @@ Coded by www.creative-tim.com
  * You can customized the colors for the entire Material Dashboard 2 React using thie file.
  */
 
+// Misma paleta de marca que el tema claro (ver assets/theme/base/colors.js),
+// adaptada a superficies oscuras.
+export const brand = {
+  blue: "#3b82f6",
+  blueDark: "#0053D1",
+  blueLight: "#60a5fa",
+  cyan: "#0EE3E1",
+  green: "#69F091",
+  lime: "#BCFC3A",
+  navy: "#0d1a35",
+};
+
 const colors = {
   background: {
-    default: "#1a2035",
-    sidenav: "#1f283e",
-    card: "#202940",
+    default: "#0d1a35",
+    sidenav: "#132244",
+    card: "#152C5B",
   },
 
   text: {
@@ -32,7 +44,9 @@ const colors = {
   },
 
   transparent: {
-    main: "transparent",
+    // Must stay a parseable color: MUI v7 runs alpha() over every palette entry's
+    // `main` when generating component variants, and the keyword "transparent" throws.
+    main: "rgba(0, 0, 0, 0)",
   },
 
   white: {
@@ -47,33 +61,33 @@ const colors = {
   },
 
   primary: {
-    main: "#e91e63",
-    focus: "#e91e63",
+    main: brand.blue,
+    focus: brand.blueLight,
   },
 
   secondary: {
-    main: "#7b809a",
-    focus: "#8f93a9",
+    main: "#8f9bb3",
+    focus: "#a6b1c5",
   },
 
   info: {
-    main: "#1A73E8",
-    focus: "#1662C4",
+    main: brand.blue,
+    focus: brand.blueLight,
   },
 
   success: {
-    main: "#4CAF50",
-    focus: "#67bb6a",
+    main: "#0e9f6e",
+    focus: "#10b981",
   },
 
   warning: {
-    main: "#fb8c00",
-    focus: "#fc9d26",
+    main: "#f59e0b",
+    focus: "#fbbf24",
   },
 
   error: {
-    main: "#F44335",
-    focus: "#f65f53",
+    main: "#e02424",
+    focus: "#ef4444",
   },
 
   light: {
@@ -99,9 +113,14 @@ const colors = {
   },
 
   gradients: {
+    brand: {
+      main: brand.cyan,
+      state: brand.lime,
+    },
+
     primary: {
-      main: "#EC407A",
-      state: "#D81B60",
+      main: brand.blueLight,
+      state: brand.blue,
     },
 
     secondary: {
@@ -110,8 +129,8 @@ const colors = {
     },
 
     info: {
-      main: "#49a3f1",
-      state: "#1A73E8",
+      main: brand.blueLight,
+      state: brand.blue,
     },
 
     success: {
@@ -204,55 +223,55 @@ const colors = {
 
   badgeColors: {
     primary: {
-      background: "#f8b3ca",
-      text: "#cc084b",
+      background: "#d6e4ff",
+      text: "#0043a8",
     },
 
     secondary: {
-      background: "#d7d9e1",
-      text: "#6c757d",
+      background: "#e2e6ee",
+      text: "#48566d",
     },
 
     info: {
-      background: "#aecef7",
-      text: "#095bc6",
+      background: "#d6e4ff",
+      text: "#0043a8",
     },
 
     success: {
-      background: "#bce2be",
-      text: "#339537",
+      background: "#cdf3e4",
+      text: "#036249",
     },
 
     warning: {
-      background: "#ffd59f",
-      text: "#c87000",
+      background: "#fdeac6",
+      text: "#8a5a06",
     },
 
     error: {
-      background: "#fcd3d0",
-      text: "#f61200",
+      background: "#fcdcdc",
+      text: "#b01b1b",
     },
 
     light: {
       background: "#ffffff",
-      text: "#c7d3de",
+      text: "#5a6a85",
     },
 
     dark: {
-      background: "#8097bf",
-      text: "#1e2e4a",
+      background: "#d5deef",
+      text: "#152c5b",
     },
   },
 
   coloredShadows: {
-    primary: "#e91e62",
-    secondary: "#110e0e",
-    info: "#00bbd4",
-    success: "#4caf4f",
-    warning: "#ff9900",
-    error: "#f44336",
+    primary: "#0053d1",
+    secondary: "#5a6a85",
+    info: "#0053d1",
+    success: "#047857",
+    warning: "#f59e0b",
+    error: "#e02424",
     light: "#adb5bd",
-    dark: "#404040",
+    dark: "#152c5b",
   },
 
   inputBorderColor: "#d2d6da",

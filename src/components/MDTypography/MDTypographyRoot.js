@@ -23,7 +23,13 @@ export default styled(Typography)(({ theme, ownerState }) => {
     ownerState;
 
   const { gradients, transparent, white } = palette;
-  const { fontWeightLight, fontWeightRegular, fontWeightMedium, fontWeightBold } = typography;
+  const {
+    fontWeightLight,
+    fontWeightRegular,
+    fontWeightMedium,
+    fontWeightSemiBold,
+    fontWeightBold,
+  } = typography;
   const { linearGradient } = functions;
 
   // fontWeight styles
@@ -31,6 +37,7 @@ export default styled(Typography)(({ theme, ownerState }) => {
     light: fontWeightLight,
     regular: fontWeightRegular,
     medium: fontWeightMedium,
+    semiBold: fontWeightSemiBold,
     bold: fontWeightBold,
   };
 

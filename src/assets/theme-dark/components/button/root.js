@@ -20,24 +20,37 @@ import borders from "assets/theme-dark/base/borders";
 // Material Dashboard 2 React Helper Functions
 import pxToRem from "assets/theme-dark/functions/pxToRem";
 
-const { fontWeightBold, size } = typography;
+const { fontWeightSemiBold, size } = typography;
 const { borderRadius } = borders;
 
 const root = {
   display: "inline-flex",
   justifyContent: "center",
   alignItems: "center",
-  fontSize: size.xs,
-  fontWeight: fontWeightBold,
+  fontSize: size.sm,
+  fontWeight: fontWeightSemiBold,
   borderRadius: borderRadius.lg,
-  padding: `${pxToRem(6.302)} ${pxToRem(16.604)}`,
+  padding: `${pxToRem(9)} ${pxToRem(20)}`,
   lineHeight: 1.4,
+  letterSpacing: "0.01em",
   textAlign: "center",
-  textTransform: "uppercase",
+  // Antes iba en `uppercase` con peso 700: se leía pesado y gritón. En sentence
+  // case y semibold el botón resulta más limpio sin perder jerarquía.
+  textTransform: "none",
   userSelect: "none",
   backgroundSize: "150% !important",
   backgroundPositionX: "25% !important",
-  transition: "all 150ms ease-in",
+  boxShadow: "none",
+  transition: "background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease",
+
+  "&:active": {
+    transform: "translateY(1px)",
+  },
+
+  "&:focus-visible": {
+    outline: "2px solid rgba(0, 83, 209, 0.55)",
+    outlineOffset: "2px",
+  },
 
   "&:disabled": {
     pointerEvent: "none",

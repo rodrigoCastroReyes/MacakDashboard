@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-lc", "source ~/.nvm/nvm.sh && nvm use 20.20.2 && npm run dev -- --host 127.0.0.1"],
+      "port": 3000,
+      "// autoPort": "Fijo en 3000: la sesión del usuario vive en el localStorage de ese origen; otro puerto la perdería.",
+      "autoPort": false
+    },
+    {
+      "name": "preview",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-lc", "source ~/.nvm/nvm.sh && nvm use 20.20.2 && npm run preview -- --host 127.0.0.1 --port 4173"],
+      "port": 4173
+    }
+  ]
+}

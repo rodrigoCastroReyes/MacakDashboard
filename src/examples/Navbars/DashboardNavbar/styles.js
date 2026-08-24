@@ -122,13 +122,11 @@ const navbarIconButton = ({ typography: { size }, breakpoints }) => ({
   },
 });
 
-const navbarMobileMenu = ({ breakpoints }) => ({
+// Antes se ocultaba a partir de `xl`, así que en escritorio no había manera de
+// contraer el sidenav. Ahora está disponible en todos los tamaños.
+const navbarMobileMenu = () => ({
   display: "inline-block",
   lineHeight: 0,
-
-  [breakpoints.up("xl")]: {
-    display: "none",
-  },
 });
 
 export { navbar, navbarContainer, navbarRow, navbarIconButton, navbarMobileMenu };

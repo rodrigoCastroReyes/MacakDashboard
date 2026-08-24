@@ -1,19 +1,9 @@
-/**
-=========================================================
-* Material Dashboard 2  React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-// Material Dashboard 2 React base styles
 import typography from "assets/theme/base/typography";
+import { CHART_GRID, CHART_TICK } from "utils/chartColors";
+
+/** Los nombres de producto largos desbordaban la franja del eje; se recortan. */
+const truncate = (value, max = 22) =>
+  typeof value === "string" && value.length > max ? `${value.slice(0, max - 1)}…` : value;
 
 function configs(labels, datasets) {
   return {
@@ -25,52 +15,41 @@ function configs(labels, datasets) {
       indexAxis: "y",
       responsive: true,
       maintainAspectRatio: false,
+      // Espacio a la derecha para las etiquetas de valor, que van fuera de la barra.
+      layout: { padding: { right: 56, left: 4, top: 4, bottom: 4 } },
       plugins: {
-        legend: {
-          display: false,
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "#152c5b",
+          titleFont: { family: typography.fontFamily, size: 12, weight: "600" },
+          bodyFont: { family: typography.fontFamily, size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false,
+          // El eje recorta los nombres largos; el tooltip muestra el completo.
+          callbacks: { title: (items) => items[0]?.label ?? "" },
         },
       },
       scales: {
         y: {
-          grid: {
-            drawBorder: false,
-            display: true,
-            drawOnChartArea: true,
-            drawTicks: false,
-            borderDash: [5, 5],
-            color: "#c1c4ce5c",
-          },
+          // Sin rejilla: en barras horizontales las líneas por categoría son ruido.
+          grid: { display: false, drawBorder: false, drawTicks: false },
           ticks: {
             display: true,
-            color: "#b2b9bf",
-            padding: 10,
-            font: {
-              size: 11,
-              family: typography.fontFamily,
-              style: "normal",
-              lineHeight: 2,
+            // Antes #b2b9bf, con ~1.9 de contraste sobre blanco: ilegible.
+            color: CHART_TICK,
+            padding: 8,
+            crossAlign: "far",
+            font: { size: 11, family: typography.fontFamily, weight: "500" },
+            callback(value) {
+              return truncate(this.getLabelForValue(value));
             },
           },
         },
         x: {
-          grid: {
-            drawBorder: false,
-            display: false,
-            drawOnChartArea: true,
-            drawTicks: true,
-            color: "#c1c4ce5c",
-          },
-          ticks: {
-            display: true,
-            color: "#b2b9bf",
-            padding: 20,
-            font: {
-              size: 11,
-              family: typography.fontFamily,
-              style: "normal",
-              lineHeight: 2,
-            },
-          },
+          // Cada barra lleva su valor escrito al final, así que el eje sobra.
+          display: false,
+          grid: { display: false, drawBorder: false, color: CHART_GRID },
         },
       },
     },

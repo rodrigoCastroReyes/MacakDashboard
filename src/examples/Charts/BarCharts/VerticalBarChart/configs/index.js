@@ -41,7 +41,7 @@ function configs(labels, datasets) {
           anchor: "end",
           font: {
             size: 11,
-            family: "montserrat-semibold",
+            family: "Poppins", weight: 600,
             style: "normal",
             lineHeight: 2,
           },
@@ -64,7 +64,7 @@ function configs(labels, datasets) {
             color: "#1c0d02",
             font: {
               size: 12,
-              family: "montserrat",
+              family: "Poppins",
               style: "normal",
               lineHeight: 2,
             },
@@ -83,7 +83,7 @@ function configs(labels, datasets) {
             padding: 10,
             font: {
               size: 12,
-              family: "poppins",
+              family: "Poppins",
               style: "normal",
               lineHeight: 2,
             },

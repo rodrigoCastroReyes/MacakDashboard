@@ -15,13 +15,11 @@ Coded by www.creative-tim.com
 
 // Material Dashboard 2 React base styles
 import colors from "assets/theme/base/colors";
-import borders from "assets/theme/base/borders";
 
 // Material Dashboard 2 React helper functions
 import pxToRem from "assets/theme/functions/pxToRem";
 
 const { white } = colors;
-const { borderRadius } = borders;
 
 const sidenav = {
   styleOverrides: {
@@ -34,9 +32,12 @@ const sidenav = {
     paper: {
       width: pxToRem(250),
       backgroundColor: white.main,
-      height: `calc(100vh - ${pxToRem(32)})`,
-      margin: pxToRem(16),
-      borderRadius: borderRadius.xl,
+      // Anclado a la pantalla: sin margen, sin radio y ocupando el alto completo.
+      height: "100vh",
+      top: 0,
+      left: 0,
+      margin: 0,
+      borderRadius: 0,
       border: "none",
     },
 

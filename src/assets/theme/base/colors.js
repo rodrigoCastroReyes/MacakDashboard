@@ -19,18 +19,41 @@ Coded by www.creative-tim.com
  * You can customized the colors for the entire Material Dashboard 2 React using thie file.
  */
 
+/**
+ * Paleta de marca Macak, extraída del logo:
+ *   azul wordmark  #0053D1
+ *   degradado del ícono: cyan #0EE3E1 → verde #69F091 → lima #BCFC3A
+ *
+ * Los tonos cyan/verde/lima son muy claros (contraste ~1.5 con texto blanco), así que
+ * se usan solo como acentos decorativos o con texto oscuro encima, nunca como fondo
+ * de un botón con texto blanco. Para eso está el azul de marca (contraste 6.65).
+ */
+export const brand = {
+  blue: "#0053D1",
+  blueDark: "#003FA3",
+  blueLight: "#0B6BE8",
+  cyan: "#0EE3E1",
+  green: "#69F091",
+  lime: "#BCFC3A",
+  navy: "#152C5B",
+};
+
 const colors = {
   background: {
-    default: "#f0f2f5",
+    default: "#f4f6fb",
+    card: "#ffffff",
   },
 
   text: {
-    main: "#7b809a",
-    focus: "#7b809a",
+    // Subido desde #7b809a, que sobre el fondo claro daba 3.69 de contraste (< 4.5).
+    main: "#5a6a85",
+    focus: "#5a6a85",
   },
 
   transparent: {
-    main: "transparent",
+    // Must stay a parseable color: MUI v7 runs alpha() over every palette entry's
+    // `main` when generating component variants, and the keyword "transparent" throws.
+    main: "rgba(0, 0, 0, 0)",
   },
 
   white: {
@@ -45,43 +68,45 @@ const colors = {
   },
 
   primary: {
-    main: "#e91e63",
-    focus: "#e91e63",
+    main: brand.blue,
+    focus: brand.blueDark,
   },
 
   secondary: {
-    main: "#7b809a",
-    focus: "#8f93a9",
+    main: "#5a6a85",
+    focus: "#48566d",
   },
 
   info: {
-    main: "#007bff",
-    focus: "#1662C4",
+    main: brand.blue,
+    focus: brand.blueDark,
   },
 
+  // Verde oscurecido respecto al del logo para que el texto blanco encima sea legible
+  // (5.48 de contraste). El verde y el lima del logo viven en `gradients.brand`.
   success: {
-    main: "#bfdf14",
-    focus: "#67bb6a",
+    main: "#047857",
+    focus: "#036249",
   },
 
   warning: {
-    main: "#fb8c00",
-    focus: "#fc9d26",
+    main: "#f59e0b",
+    focus: "#d97f06",
   },
 
   error: {
-    main: "#F44335",
-    focus: "#f65f53",
+    main: "#e02424",
+    focus: "#c01d1d",
   },
 
   light: {
-    main: "#f0f2f5",
-    focus: "#f0f2f5",
+    main: "#eef1f7",
+    focus: "#e4e8f0",
   },
 
   dark: {
-    main: "#344767",
-    focus: "#2c3c58",
+    main: brand.navy,
+    focus: "#0f2047",
   },
 
   grey: {
@@ -97,44 +122,51 @@ const colors = {
   },
 
   gradients: {
+    // El degradado del ícono del logo. Decorativo: solo con texto oscuro encima.
+    brand: {
+      main: brand.cyan,
+      state: brand.lime,
+    },
+
     primary: {
-      main: "#EC407A",
-      state: "#D81B60",
+      main: brand.blueLight,
+      state: brand.blue,
     },
 
     secondary: {
-      main: "#747b8a",
-      state: "#495361",
+      main: "#6b7a94",
+      state: "#48566d",
     },
 
+    // Ambos extremos son lo bastante oscuros para mantener el texto blanco legible.
     info: {
-      main: "#76d2e0",
-      state: "#2b6dbe",
+      main: brand.blueLight,
+      state: brand.blue,
     },
 
     success: {
-      main: "#66BB6A",
-      state: "#43A047",
+      main: "#0e9f6e",
+      state: "#047857",
     },
 
     warning: {
-      main: "#FFA726",
-      state: "#FB8C00",
+      main: "#fbbf24",
+      state: "#f59e0b",
     },
 
     error: {
-      main: "#EF5350",
-      state: "#E53935",
+      main: "#ef4444",
+      state: "#e02424",
     },
 
     light: {
-      main: "#EBEFF4",
-      state: "#CED4DA",
+      main: "#eef1f7",
+      state: "#dde3ed",
     },
 
     dark: {
-      main: "#42424a",
-      state: "#191919",
+      main: "#1e3a70",
+      state: brand.navy,
     },
   },
 
@@ -202,58 +234,58 @@ const colors = {
 
   badgeColors: {
     primary: {
-      background: "#f8b3ca",
-      text: "#cc084b",
+      background: "#d6e4ff",
+      text: "#0043a8",
     },
 
     secondary: {
-      background: "#d7d9e1",
-      text: "#6c757d",
+      background: "#e2e6ee",
+      text: "#48566d",
     },
 
     info: {
-      background: "#aecef7",
-      text: "#095bc6",
+      background: "#d6e4ff",
+      text: "#0043a8",
     },
 
     success: {
-      background: "#bce2be",
-      text: "#339537",
+      background: "#cdf3e4",
+      text: "#036249",
     },
 
     warning: {
-      background: "#ffd59f",
-      text: "#c87000",
+      background: "#fdeac6",
+      text: "#8a5a06",
     },
 
     error: {
-      background: "#fcd3d0",
-      text: "#f61200",
+      background: "#fcdcdc",
+      text: "#b01b1b",
     },
 
     light: {
       background: "#ffffff",
-      text: "#c7d3de",
+      text: "#5a6a85",
     },
 
     dark: {
-      background: "#8097bf",
-      text: "#1e2e4a",
+      background: "#d5deef",
+      text: "#152c5b",
     },
   },
 
   coloredShadows: {
-    primary: "#e91e62",
-    secondary: "#110e0e",
-    info: "#00bbd4",
-    success: "#4caf4f",
-    warning: "#ff9900",
-    error: "#f44336",
+    primary: "#0053d1",
+    secondary: "#5a6a85",
+    info: "#0053d1",
+    success: "#047857",
+    warning: "#f59e0b",
+    error: "#e02424",
     light: "#adb5bd",
-    dark: "#404040",
+    dark: "#152c5b",
   },
 
-  inputBorderColor: "#d2d6da",
+  inputBorderColor: "#d5dce8",
 
   tabs: {
     indicator: { boxShadow: "#ddd" },

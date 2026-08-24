@@ -1,0 +1,23 @@
+.event-summary-title {
+  color: var(--macak-navy);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.event-summary-label {
+  color: var(--macak-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.event-summary-value {
+  color: var(--macak-blue);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.event-summary-container {
+  padding: 1.25rem;
+}

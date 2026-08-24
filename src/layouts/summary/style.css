@@ -1,0 +1,4 @@
+/* `.event-title` se define en src/css/styles.css; aquí solo el espaciado del layout. */
+.event-title {
+  padding: 1rem 1rem 0 1rem;
+}

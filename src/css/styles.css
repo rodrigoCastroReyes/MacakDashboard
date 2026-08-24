@@ -1,163 +1,110 @@
+/* ============================================================
+   Tipografía: Poppins, una sola familia en toda la app.
+
+   Antes se declaraba Poppins-Regular.ttf con `font-weight: 900`, así que ningún
+   peso real coincidía y el navegador sintetizaba las negritas (falso bold).
+   Ahora cada archivo se declara con su peso correcto.
+   ============================================================ */
+
 @font-face {
-  font-family: 'montserrat';
-  src: local('Montserrat'), url(./../fonts/Montserrat/Montserrat-Regular.ttf) format('truetype');
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local("Poppins Regular"), url(../fonts/Poppins/Poppins-Regular.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'montserrat';
-  font-weight: 900;
-  src: local('Montserrat'), url(./../fonts/Montserrat/Montserrat-Bold.ttf) format('truetype');
-}
-
-
-@font-face {
-  font-family: 'montserrat-semibold';
-  src: local('Montserrat'), url(./../fonts/Montserrat/Montserrat-SemiBold.ttf) format('truetype');
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local("Poppins Medium"), url(../fonts/Poppins/Poppins-Medium.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'montserrat';
-  font-weight: 900;
-  src: local('Montserrat'), url(./../fonts/Montserrat/Montserrat-Black.ttf) format('truetype');
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local("Poppins SemiBold"), url(../fonts/Poppins/Poppins-SemiBold.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'poppins';
-  font-weight: 900;
-  src: local('Poppins'), url(./../fonts/Poppins/Poppins-Regular.ttf) format('truetype');
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Poppins Bold"), url(../fonts/Poppins/Poppins-Bold.ttf) format("truetype");
 }
 
-/*
-.MuiTypography-root {
-  font-family: 'poppins' !important;
-}*/
+/* ============================================================
+   Tokens de marca. Duplican los valores de assets/theme/base/colors.js
+   para el CSS plano que no pasa por el tema de MUI.
+   ============================================================ */
 
-.custom-btn-icon{
-  padding: 0px;
+:root {
+  --macak-blue: #0053d1;
+  --macak-blue-dark: #003fa3;
+  --macak-cyan: #0ee3e1;
+  --macak-lime: #bcfc3a;
+  --macak-navy: #152c5b;
+  --macak-text: #5a6a85;
+  --macak-border: #e3e8f0;
+  --macak-radius: 10px;
+}
+
+/* ============================================================
+   Utilidades
+   ============================================================ */
+
+.custom-btn-icon {
+  padding: 0;
   cursor: pointer;
+  color: var(--macak-text);
+  transition: color 0.2s ease;
 }
 
 .custom-btn-icon:hover {
-  color: #007bff !important; /* Color al pasar el mouse */
+  color: var(--macak-blue) !important;
 }
 
 .custom-link {
-  color: #7b809a !important; 
-  font-weight: 800;
+  color: var(--macak-blue) !important;
+  font-weight: 600;
   text-decoration: none !important;
+  transition: color 0.2s ease;
 }
 
 .custom-link:hover {
-  color: #007bff !important; /* Color al pasar el mouse */
+  color: var(--macak-blue-dark) !important;
+  text-decoration: underline !important;
 }
 
 .custom-link:visited {
-  color: purple; /* Color después de visitar el enlace */
+  color: var(--macak-blue) !important;
 }
 
-.refresh-button {
-  font-family: 'montserrat';
-  font-size: 14px;
-  background-color: #007bff;
-  color: #ffffff;
-  padding: 0.625rem 2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  right: 0;
-  margin: 0px !important;
-}
-
-.refresh-button:hover {
-  background-color: #0056b3; /* Cambio de color al pasar el ratón */
-}
-
-.return-button {
-  font-family: 'montserrat';
-  font-size:14px;
-  background-color: #007bff;
-  color: #ffffff;
-  padding: 0.625rem 2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  left: 0;
-  margin-left: 1rem;
-}
-
-.return-button:hover {
-  font-family: 'montserrat';
-  background-color: #0056b3; /* Cambio de color al pasar el ratón */
-}
-
-.sign-in-button{
-  font-family: 'montserrat';
-  font-size: 14px;
-  color:#ffffff;
-  background-color: #007bff;
-  padding: 0.625rem 2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.sign-in-button:hover {
-  font-family: 'montserrat';
-  background-color: #0056b3; /* Cambio de color al pasar el ratón */
-}
-
-.logout-button{
-  font-family: 'montserrat';
-  font-size: 14px;
-  color:#ffffff;
-  background-color: #007bff;
-  padding: 0.625rem 2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-
-.logout-button:hover {
-  font-family: 'montserrat';
-  background-color: #0056b3; /* Cambio de color al pasar el ratón */
-}
-
-
-.empty-container{
+.empty-container {
   width: 100%;
   display: flex;
   justify-content: center;
   text-align: center;
   align-items: center;
-  padding: 25px;
-  font-family: 'poppins';
+  padding: 2.5rem 1.5rem;
+  color: var(--macak-text);
+  font-size: 0.9rem;
 }
 
-.search-input{
-  font-family: 'montserrat' !important;
-  padding: 0.625rem 2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  position: absolute;
-  left: 0;
-  margin-left: 3rem;
-}
-
-.MuiBadge-badge{
+.MuiBadge-badge {
   font-size: 12px !important;
+  font-weight: 600 !important;
 }
 
-.css-11qsdy6 {
-  position: absolute;
-  right: 0;
-  margin-left: 1rem;
-}
-
-.event-title{
-  color: #344767 !important; 
-  font-family: 'montserrat-semibold' !important;
-  font-size: 20px;
-  font-weight: 800 !important;
+/* Títulos de sección dentro de las tarjetas del dashboard */
+.event-title {
+  color: var(--macak-navy) !important;
+  font-size: 1.25rem;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
 }
