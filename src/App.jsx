@@ -6,6 +6,7 @@ import theme from "assets/theme";
 import themeDark from "assets/theme-dark";
 import routes from "routes";
 import { useMaterialUIController, setMiniSidenav } from "context";
+import { useAuth } from "context/authProvider";
 import Sidenav from "examples/Sidenav";
 import GlobalLoadingBar from "examples/GlobalLoadingBar";
 import brandWhite from "assets/images/macak.png";
@@ -31,10 +32,11 @@ export default function App() {
   const { miniSidenav, layout, sidenavColor, transparentSidenav, whiteSidenav, darkMode } =
     controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
-  // Read synchronously on first render: reading it in an effect made the very first
-  // render see `null` and redirect to sign-in before the token was ever loaded,
-  // which logged the user out on every page refresh.
-  const [authToken] = useState(() => localStorage.getItem("authToken"));
+  // El token viene del contexto de auth, que lo inicializa de forma síncrona desde
+  // localStorage (así el primer render ya lo ve y no rebota a sign-in al refrescar)
+  // y —a diferencia de un useState local— se actualiza tras el login: sin esto,
+  // App conservaba el `null` del montaje y la redirección a /resumen volvía al login.
+  const { authToken } = useAuth();
 
   const { pathname } = useLocation();
 
