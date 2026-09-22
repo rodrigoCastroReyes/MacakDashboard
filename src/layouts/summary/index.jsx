@@ -26,6 +26,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 import EventSummary from "layouts/summary/components/EventSummary";
 import SalesSummary from "layouts/summary/components/SalesSummary";
+import PrechargesSummary from "layouts/summary/components/PrechargesSummary";
 import SectionHeader from "examples/SectionHeader";
 
 import { useAuth } from "context/authProvider";
@@ -148,8 +149,10 @@ const Summary = () => {
         />
 
         <SectionHeader title="Resumen por puntos de venta" mt={4} />
-
         <SalesSummary refreshToken={refreshToken} />
+        
+        <SectionHeader title="Resumen de precargas" mt={4} />
+        <PrechargesSummary refreshToken={refreshToken} />
       </MDBox>
     </DashboardLayout>
   );

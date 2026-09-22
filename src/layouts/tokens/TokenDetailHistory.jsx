@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Card from "@mui/material/Card";
+import Collapse from "@mui/material/Collapse";
 import Icon from "@mui/material/Icon";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
@@ -82,23 +83,16 @@ function TokenDetailHistory() {
   const { data, loading, error, refetch } = usePagedAxios(
     `${API_BASE_URL}/dashboard/token?token_id=${id}`
   );
-  // Las anuladas viven en otro endpoint y no aparecen en el principal, así que
-  // se traen aparte y se funden en una sola tabla filtrable.
-  const { data: voidedData, refetch: refetchVoided } = useAxios(
-    `${API_BASE_URL}/transaction/get_anulled_transactions_of_token?token_id=${id}`
+  // Nuevo endpoint que trae resumen (compras, recargas, anulaciones) junto con detalle de items
+  const { data: summaryData, loading: loadingSummary, refetch: refetchSummary } = usePagedAxios(
+    `${API_BASE_URL}/token/summary?token_id=${id}`
   );
 
   const token = data?.token;
 
   const movements = useMemo(() => {
-    const main = data?.transactions || [];
-    const voided = (voidedData?.transactions || []).map((t) => ({ ...t, annulled: true }));
-    // Los dos endpoints son disjuntos, pero se deduplica por si algún día
-    // dejan de serlo y una anulada acaba contada dos veces.
-    const byId = new Map();
-    [...main, ...voided].forEach((t) => byId.set(t._id, t));
-    return [...byId.values()];
-  }, [data?.transactions, voidedData?.transactions]);
+    return summaryData?.transactions || [];
+  }, [summaryData?.transactions]);
 
   const chrono = useMemo(
     () => [...movements].sort((a, b) => a.__createdtime__ - b.__createdtime__),
@@ -157,21 +151,21 @@ function TokenDetailHistory() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([refetch(), refetchVoided()]);
+    await Promise.all([refetch(), refetchSummary()]);
     setRefreshing(false);
   };
 
   const toggleSort = (key) =>
     setSort((s) => (s.key === key ? { key, dir: -s.dir } : { key, dir: -1 }));
 
-  if (loading || error || !token) {
+  if (loading || loadingSummary || error || !token) {
     return (
       <DashboardLayout>
         <DashboardNavbar main_title="Movimientos del token" />
         <MDBox py={3}>
           <StateMessage
-            state={loading ? "loading" : "error"}
-            message={loading ? "Cargando movimientos…" : undefined}
+            state={(loading || loadingSummary) ? "loading" : "error"}
+            message={(loading || loadingSummary) ? "Cargando movimientos…" : undefined}
           />
         </MDBox>
       </DashboardLayout>
@@ -452,6 +446,7 @@ Kpi.propTypes = {
 
 /** Extracto de movimientos, agrupado por día cuando el orden es cronológico. */
 function MovementRows({ rows, sort, onSort, opening }) {
+  const [expandedRow, setExpandedRow] = useState(null);
   const grouped = sort.key === "time";
   let lastDay = null;
 
@@ -575,15 +570,18 @@ function MovementRows({ rows, sort, onSort, opening }) {
                 alignItems="center"
                 px={3}
                 py={1.25}
+                onClick={() => setExpandedRow(expandedRow === t._id ? null : t._id)}
                 sx={({ palette }) => ({
                   gridTemplateColumns: GRID,
-                  borderBottom: `1px solid ${palette.grey[200]}`,
+                  borderBottom: expandedRow === t._id ? "none" : `1px solid ${palette.grey[200]}`,
+                  cursor: "pointer",
                   backgroundColor:
                     state === "rejected"
                       ? palette.badgeColors.error.background
                       : state === "annulled"
                       ? palette.grey[100]
                       : "transparent",
+                  "&:hover": { backgroundColor: palette.grey[50] },
                 })}
               >
                 <MDTypography
@@ -695,6 +693,31 @@ function MovementRows({ rows, sort, onSort, opening }) {
                   {formatCurrency(balanceAfter(t))}
                 </MDTypography>
               </MDBox>
+
+              <Collapse in={expandedRow === t._id} timeout="auto" unmountOnExit>
+                <MDBox px={3} pb={2} pt={1} sx={({ palette }) => ({ borderBottom: `1px solid ${palette.grey[200]}`, backgroundColor: palette.grey[50] })}>
+                  {t.store_name && (
+                    <MDTypography variant="caption" color="dark" fontWeight="semiBold" display="block" mb={1}>
+                      Tienda: {t.store_name}
+                    </MDTypography>
+                  )}
+                  {t.items && t.items.length > 0 ? (
+                    <MDBox component="ul" m={0} pl={2.5}>
+                      {t.items.map((item, idx) => (
+                        <MDBox component="li" key={idx} mb={0.5}>
+                          <MDTypography variant="caption" color="text">
+                            {item.number_of_product}x {item.description} - {formatCurrency(item.total_price)}
+                          </MDTypography>
+                        </MDBox>
+                      ))}
+                    </MDBox>
+                  ) : (
+                    <MDTypography variant="caption" color="text">
+                      {t.detail || "Sin detalles adicionales"}
+                    </MDTypography>
+                  )}
+                </MDBox>
+              </Collapse>
             </MDBox>
           );
         })}
