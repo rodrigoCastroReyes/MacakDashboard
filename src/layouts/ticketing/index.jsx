@@ -22,6 +22,7 @@ import PurchaseTicketsTransactions from "./PurchaseTicketTransactions";
 
 // URL
 import { API_BASE_URL } from "../../config";
+import { countSoldByTicketName } from "utils/purchaseStatus";
 
 const Ticketing = () => {
   const [jwtToken, setJwtToken] = useState(null);
@@ -47,23 +48,32 @@ const Ticketing = () => {
     const fetch_data = async () => {
       try {
         if (jwtToken && eventId) {
-          const eventResponse = await axios.get(
-            `${API_BASE_URL}/ticket/event?id=${eventId}`,
-            {
+          const [eventResponse, purchasesResponse] = await Promise.all([
+            axios.get(`${API_BASE_URL}/ticket/event?id=${eventId}`, {
               headers: {
                 Authorization: jwtToken,
               },
-            }
-          );
+            }),
+            axios.get(`${API_BASE_URL}/purchase_ticket/event?id=${eventId}`),
+          ]);
 
-          setTickets(eventResponse.data);
+          // Los vendidos se cuentan desde las órdenes pagadas y no desde
+          // `sold_quantity` de la localidad, que hasta la versión 1.2.0 del
+          // backend sumaba también las compras que nunca se pagaron.
+          const soldByName = countSoldByTicketName(purchasesResponse.data);
+          const ticketsWithPaidSales = eventResponse.data.map((ticket) => ({
+            ...ticket,
+            sold_quantity: soldByName[ticket.name] || 0,
+          }));
 
-          const ticketsCapacity = eventResponse.data.reduce(
-            (acc, store) => acc + store.max_quantity,
+          setTickets(ticketsWithPaidSales);
+
+          const ticketsCapacity = ticketsWithPaidSales.reduce(
+            (acc, ticket) => acc + ticket.max_quantity,
             0
           );
-          const ticketsSolds = eventResponse.data.reduce(
-            (acc, store) => acc + store.sold_quantity,
+          const ticketsSolds = ticketsWithPaidSales.reduce(
+            (acc, ticket) => acc + ticket.sold_quantity,
             0
           );
 

@@ -4,6 +4,7 @@ import {
   Box,
   Grid,
   Card,
+  Chip,
   Typography,
   IconButton,
   CircularProgress,
@@ -16,6 +17,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "examples/Tables/DataTable";
 import MDTypography from "components/MDTypography";
 import MDBadge from "components/MDBadge";
+import { isUnpaidPurchase } from "utils/purchaseStatus";
 import useAxios from "hooks/useAxios";
 import moment from "moment";
 import "moment/dist/locale/es";
@@ -92,13 +94,16 @@ const AttenderOrderTable = ({ purchase_tickets, onRefresh, loading }) => {
             align="center"
           >
             {`${item.ticket_name} ${item.quantity}x`}
+            {isUnpaidPurchase(ticket) && (
+              <Chip label="Pendiente" size="small" color="warning" variant="outlined" sx={{ ml: 1 }} />
+            )}
           </MDTypography>
         ),
         amount: (
           <MDTypography
             fontSize="12px"
             variant="caption"
-            color="success"
+            color={isUnpaidPurchase(ticket) ? "text" : "success"}
             fontWeight="bold"
             align="center"
           >
