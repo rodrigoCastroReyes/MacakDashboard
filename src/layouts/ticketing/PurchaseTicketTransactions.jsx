@@ -72,6 +72,9 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     { Header: "Tickets", accessor: "n_tickets", align: "center" },
     { Header: "Observaciones", accessor: "observations", align: "center" },
     { Header: "Precarga", accessor: "precharge", align: "center" },
+    // "Pendiente" y "fallida" no son lo mismo: la primera puede todavia
+    // completarse, la segunda ya se sabe que no se cobro.
+    ...(showUnpaid ? [{ Header: "Estado", accessor: "state", align: "center" }] : []),
   ];
 
   if (loading) return <StateMessage state="loading" message="Cargando transacciones…" />;
@@ -126,6 +129,14 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
         {transaction.purchase_ticket.precharge_amount}
       </MDTypography>
     ),
+    state: (
+      <Chip
+        label={transaction.purchase_ticket?.status === "error" ? "Fallida" : "Pendiente"}
+        size="small"
+        color={transaction.purchase_ticket?.status === "error" ? "default" : "warning"}
+        variant="outlined"
+      />
+    ),
   }));
 
   return (
@@ -134,11 +145,11 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
         <RefreshButtonContainer>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <MDTypography color="dark" fontWeight="bold" component="div" align="left" style={{ fontSize: "1rem" }} >
-              {showUnpaid ? "Ordenes pendientes" : "Historial de ordenes"}
+              {showUnpaid ? "Ordenes no pagadas" : "Historial de ordenes"}
             </MDTypography>
             {(unpaidCount > 0 || showUnpaid) && (
               <Chip
-                label={showUnpaid ? "Ver pagadas" : `Ver pendientes (${unpaidCount})`}
+                label={showUnpaid ? "Ver pagadas" : `Ver no pagadas (${unpaidCount})`}
                 size="small"
                 color={showUnpaid ? "default" : "warning"}
                 variant={showUnpaid ? "filled" : "outlined"}
