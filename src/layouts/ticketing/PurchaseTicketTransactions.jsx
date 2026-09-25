@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import moment from "moment";
 import MDTypography from "components/MDTypography";
-import { Card, CardContent, IconButton } from '@mui/material';
+import { Card, CardContent, IconButton, Chip } from '@mui/material';
 import DataTable from "examples/Tables/DataTable";
 import useAxios from "hooks/useAxios";
 import { Link } from 'react-router-dom';
@@ -14,6 +14,7 @@ import axios from 'axios';
 // Variable Global
 import { API_BASE_URL } from '../../config';
 import StateMessage from "examples/StateMessage";
+import { isUnpaidPurchase } from "utils/purchaseStatus";
 
 const RefreshButtonContainer = styled("div")(({ theme }) => ({
   display: "flex",
@@ -34,6 +35,9 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  // Las órdenes se crean antes de pagar. Por defecto se muestran solo las
+  // pagadas, para que un intento abandonado no se vea como una venta.
+  const [showUnpaid, setShowUnpaid] = useState(false);
 
   // Mueve la lógica de la llamada a una función separada
   const fetchData = useCallback(async () => {
@@ -68,6 +72,9 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     { Header: "Tickets", accessor: "n_tickets", align: "center" },
     { Header: "Observaciones", accessor: "observations", align: "center" },
     { Header: "Precarga", accessor: "precharge", align: "center" },
+    // "Pendiente" y "fallida" no son lo mismo: la primera puede todavia
+    // completarse, la segunda ya se sabe que no se cobro.
+    ...(showUnpaid ? [{ Header: "Estado", accessor: "state", align: "center" }] : []),
   ];
 
   if (loading) return <StateMessage state="loading" message="Cargando transacciones…" />;
@@ -78,13 +85,17 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     return attender ? attender.full_name : id;
   };
 
+  const isUnpaid = (t) => isUnpaidPurchase(t.purchase_ticket);
+  const unpaidCount = transactions.filter(isUnpaid).length;
+  const visibleTransactions = transactions.filter((t) => (showUnpaid ? isUnpaid(t) : !isUnpaid(t)));
+
   transactions.sort((a, b) => {
     const dateA = new Date(a.purchase_ticket.__createdtime__);
     const dateB = new Date(b.purchase_ticket.__createdtime__);
     return dateB - dateA;
   });
 
-  const rows = transactions.map((transaction) => ({
+  const rows = visibleTransactions.map((transaction) => ({
     date: (
       <MDTypography variant="caption" fontWeight="medium" style={{ color: 'inherit' }}>
         {moment(transaction.purchase_ticket.__createdtime__).format("DD MMM YYYY HH:mm")}
@@ -118,15 +129,35 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
         {transaction.purchase_ticket.precharge_amount}
       </MDTypography>
     ),
+    state: (
+      <Chip
+        label={transaction.purchase_ticket?.status === "error" ? "Fallida" : "Pendiente"}
+        size="small"
+        color={transaction.purchase_ticket?.status === "error" ? "default" : "warning"}
+        variant="outlined"
+      />
+    ),
   }));
 
   return (
     <Card>
       <CardContent>
         <RefreshButtonContainer>
-          <MDTypography color="dark" fontWeight="bold" component="div" align="left" style={{ fontSize: "1rem" }} >
-            Historial de ordenes
-          </MDTypography>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <MDTypography color="dark" fontWeight="bold" component="div" align="left" style={{ fontSize: "1rem" }} >
+              {showUnpaid ? "Ordenes no pagadas" : "Historial de ordenes"}
+            </MDTypography>
+            {(unpaidCount > 0 || showUnpaid) && (
+              <Chip
+                label={showUnpaid ? "Ver pagadas" : `Ver no pagadas (${unpaidCount})`}
+                size="small"
+                color={showUnpaid ? "default" : "warning"}
+                variant={showUnpaid ? "filled" : "outlined"}
+                onClick={() => setShowUnpaid((v) => !v)}
+                style={{ cursor: "pointer" }}
+              />
+            )}
+          </div>
           <div style={{ display: "flex", alignItems: "center" }}>
             <IconButton className='custom-btn-icon' onClick={handleRefresh} aria-label="refresh">
               <RefreshIcon style={{ margin: "0px 10px", cursor:"pointer"}} fontSize="medium" />
