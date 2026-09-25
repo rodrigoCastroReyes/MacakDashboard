@@ -24,6 +24,7 @@ import { downloadAttendeesAsCSV } from "./utils/AttendeesList";
 
 // URL
 import { API_BASE_URL } from "config";
+import { isUnpaidPurchase } from "utils/purchaseStatus";
 
 const ClientList = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,8 +32,27 @@ const ClientList = () => {
   const { data, loading, error } = useAxios(
     `${API_BASE_URL}/purchase_ticket/attender_event?id=${eventId}`
   );
+  // El endpoint de arriba devuelve a cualquiera con una orden del evento,
+  // incluso si nunca la pago: las ordenes se crean antes de cobrar. Con las
+  // compras se sabe quien pago de verdad.
+  const { data: purchases } = useAxios(
+    `${API_BASE_URL}/purchase_ticket/event?id=${eventId}`
+  );
 
-  const attendeesList = useMemo(() => data || [], [data]);
+  const paidAttenderIds = useMemo(() => {
+    const ids = new Set();
+    for (const row of purchases || []) {
+      if (!isUnpaidPurchase(row?.purchase_ticket)) {
+        ids.add(row?.purchase_ticket?.attender_id);
+      }
+    }
+    return ids;
+  }, [purchases]);
+
+  const attendeesList = useMemo(
+    () => (data || []).filter((attender) => paidAttenderIds.has(attender._id)),
+    [data, paidAttenderIds]
+  );
 
   const filteredAttendees = useMemo(() => {
     const lowerSearch = searchTerm.toLowerCase();

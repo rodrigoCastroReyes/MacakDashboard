@@ -4,7 +4,6 @@ import {
   Box,
   Grid,
   Card,
-  Chip,
   Typography,
   IconButton,
   CircularProgress,
@@ -94,16 +93,13 @@ const AttenderOrderTable = ({ purchase_tickets, onRefresh, loading }) => {
             align="center"
           >
             {`${item.ticket_name} ${item.quantity}x`}
-            {isUnpaidPurchase(ticket) && (
-              <Chip label="Pendiente" size="small" color="warning" variant="outlined" sx={{ ml: 1 }} />
-            )}
           </MDTypography>
         ),
         amount: (
           <MDTypography
             fontSize="12px"
             variant="caption"
-            color={isUnpaidPurchase(ticket) ? "text" : "success"}
+            color="success"
             fontWeight="bold"
             align="center"
           >
@@ -278,7 +274,11 @@ const AttendeeDetails = () => {
     );
   }
 
-  const { attender, purchase_tickets = [] } = attenderData;
+  // Solo las compras pagadas: las abandonadas no son ordenes de esta persona.
+  const { attender, purchase_tickets: all_purchase_tickets = [] } = attenderData;
+  const purchase_tickets = all_purchase_tickets.filter(
+    (ticket) => !isUnpaidPurchase(ticket)
+  );
 
   const handleRefresh = async () => {
     await Promise.all([refetchAttender(), refetchTokens()]);
