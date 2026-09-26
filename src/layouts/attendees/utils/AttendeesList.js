@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "config";
+import { isUnpaidPurchase } from "utils/purchaseStatus";
 
 export async function downloadAttendeesAsCSV(eventId) {
   try {
@@ -15,7 +16,7 @@ export async function downloadAttendeesAsCSV(eventId) {
       "Tokens Registrados",
     ];
 
-    const rows = await Promise.all(
+    const rowsWithEmpties = await Promise.all(
       attendees.map(async (attendee) => {
         const { _id, full_name, id_document, email } = attendee;
 
@@ -24,10 +25,19 @@ export async function downloadAttendeesAsCSV(eventId) {
         );
         const ticketData = await ticketRes.json();
 
-        const ticketCount =
-          ticketData.purchase_tickets?.reduce((acc, ticket) => {
-            return acc + (ticket.purchase_ticket_items?.length || 0);
-          }, 0) || 0;
+        // Solo compras pagadas: las ordenes se crean antes de cobrar, asi que
+        // contar todas inflaria los boletos de quien abandono el pago.
+        const paidPurchases = (ticketData.purchase_tickets || []).filter(
+          (ticket) => !isUnpaidPurchase(ticket)
+        );
+        if (paidPurchases.length === 0) {
+          return null;
+        }
+
+        const ticketCount = paidPurchases.reduce(
+          (acc, ticket) => acc + (ticket.purchase_ticket_items?.length || 0),
+          0
+        );
 
         const tokenRes = await fetch(
           `${API_BASE_URL}/token/by_attender_event?attender_id=${_id}&event_id=${eventId}`
@@ -38,6 +48,9 @@ export async function downloadAttendeesAsCSV(eventId) {
         return [full_name, id_document, email, ticketCount, tokenCount];
       })
     );
+
+    // Fuera quienes no llegaron a pagar ninguna compra.
+    const rows = rowsWithEmpties.filter(Boolean);
 
     const csvContent = [
       headers.join(","),
