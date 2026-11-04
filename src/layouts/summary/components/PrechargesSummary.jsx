@@ -157,9 +157,7 @@ function PrechargesRows({ rows }) {
                 {formatCurrency(row.total_precharged)}
               </MDTypography>
 
-              <MDTypography variant="caption" color="text" sx={{ whiteSpace: "nowrap" }}>
-                {row.assigned_tokens || "Ninguno"}
-              </MDTypography>
+              <AssignedTokens value={row.assigned_tokens} />
 
               <MDBox>
                 <MDBox
@@ -190,6 +188,43 @@ function PrechargesRows({ rows }) {
 
 PrechargesRows.propTypes = {
   rows: PropTypes.array.isRequired,
+};
+
+// El backend manda los nombres de las pulseras unidos por coma. Con varias, la
+// lista en una sola línea invadía la columna Estado: se muestra la cantidad y
+// la lista completa queda en el tooltip.
+function AssignedTokens({ value }) {
+  const names = !value || value === "Ninguno"
+    ? []
+    : value.split(",").map((n) => n.trim()).filter(Boolean);
+
+  if (names.length === 0) {
+    return (
+      <MDTypography variant="caption" color="text">
+        Ninguno
+      </MDTypography>
+    );
+  }
+
+  return (
+    <MDBox minWidth={0} title={names.join(", ")}>
+      <MDTypography variant="caption" fontWeight="semiBold" color="dark" display="block">
+        {names.length} {names.length === 1 ? "pulsera" : "pulseras"}
+      </MDTypography>
+      <MDTypography
+        variant="caption"
+        color="text"
+        display="block"
+        sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+      >
+        {names.join(", ")}
+      </MDTypography>
+    </MDBox>
+  );
+}
+
+AssignedTokens.propTypes = {
+  value: PropTypes.string,
 };
 
 export default PrechargesSummary;

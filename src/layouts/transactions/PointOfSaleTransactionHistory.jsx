@@ -29,6 +29,8 @@ import UnitsPerHourAndProduct from "layouts/reports/components/UnitsPerHourAndPr
 import SalesByHourAndProductHeatmap from "layouts/reports/components/SalesByHourAndProductHeatmap";
 import StoreHero from "layouts/reports/components/StoreHero";
 import OrdersList from "layouts/reports/components/OrdersList";
+import SalesByVendor from "layouts/reports/components/SalesByVendor";
+import { downloadCsv } from "utils/csv";
 import { API_BASE_URL } from '../../config';
 
 
@@ -40,6 +42,10 @@ function PointOfSaleTransactionHistory() {
 
   const [refreshToken, setRefreshToken] = useState(0);
   const [activeTab, setActiveTab] = useState(0); // 0: Resumen de ventas · 1: Órdenes
+  const [exportingCsv, setExportingCsv] = useState(false);
+  // Vista del resumen: "store" (toda la tienda) o "vendors" (por vendedor).
+  // El PDF y el CSV exportan la vista elegida.
+  const [summaryView, setSummaryView] = useState("store");
 
   const { data, loading, error, refetch } = useAxios(
     `${API_BASE_URL}/dashboard/store?store_id=${id}`
@@ -82,14 +88,20 @@ function PointOfSaleTransactionHistory() {
     const pdfHeight = pdf.internal.pageSize.getHeight();
     const contentW = pdfWidth - MARGIN * 2;
 
-    // IDs de las secciones a capturar en orden
-    const sections = [
-      "section-hero",
-      "section-products",
-      "section-sales-hour",
-      "section-units-hour",
-      "section-sales-hour-product",
-    ];
+    // IDs de las secciones a capturar en orden. En la vista por vendedor hay
+    // una sección por vendedor, así que se leen del DOM.
+    const sections = summaryView === "vendors"
+      ? [
+          "section-vendors-summary",
+          ...[...document.querySelectorAll('[id^="section-vendor-"]')].map((el) => el.id),
+        ]
+      : [
+          "section-hero",
+          "section-products",
+          "section-sales-hour",
+          "section-units-hour",
+          "section-sales-hour-product",
+        ];
 
     const addHeader = (isFirst, storeName) => {
       if (isFirst) {
@@ -206,6 +218,99 @@ function PointOfSaleTransactionHistory() {
     pdf.save(`Reporte_${data?.store?.name || 'tienda'}_${new Date().toLocaleDateString('es-EC')}.pdf`);
   };
 
+  // CSV de ventas por producto: cantidad total vendida y monto total de cada
+  // producto. Une los mismos dos endpoints de los gráficos de "Ventas por
+  // producto" (mismas órdenes: exitosas y no anuladas), pedidos en el momento
+  // para no exportar datos de la caché.
+  const handleExportCsv = async () => {
+    if (summaryView === "vendors") {
+      handleExportVendorsCsv();
+      return;
+    }
+    setExportingCsv(true);
+    try {
+      const [qtyRes, valueRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/dashboard/sold_products?store_id=${id}`),
+        fetch(`${API_BASE_URL}/dashboard/total_per_product?store_id=${id}`),
+      ]);
+      if (!qtyRes.ok || !valueRes.ok) throw new Error("No se pudieron obtener las ventas");
+      const quantities = (await qtyRes.json())?.report || [];
+      const values = (await valueRes.json())?.report || [];
+
+      const byProduct = new Map();
+      const entry = (productId, description) => {
+        if (!byProduct.has(productId)) {
+          byProduct.set(productId, { description: null, quantity: 0, value: 0 });
+        }
+        const item = byProduct.get(productId);
+        if (!item.description && description) item.description = description;
+        return item;
+      };
+      quantities.forEach((p) => { entry(p.product_id, p.description).quantity += Number(p.quantity) || 0; });
+      values.forEach((p) => { entry(p.product_id, p.description).value += Number(p.value) || 0; });
+
+      const items = [...byProduct.values()].sort((a, b) => b.value - a.value);
+      const money = (n) => (Math.round(n * 100) / 100).toFixed(2);
+      const rows = items.map((p) => [
+        // Un producto borrado después de vender sigue contando en el dinero.
+        p.description || "Producto eliminado",
+        p.quantity,
+        money(p.value),
+      ]);
+      rows.push([
+        "TOTAL",
+        items.reduce((acc, p) => acc + p.quantity, 0),
+        money(items.reduce((acc, p) => acc + p.value, 0)),
+      ]);
+
+      const store = (data?.store?.name || "tienda").replace(/[\\/:*?"<>|]/g, "_");
+      downloadCsv(
+        `Ventas_por_producto_${store}_${moment().format("YYYYMMDD_HHmmss")}.csv`,
+        ["Producto", "Items vendidos", "Ventas totales"],
+        rows
+      );
+    } catch (e) {
+      console.error("Error al exportar CSV:", e);
+      alert("No se pudo generar el CSV de ventas por producto.");
+    } finally {
+      setExportingCsv(false);
+    }
+  };
+
+  // CSV por vendedor: cada vendedor con sus productos, su subtotal y, al final,
+  // el total de la tienda. Pedido en el momento, igual que el CSV por producto.
+  const handleExportVendorsCsv = async () => {
+    setExportingCsv(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/dashboard/sales_by_vendor?store_id=${id}`);
+      if (!res.ok) throw new Error("No se pudieron obtener las ventas por vendedor");
+      const report = await res.json();
+
+      const money = (n) => (Math.round(n * 100) / 100).toFixed(2);
+      const rows = [];
+      (report.vendors || []).forEach((vendor) => {
+        const name = vendor.username || "Vendedor sin nombre";
+        vendor.products.forEach((p) => {
+          rows.push([name, p.description || "Producto eliminado", p.quantity, money(p.value)]);
+        });
+        rows.push([name, `SUBTOTAL ${name} (${vendor.orders} órdenes)`, vendor.items, money(vendor.total)]);
+      });
+      rows.push(["TOTAL TIENDA", `${report.orders || 0} órdenes`, report.items || 0, money(report.total || 0)]);
+
+      const store = (data?.store?.name || "tienda").replace(/[\\/:*?"<>|]/g, "_");
+      downloadCsv(
+        `Ventas_por_vendedor_${store}_${moment().format("YYYYMMDD_HHmmss")}.csv`,
+        ["Vendedor", "Producto", "Items vendidos", "Ventas totales"],
+        rows
+      );
+    } catch (e) {
+      console.error("Error al exportar CSV:", e);
+      alert("No se pudo generar el CSV de ventas por vendedor.");
+    } finally {
+      setExportingCsv(false);
+    }
+  };
+
   const handleStoreChange = (_, newStore) => {
     if (newStore) {
       localStorage.setItem("selectedStoreId", newStore._id);
@@ -286,7 +391,29 @@ function PointOfSaleTransactionHistory() {
             noOptionsText="No se encontraron tiendas"
           />
 
-          <MDBox ml="auto">
+          <MDBox ml="auto" display="flex" gap={1}>
+            {activeTab === 0 && (
+              <Tooltip
+                title={
+                  summaryView === "vendors"
+                    ? "Productos, cantidad y monto vendido por cada vendedor"
+                    : "Cantidad y monto total vendido de cada producto"
+                }
+              >
+                <span>
+                  <MDButton
+                    variant="outlined"
+                    color="info"
+                    size="small"
+                    onClick={handleExportCsv}
+                    disabled={exportingCsv}
+                    startIcon={<Icon>download</Icon>}
+                  >
+                    {exportingCsv ? "Generando…" : "CSV"}
+                  </MDButton>
+                </span>
+              </Tooltip>
+            )}
             <MDButton
               variant="outlined"
               color="info"
@@ -299,19 +426,34 @@ function PointOfSaleTransactionHistory() {
           </MDBox>
         </MDBox>
 
-        <Tabs
-          value={activeTab}
-          onChange={(_, v) => setActiveTab(v)}
-          sx={{ maxWidth: 360, mb: 3 }}
-        >
-          <Tab label="Resumen de ventas" />
-          <Tab label="Órdenes" />
-        </Tabs>
+        <MDBox display="flex" alignItems="center" gap={2} flexWrap="wrap" mb={3}>
+          <Tabs
+            value={activeTab}
+            onChange={(_, v) => setActiveTab(v)}
+            sx={{ width: 360, maxWidth: "100%" }}
+          >
+            <Tab label="Resumen de ventas" />
+            <Tab label="Órdenes" />
+          </Tabs>
+
+          {/* Mismo control que las pestañas de la izquierda, alineado a la derecha. */}
+          {activeTab === 0 && (
+            <Tabs
+              value={summaryView}
+              onChange={(_, v) => setSummaryView(v)}
+              aria-label="Vista del resumen"
+              sx={{ width: 320, maxWidth: "100%", ml: "auto" }}
+            >
+              <Tab value="store" label="Toda la tienda" />
+              <Tab value="vendors" label="Por vendedor" />
+            </Tabs>
+          )}
+        </MDBox>
 
         {/* El resumen se mantiene montado y solo se oculta con CSS: así sus hijos
             no se vuelven a pedir al cambiar de pestaña y el PDF sigue capturando
             sus secciones por id. Las Órdenes se montan bajo demanda. */}
-        <MDBox sx={{ display: activeTab === 0 ? "block" : "none" }}>
+        <MDBox sx={{ display: activeTab === 0 && summaryView === "store" ? "block" : "none" }}>
         {/* Contenido del PDF */}
         <div>
           <div id="section-hero">
@@ -358,6 +500,11 @@ function PointOfSaleTransactionHistory() {
           </div>
         </div>
         </MDBox>
+
+        {/* Se monta al elegir la vista: solo entonces se pide el endpoint. */}
+        {activeTab === 0 && summaryView === "vendors" && (
+          <SalesByVendor id_store={id} refreshToken={refreshToken} />
+        )}
 
         {activeTab === 1 && (
           <OrdersList id_store={id} refreshToken={refreshToken} />
