@@ -18,7 +18,8 @@ function QuantitySoldByTicket({ data }) {
       </div>
     );
 
-  const topThreeTickets = data.slice(0, 3);
+  // Antes se mostraban solo las 3 primeras: con una cuarta localidad (p. ej.
+  // VENTA INDIVIDUAL) su cupo sumaba en el total pero no tenía gráfico.
 
   return (
     <Card
@@ -34,9 +35,10 @@ function QuantitySoldByTicket({ data }) {
         </MDTypography>
       </MDBox>
       <Grid container spacing={2} justifyContent="center" alignItems="stretch">
-        {topThreeTickets.map((ticket, index) => {
+        {data.map((ticket, index) => {
           const sold = ticket.sold_quantity;
-          const available = ticket.max_quantity - ticket.sold_quantity;
+          // Si se vendió más que el cupo, el disponible negativo rompía la dona.
+          const available = Math.max(0, ticket.max_quantity - ticket.sold_quantity);
 
           const chartData = {
             labels: ["Vendidos", "Disponibles"],

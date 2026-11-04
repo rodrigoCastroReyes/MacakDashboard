@@ -6,12 +6,15 @@
  * guardado como una orden más: sin este filtro, el dashboard lo mostraba y lo
  * sumaba como si fuera una venta.
  *
- * Sin pagar = "pending" o "error". Ojo: NO es "distinto de completed". Las
- * órdenes anteriores a que existiera el campo tienen estado nulo y son ventas
- * reales (por ejemplo, las 948 del Oktoberfest 2025), así que cuentan como
- * pagadas.
+ * Sin pagar = "pending", "error" o "annulled". Una orden anulada por el
+ * personal sí se cobró en su momento, pero el dinero se devuelve a mano en
+ * PayPhone y sus boletos ya no valen, así que tampoco es una venta.
+ *
+ * Ojo: NO es "distinto de completed". Las órdenes anteriores a que existiera el
+ * campo tienen estado nulo y son ventas reales (por ejemplo, las 948 del
+ * Oktoberfest 2025), así que cuentan como pagadas.
  */
-export const UNPAID_STATUSES = ["pending", "error"];
+export const UNPAID_STATUSES = ["pending", "error", "annulled"];
 
 /** true si la orden no llegó a pagarse. Recibe el purchase_ticket. */
 export const isUnpaidPurchase = (purchaseTicket) =>

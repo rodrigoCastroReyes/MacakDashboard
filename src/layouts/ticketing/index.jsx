@@ -54,7 +54,7 @@ const Ticketing = () => {
                 Authorization: jwtToken,
               },
             }),
-            axios.get(`${API_BASE_URL}/purchase_ticket/event?id=${eventId}`),
+            axios.get(`${API_BASE_URL}/purchase_ticket/event/completed?id=${eventId}`),
           ]);
 
           // Los vendidos se cuentan desde las órdenes pagadas y no desde
