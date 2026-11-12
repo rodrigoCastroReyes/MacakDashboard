@@ -20,7 +20,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 
 import useAxios from "hooks/useAxios";
 
-import { downloadAttendeesAsCSV } from "./utils/AttendeesList";
+import { downloadAttendeesAsExcel } from "./utils/AttendeesList";
 
 // URL
 import { API_BASE_URL } from "config";
@@ -107,7 +107,7 @@ const ClientList = () => {
               <RefreshIcon fontSize="medium" />
             </IconButton>
             <IconButton
-              onClick={() => downloadAttendeesAsCSV(eventId)}
+              onClick={() => downloadAttendeesAsExcel(eventId)}
               sx={{ ml: 2 }}
               title="Descargar Lista de Asistentes"
             >

@@ -1,7 +1,8 @@
 import { API_BASE_URL } from "config";
 import { isUnpaidPurchase } from "utils/purchaseStatus";
+import { downloadExcel } from "utils/excel";
 
-export async function downloadAttendeesAsCSV(eventId) {
+export async function downloadAttendeesAsExcel(eventId) {
   try {
     const res = await fetch(
       `${API_BASE_URL}/purchase_ticket/attender_event?id=${eventId}`
@@ -52,23 +53,15 @@ export async function downloadAttendeesAsCSV(eventId) {
     // Fuera quienes no llegaron a pagar ninguna compra.
     const rows = rowsWithEmpties.filter(Boolean);
 
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) => row.map((val) => `"${val}"`).join(",")),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
     const today = new Date().toISOString().split("T")[0]; // formato YYYY-MM-DD
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `ListaAsistentes_${today}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    downloadExcel(
+      `ListaAsistentes_${today}.xlsx`,
+      headers,
+      rows,
+      "Asistentes"
+    );
   } catch (error) {
     console.error("Error al descargar los datos:", error);
-    alert("Ocurrió un error al generar el archivo CSV.");
+    alert("Ocurrió un error al generar el archivo Excel.");
   }
 }
