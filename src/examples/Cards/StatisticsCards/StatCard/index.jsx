@@ -10,9 +10,18 @@ import MDTypography from "components/MDTypography";
  * Tarjeta de métrica: etiqueta arriba, cifra grande y pie opcional.
  * El icono es opcional y el pie admite un nodo (por ejemplo, una píldora).
  */
-function StatCard({ icon, label, value, caption, color = "info", valueColor = "dark", valueVariant = "h3" }) {
+function StatCard({ icon, label, value, caption, color = "info", valueColor = "dark", valueVariant = "h3", highlight = false }) {
   return (
-    <Card sx={{ height: "100%" }}>
+    <Card
+      sx={({ palette }) => ({
+        height: "100%",
+        // Resaltada: borde y fondo suave del color de la tarjeta.
+        ...(highlight && {
+          border: `1px solid ${palette[color].main}`,
+          backgroundColor: "rgba(0, 83, 209, 0.04)",
+        }),
+      })}
+    >
       <MDBox p={2.5}>
         <MDBox display="flex" alignItems="center" gap={1} mb={1.25}>
           {icon && (
@@ -66,6 +75,7 @@ StatCard.propTypes = {
   color: PropTypes.string,
   valueColor: PropTypes.string,
   valueVariant: PropTypes.string,
+  highlight: PropTypes.bool,
 };
 
 export default StatCard;

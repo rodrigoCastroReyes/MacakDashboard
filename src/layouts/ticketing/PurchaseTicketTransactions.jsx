@@ -41,7 +41,7 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     try {
       setLoading(true);
       const [transRes, attendersRes] = await Promise.all([
-        axios.get(`${API_BASE_URL}/purchase_ticket/event?id=${id_event}`),
+        axios.get(`${API_BASE_URL}/purchase_ticket/event/completed?id=${id_event}`),
         axios.get(`${API_BASE_URL}/purchase_ticket/attender_event?id=${id_event}`)
       ]);
       setTransactions(transRes.data);

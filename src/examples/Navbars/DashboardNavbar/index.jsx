@@ -10,6 +10,9 @@ import Icon from "@mui/material/Icon";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogActions from "@mui/material/DialogActions";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
 
 // Componentes del dashboard
 import MDBox from "components/MDBox";
@@ -45,6 +48,7 @@ function DashboardNavbar({ absolute = false, light = false, isMini = false, main
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
 
   useEffect(() => {
     if (fixedNavbar) {
@@ -162,27 +166,54 @@ function DashboardNavbar({ absolute = false, light = false, isMini = false, main
                   </MDButton>
                 )}
 
-                <MDButton
-                  variant="gradient"
-                  color="info"
-                  size="small"
-                  onClick={() => setOpenDialog(true)}
-                  startIcon={<Icon>logout</Icon>}
-                >
-                  Cerrar sesión
-                </MDButton>
-
+                {/* Cerrar sesión no es la acción principal de ninguna pantalla:
+                    va dentro del menú, junto con contraer el menú lateral. */}
                 <IconButton
                   size="large"
                   disableRipple
                   color="inherit"
                   sx={navbarMobileMenu}
-                  onClick={handleMiniSidenav}
+                  onClick={(e) => setMenuAnchor(e.currentTarget)}
+                  aria-label="Menú"
+                  aria-haspopup="true"
                 >
                   <Icon sx={iconsStyle} fontSize="medium">
-                    {miniSidenav ? "menu_open" : "menu"}
+                    menu
                   </Icon>
                 </IconButton>
+                <Menu
+                  anchorEl={menuAnchor}
+                  open={Boolean(menuAnchor)}
+                  onClose={() => setMenuAnchor(null)}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  transformOrigin={{ vertical: "top", horizontal: "right" }}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      setMenuAnchor(null);
+                      handleMiniSidenav();
+                    }}
+                  >
+                    <ListItemIcon>
+                      <Icon fontSize="small">{miniSidenav ? "menu_open" : "menu"}</Icon>
+                    </ListItemIcon>
+                    {miniSidenav ? "Expandir menú lateral" : "Contraer menú lateral"}
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setMenuAnchor(null);
+                      setOpenDialog(true);
+                    }}
+                    sx={{ color: "error.main" }}
+                  >
+                    <ListItemIcon>
+                      <Icon fontSize="small" color="error">
+                        logout
+                      </Icon>
+                    </ListItemIcon>
+                    Cerrar sesión
+                  </MenuItem>
+                </Menu>
               </MDBox>
             </MDBox>
           )}

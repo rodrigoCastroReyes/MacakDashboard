@@ -90,11 +90,11 @@ const routes = [
     route: "/transaccion/:id",
     component: <PointOfSaleTransactionHistory />,
   },
-  // "Transacciones" queda fuera del menú: hoy no muestra nada. La pantalla pide
-  // /dashboard/event y luego exige `data.event_id` en la respuesta, que ese
-  // endpoint no devuelve, así que siempre cae en el mensaje de error.
-  // Para reactivarla hay que descomentar también su import y el de
-  // AttachMoneySharpIcon.
+  // "Transacciones" queda fuera del menú: /dashboard/event hace una consulta por
+  // pulsera y pagina por pulsera, no por evento. Con un evento grande tarda
+  // decenas de segundos y ya ha llegado a tumbar el servidor; además, con
+  // page=1 muestra las transacciones 21-40 de cada pulsera, no las últimas.
+  // Antes de reactivarla hay que paginar el endpoint sobre todo el evento.
   // {
   //   type: "collapse",
   //   name: "Transacciones",
