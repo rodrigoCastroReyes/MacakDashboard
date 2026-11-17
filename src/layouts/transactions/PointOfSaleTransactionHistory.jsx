@@ -19,7 +19,7 @@ import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import useAxios from "hooks/useAxios";
-import { toPng } from "html-to-image";
+import { toJpeg } from "html-to-image";
 import jsPDF from "jspdf";
 import "./styles.css";
 import SalesPerProduct from "layouts/reports/components/SalesPerProduct";
@@ -30,7 +30,7 @@ import SalesByHourAndProductHeatmap from "layouts/reports/components/SalesByHour
 import StoreHero from "layouts/reports/components/StoreHero";
 import OrdersList from "layouts/reports/components/OrdersList";
 import SalesByVendor from "layouts/reports/components/SalesByVendor";
-import { downloadCsv } from "utils/csv";
+import { downloadExcel } from "utils/excel";
 import { API_BASE_URL } from '../../config';
 
 
@@ -42,9 +42,9 @@ function PointOfSaleTransactionHistory() {
 
   const [refreshToken, setRefreshToken] = useState(0);
   const [activeTab, setActiveTab] = useState(0); // 0: Resumen de ventas · 1: Órdenes
-  const [exportingCsv, setExportingCsv] = useState(false);
+  const [exportingExcel, setExportingExcel] = useState(false);
   // Vista del resumen: "store" (toda la tienda) o "vendors" (por vendedor).
-  // El PDF y el CSV exportan la vista elegida.
+  // El PDF y el Excel exportan la vista elegida.
   const [summaryView, setSummaryView] = useState("store");
 
   const { data, loading, error, refetch } = useAxios(
@@ -78,6 +78,7 @@ function PointOfSaleTransactionHistory() {
       orientation: "portrait",
       unit: "mm",
       format: "a4",
+      compress: true,
     });
 
     const MARGIN = 12;
@@ -138,16 +139,21 @@ function PointOfSaleTransactionHistory() {
     // navegador, así que los espacios entre palabras se respetan y ya NO
     // hace falta el hack de letter-spacing/word-spacing de html2canvas.
     // pixelRatio: 2 equivale al antiguo scale: 2.
+    //
+    // Se captura a JPEG (no PNG): para gráficos y texto, el PNG sin pérdida
+    // generaba PDFs de varios MB. JPEG a calidad 0.85 (sobre fondo blanco, sin
+    // transparencia) reduce el peso ~5-15× manteniendo la nitidez a 2×.
     const imgOptions = {
       pixelRatio: 2,
+      quality: 0.85,
       backgroundColor: "#ffffff",
       cacheBust: true,
     };
 
-    // Captura un nodo a PNG y devuelve el dataURL + sus dimensiones reales en px,
-    // que necesitamos para calcular la altura al pasar a mm en el PDF.
+    // Captura un nodo a JPEG y devuelve el dataURL + sus dimensiones reales en
+    // px, que necesitamos para calcular la altura al pasar a mm en el PDF.
     const capture = async (el) => {
-      const dataUrl = await toPng(el, imgOptions);
+      const dataUrl = await toJpeg(el, imgOptions);
       const img = new Image();
       await new Promise((resolve, reject) => {
         img.onload = resolve;
@@ -163,7 +169,7 @@ function PointOfSaleTransactionHistory() {
     const firstEl = document.getElementById(sections[0]);
     if (firstEl) {
       try {
-        await toPng(firstEl, imgOptions);
+        await toJpeg(firstEl, imgOptions);
       } catch (e) {
         // ignorar: es solo para precargar recursos
       }
@@ -192,7 +198,7 @@ function PointOfSaleTransactionHistory() {
 
       while (remainingH > 0) {
         const availH = pdfHeight - currentY - FOOTER_H;
-        pdf.addImage(dataUrl, "PNG", MARGIN, currentY - sectionShown, contentW, imgHeight);
+        pdf.addImage(dataUrl, "JPEG", MARGIN, currentY - sectionShown, contentW, imgHeight);
 
         if (remainingH <= availH) {
           currentY += remainingH;
@@ -218,16 +224,16 @@ function PointOfSaleTransactionHistory() {
     pdf.save(`Reporte_${data?.store?.name || 'tienda'}_${new Date().toLocaleDateString('es-EC')}.pdf`);
   };
 
-  // CSV de ventas por producto: cantidad total vendida y monto total de cada
+  // Excel de ventas por producto: cantidad total vendida y monto total de cada
   // producto. Une los mismos dos endpoints de los gráficos de "Ventas por
   // producto" (mismas órdenes: exitosas y no anuladas), pedidos en el momento
   // para no exportar datos de la caché.
-  const handleExportCsv = async () => {
+  const handleExportExcel = async () => {
     if (summaryView === "vendors") {
-      handleExportVendorsCsv();
+      handleExportVendorsExcel();
       return;
     }
-    setExportingCsv(true);
+    setExportingExcel(true);
     try {
       const [qtyRes, valueRes] = await Promise.all([
         fetch(`${API_BASE_URL}/dashboard/sold_products?store_id=${id}`),
@@ -264,23 +270,24 @@ function PointOfSaleTransactionHistory() {
       ]);
 
       const store = (data?.store?.name || "tienda").replace(/[\\/:*?"<>|]/g, "_");
-      downloadCsv(
-        `Ventas_por_producto_${store}_${moment().format("YYYYMMDD_HHmmss")}.csv`,
+      downloadExcel(
+        `Ventas_por_producto_${store}_${moment().format("YYYYMMDD_HHmmss")}.xlsx`,
         ["Producto", "Items vendidos", "Ventas totales"],
-        rows
+        rows,
+        "Ventas por producto"
       );
     } catch (e) {
-      console.error("Error al exportar CSV:", e);
-      alert("No se pudo generar el CSV de ventas por producto.");
+      console.error("Error al exportar Excel:", e);
+      alert("No se pudo generar el Excel de ventas por producto.");
     } finally {
-      setExportingCsv(false);
+      setExportingExcel(false);
     }
   };
 
-  // CSV por vendedor: cada vendedor con sus productos, su subtotal y, al final,
-  // el total de la tienda. Pedido en el momento, igual que el CSV por producto.
-  const handleExportVendorsCsv = async () => {
-    setExportingCsv(true);
+  // Excel por vendedor: cada vendedor con sus productos, su subtotal y, al
+  // final, el total de la tienda. Pedido en el momento, igual que el de producto.
+  const handleExportVendorsExcel = async () => {
+    setExportingExcel(true);
     try {
       const res = await fetch(`${API_BASE_URL}/dashboard/sales_by_vendor?store_id=${id}`);
       if (!res.ok) throw new Error("No se pudieron obtener las ventas por vendedor");
@@ -298,16 +305,17 @@ function PointOfSaleTransactionHistory() {
       rows.push(["TOTAL TIENDA", `${report.orders || 0} órdenes`, report.items || 0, money(report.total || 0)]);
 
       const store = (data?.store?.name || "tienda").replace(/[\\/:*?"<>|]/g, "_");
-      downloadCsv(
-        `Ventas_por_vendedor_${store}_${moment().format("YYYYMMDD_HHmmss")}.csv`,
+      downloadExcel(
+        `Ventas_por_vendedor_${store}_${moment().format("YYYYMMDD_HHmmss")}.xlsx`,
         ["Vendedor", "Producto", "Items vendidos", "Ventas totales"],
-        rows
+        rows,
+        "Ventas por vendedor"
       );
     } catch (e) {
-      console.error("Error al exportar CSV:", e);
-      alert("No se pudo generar el CSV de ventas por vendedor.");
+      console.error("Error al exportar Excel:", e);
+      alert("No se pudo generar el Excel de ventas por vendedor.");
     } finally {
-      setExportingCsv(false);
+      setExportingExcel(false);
     }
   };
 
@@ -405,11 +413,11 @@ function PointOfSaleTransactionHistory() {
                     variant="outlined"
                     color="info"
                     size="small"
-                    onClick={handleExportCsv}
-                    disabled={exportingCsv}
+                    onClick={handleExportExcel}
+                    disabled={exportingExcel}
                     startIcon={<Icon>download</Icon>}
                   >
-                    {exportingCsv ? "Generando…" : "CSV"}
+                    {exportingExcel ? "Generando…" : "Excel"}
                   </MDButton>
                 </span>
               </Tooltip>

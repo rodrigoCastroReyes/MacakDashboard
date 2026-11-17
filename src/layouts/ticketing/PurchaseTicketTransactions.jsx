@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import moment from "moment";
 import MDTypography from "components/MDTypography";
@@ -62,71 +62,89 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
     setRefreshKey(oldKey => oldKey + 1);
   };
 
-  const columns = [
-    { Header: "Fecha", accessor: "date", align: "center" },
-    { Header: "Asistente", accessor: "assistant", align: "center" },
-    { Header: "Monto", accessor: "amount", align: "center" },
-    { Header: "Tickets", accessor: "n_tickets", align: "center" },
-    { Header: "Observaciones", accessor: "observations", align: "center" },
-    { Header: "Precarga", accessor: "precharge", align: "center" },
-  ];
+  // Memoizadas para que su identidad sea estable entre renders. DataTable
+  // (react-table v7) reprocesa toda la tabla cuando cambia la referencia de
+  // `columns`/`data`; con más de mil filas cuyos valores de celda son elementos
+  // React, recrearlas en cada render disparaba ese reproceso una y otra vez y
+  // congelaba la vista (un evento con ~1000 compras colgaba /boleteria).
+  const columns = useMemo(
+    () => [
+      { Header: "Fecha", accessor: "date", align: "center" },
+      { Header: "Asistente", accessor: "assistant", align: "center" },
+      { Header: "Monto", accessor: "amount", align: "center" },
+      { Header: "Tickets", accessor: "n_tickets", align: "center" },
+      { Header: "Observaciones", accessor: "observations", align: "center" },
+      { Header: "Precarga", accessor: "precharge", align: "center" },
+    ],
+    []
+  );
+
+  // Nombre del asistente por id en O(1): antes era un `find` por fila, que con
+  // miles de compras y asistentes se volvía O(n·m).
+  const attenderNameById = useMemo(() => {
+    const map = new Map();
+    attenders.forEach((a) => map.set(a._id, a.full_name));
+    return map;
+  }, [attenders]);
+
+  const rows = useMemo(() => {
+    // Las ordenes se crean antes de pagar, asi que un intento abandonado queda
+    // guardado como una orden mas. Aqui se muestran solo las pagadas: una compra
+    // que nadie pago no es una venta. Se copia antes de ordenar porque
+    // `transactions` es estado y no debe mutarse en render.
+    const visibleTransactions = transactions
+      .filter((t) => !isUnpaidPurchase(t.purchase_ticket))
+      .slice()
+      .sort(
+        (a, b) =>
+          new Date(b.purchase_ticket.__createdtime__) -
+          new Date(a.purchase_ticket.__createdtime__)
+      );
+
+    return visibleTransactions.map((transaction) => ({
+      date: (
+        <MDTypography variant="caption" fontWeight="medium" style={{ color: 'inherit' }}>
+          {moment(transaction.purchase_ticket.__createdtime__).format("DD MMM YYYY HH:mm")}
+        </MDTypography>
+      ),
+      assistant: (
+        <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
+          {attenderNameById.get(transaction.purchase_ticket.attender_id) ||
+            transaction.purchase_ticket.attender_id}
+        </MDTypography>
+      ),
+      amount: (
+        <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
+          <Link className="custom-link" to={`/orden_boleteria/${transaction.purchase_ticket._id}`}>
+            {"$"}
+            {transaction.purchase_ticket.total_amount}{" "}
+          </Link>
+        </MDTypography>
+      ),
+      n_tickets: (
+        <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
+          {transaction.purchase_ticket_items?.length}{" "}
+        </MDTypography>
+      ),
+      observations: (
+        <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
+          {transaction.purchase_ticket?.observation}{" "}
+        </MDTypography>
+      ),
+      precharge: (
+        <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
+          {transaction.purchase_ticket.precharge_amount}
+        </MDTypography>
+      ),
+    }));
+  }, [transactions, attenderNameById]);
+
+  // Identidad estable del prop `table`: DataTable lo usa como dependencia de
+  // sus propios useMemo internos.
+  const tableData = useMemo(() => ({ columns, rows }), [columns, rows]);
 
   if (loading) return <StateMessage state="loading" message="Cargando transacciones…" />;
   if (error) return <StateMessage state="error" />;
-
-  const getFullName = (id) => {
-    const attender = attenders.find((a) => a._id === id);
-    return attender ? attender.full_name : id;
-  };
-
-  // Las ordenes se crean antes de pagar, asi que un intento abandonado queda
-  // guardado como una orden mas. Aqui se muestran solo las pagadas: una compra
-  // que nadie pago no es una venta.
-  const visibleTransactions = transactions.filter(
-    (t) => !isUnpaidPurchase(t.purchase_ticket)
-  );
-
-  transactions.sort((a, b) => {
-    const dateA = new Date(a.purchase_ticket.__createdtime__);
-    const dateB = new Date(b.purchase_ticket.__createdtime__);
-    return dateB - dateA;
-  });
-
-  const rows = visibleTransactions.map((transaction) => ({
-    date: (
-      <MDTypography variant="caption" fontWeight="medium" style={{ color: 'inherit' }}>
-        {moment(transaction.purchase_ticket.__createdtime__).format("DD MMM YYYY HH:mm")}
-      </MDTypography>
-    ),
-    assistant: (
-      <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
-        {getFullName(transaction.purchase_ticket.attender_id)}
-      </MDTypography>
-    ),
-    amount: (
-      <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
-        <Link className="custom-link" to={`/orden_boleteria/${transaction.purchase_ticket._id}`}>
-          {"$"}
-          {transaction.purchase_ticket.total_amount}{" "}
-        </Link>
-      </MDTypography>
-    ),
-    n_tickets: (
-      <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
-         {transaction.purchase_ticket_items?.length}{" "}
-      </MDTypography>
-    ),
-    observations: (
-      <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
-         {transaction.purchase_ticket?.observation}{" "}
-      </MDTypography>
-    ),
-    precharge: (
-      <MDTypography variant="button" fontWeight="medium" style={{ color: 'inherit' }}>
-        {transaction.purchase_ticket.precharge_amount}
-      </MDTypography>
-    ),
-  }));
 
   return (
     <Card>
@@ -146,7 +164,7 @@ const PurchaseTicketsTransactions = ({ id_event }) => {
           </div>
         </RefreshButtonContainer>
         <DataTable
-          table={{ columns, rows }}
+          table={tableData}
           isSorted={false}
           entriesPerPage={false}
           showTotalEntries={false}

@@ -19,6 +19,7 @@ import axios from "axios";
 import SalesPerTicket from "./SalesPerTicket";
 import QuantitySoldByTicket from "./QuantitySoldByTicket";
 import PurchaseTicketsTransactions from "./PurchaseTicketTransactions";
+import PayphoneAttendersReport from "./PayphoneAttendersReport";
 
 // URL
 import { API_BASE_URL } from "../../config";
@@ -94,9 +95,18 @@ const Ticketing = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar main_title="Boleteria" />
-      <MDTypography className="event-summary-title">
-        Estadísticas de la boletería
-      </MDTypography>
+      <MDBox
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        gap={2}
+        flexWrap="wrap"
+      >
+        <MDTypography className="event-summary-title">
+          Estadísticas de la boletería
+        </MDTypography>
+        <PayphoneAttendersReport id_event={eventId} />
+      </MDBox>
       <MDBox py={3}>
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 6, lg: 4 }}>
